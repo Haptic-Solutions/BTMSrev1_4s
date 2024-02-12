@@ -10,9 +10,7 @@ H - Enables auto heater calibration check and Manually runs heater calibration.
 
 h - Disable heater calibration and check.
 
-E - Local echo on or off using "y" or "n" as args with no space in between. (default 'y') Examples: 'Ey' or 'En'
-
-S - Low power shutdown test. Can only be waken back up through pluggin in the charger, turning the key, or resetting through the command set if not using the power managment circuit.
+S - Go into deep sleep state. Can only be waken back up through plugging in the charger, turning the key, or resetting through the command set if not using the power management circuit.
 
 F - Read fault codes.
 
@@ -22,9 +20,7 @@ P - Turns on main power output. Software power switch.
 
 p - Turns off main power output. Software power switch.
 
-Z - Overide partial charge and set to fully charge battery one time.
-
-S - Go into deep sleep state.
+Z - Override partial charge and set to fully charge battery one time.
 
 E - Local echo on.
 
@@ -36,8 +32,8 @@ $ - Generate and Check Program Memory Checksum.
 
 & - Generate and Check EEPROM/NVMEM Checksum.
 
-! - Download EEPROM/NVMEM data through serial port.
+! - Download EEPROM/NVMEM data through serial port. (NOT IMPLEMENTED?)
 
-@ - Upload EEPROM/NVMEM data through serial port.
+@ - Upload EEPROM/NVMEM data through serial port.  (NOT IMPLEMENTED?)
 
 * - Get firmware version.
