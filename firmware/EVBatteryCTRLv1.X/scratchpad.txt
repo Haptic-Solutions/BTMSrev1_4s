@@ -1,0 +1,215 @@
+
+//Initialize the display.
+void POS_disp_init(void){
+    //Check to see if our buffer is busy or if we have already initialized the display.
+    if(IFS1bits.U2TXIF == 0 && dispinit == 0){
+        Port2_Buffer[0] = 0x0C;     //Clear display.
+        Port2_Buffer[1] = 0x12;     //Auto Return Off.
+        Port2_Buffer[2] = 0x0E;     //Cursor Off.
+        //Dispatch the data in the buffers to the display by creating a TX IRQ on PORT 2.
+        CBuff_index = 0;            //Start Index at 0.
+        CBuff_max_data = 2;        //End Index at 43 bytes. 44? Arrays start at 0 right?
+        IFS1bits.U2TXIF = 1;        //Start transmitting by manually send an IRQ.
+        dispinit = 1;
+    }
+    
+}
+
+//Writes data to Display Port Buffer for a 20 x 2 POS display. Model:??????
+//This model uses rs232 so you must use a level converter for rs232.
+//Dash Board display.
+void POS_dash_display(void){
+    
+    //Check to see if our buffer is busy or if our display is initialized.
+    if(IFS1bits.U2TXIF == 0 && dispinit == 1){
+        //Top Row.
+        //Display Setup.
+        CBuff_index = 0;
+        Port2_Buffer[CBuff_index] = 0x16;             //Cursor Home
+        //Display Voltage.
+        CBuff_index = 1;
+        float_send(battery_voltage, BigBuffer);  //battery voltage
+        CBuff_index = 6;
+        send_string(TXT, "V ", BigBuffer);
+        //Battery Watts In/Out
+        CBuff_index = 8;
+        config_space = 1;
+        float_send((battery_vltg_average * battery_crnt_average), BigBuffer);      //battery watts
+        CBuff_index = 13;
+        send_string(TXT, "W ", BigBuffer);
+        //Battery  % charge
+        CBuff_index = 15;
+        float batt_percent = 0;
+        batt_percent = ((battery_remaining / battery_capacity) * 100);
+        if(batt_percent >= 100){
+            send_string(TXT, " ", BigBuffer);
+            float_send(batt_percent, BigBuffer);   //battery percentage remaining
+            CBuff_index = 20;
+            send_string(TXT, "%", BigBuffer);
+        }
+        else{
+            float_send(batt_percent, BigBuffer);   //battery percentage remaining
+            CBuff_index = 20;
+            send_string(TXT, "%", BigBuffer);
+        }
+
+        //Bottom Row Start.
+        CBuff_index = 21;
+        nl_send(BigBuffer);
+        return_send(BigBuffer);
+        CBuff_index = 23;
+        send_string(TXT, "BT ", BigBuffer);
+        CBuff_index = 25;
+        config_space = 0;
+        float_send(battery_temp, BigBuffer);
+        CBuff_index = 30;
+        send_string(TXT, "C   ", BigBuffer);
+        CBuff_index = 32;
+        //Low Battery
+        if(batt_percent < 10){
+            //Make low battery message blink.
+            if(error_blink){
+                send_string(TXT, "Low Batt!  ", BigBuffer);
+            }
+            else{
+                send_string(TXT, "           ", BigBuffer);
+            }
+        }
+        else{
+            send_string(TXT, "           ", BigBuffer);
+        }
+        //Error status.
+        CBuff_index = 42;
+        if(fault_count != 0){
+            //Make error message blink.
+            if(error_blink){
+                send_string(TXT, "E", BigBuffer);
+            }
+            else{
+                send_string(TXT, " ", BigBuffer);
+            }
+        }
+        else{
+            send_string(TXT, " ", BigBuffer);
+            err_scroll = 0;
+        }
+        Port2_Buffer[44] = 0x12;     //Auto Return Off.
+        Port2_Buffer[45] = 0x0E;     //Cursor Off.
+        
+        //Diag variable viewer.
+        //CBuff_index = 23;
+        //float_send(crnt_integral, BigBuffer);
+        //Dispatch the data in the buffers to the display by creating a TX IRQ on PORT 2.
+        CBuff_index = 0;            //Start Index at 0.
+        CBuff_max_data = 45;        //End Index at 43 bytes. 44? Arrays start at 0 right?
+        IFS1bits.U2TXIF = 1;        //Start transmitting by manually send an IRQ.
+    }
+}
+//*************************************88
+//Diagnostics display.
+void POS_diag_display(void){
+    
+    //Check to see if our buffer is busy or if our display is initialized.
+    if(IFS1bits.U2TXIF == 0 && dispinit == 1){
+        //Top Row.
+        //Display Setup.
+        CBuff_index = 0;
+        Port2_Buffer[CBuff_index] = 0x16;             //Cursor Home
+        //Display Voltage.
+        CBuff_index = 1;
+        float_send(battery_voltage, BigBuffer);  //battery voltage
+        CBuff_index = 6;
+        send_string(TXT, "V ", BigBuffer);
+        //Battery Watts In/Out
+        CBuff_index = 8;
+        config_space = 1;
+        float_send((battery_vltg_average * battery_crnt_average), BigBuffer);      //battery watts
+        CBuff_index = 13;
+        send_string(TXT, "W ", BigBuffer);
+        //Battery  % charge
+        CBuff_index = 15;
+        float batt_percent = 0;
+        batt_percent = ((battery_remaining / battery_capacity) * 100);
+        if(batt_percent >= 100){
+            send_string(TXT, " ", BigBuffer);
+            float_send(batt_percent, BigBuffer);   //battery percentage remaining
+            CBuff_index = 20;
+            send_string(TXT, "%", BigBuffer);
+        }
+        else{
+            float_send(batt_percent, BigBuffer);   //battery percentage remaining
+            CBuff_index = 20;
+            send_string(TXT, "%", BigBuffer);
+        }
+
+        //Bottom Row Start.
+        CBuff_index = 21;
+        nl_send(BigBuffer);
+        return_send(BigBuffer);
+        CBuff_index = 23;
+        //Charging status. 4 char
+        if(battery_crnt_average > 0.1){
+            send_string(TXT, "Chrg ", BigBuffer);
+        }
+        else if(battery_crnt_average < -0.1){
+            send_string(TXT, "Dis  ", BigBuffer);
+        }
+        else {
+            send_string(TXT, "Idle ", BigBuffer);
+        }
+        //Heating status. 8 char
+        CBuff_index = 28;
+        if(heat_power >= 1){
+            send_string(TXT, "Htr On  ", BigBuffer);
+        }
+        else{
+            send_string(TXT, "Htr Off ", BigBuffer);
+        }
+        //Error status. 7 char
+        CBuff_index = 36;
+        if(fault_count != 0){
+            //Make error message blink.
+            if(error_blink){
+                if(err_scroll >= fault_count - 1){
+                    err_scroll = 0;
+                }
+                else{
+                    err_scroll++;
+                }
+                if(err_scroll == fault_count - 1){
+                    send_string(TXT, "END    ", BigBuffer);
+                }
+                else if(err_scroll == 0){
+                    send_string(TXT, "Strt   ", BigBuffer);
+                }
+                else{
+                    send_string(TXT, "       ", BigBuffer);
+                }
+            }
+            else{
+                if(err_scroll == fault_count - 1){
+                    send_string(TXT, "END    ", BigBuffer);
+                }
+                else if(err_scroll == 0){
+                    send_string(TXT, "Strt   ", BigBuffer);
+                }
+                else{
+                    send_string(TXT, "       ", BigBuffer);
+                }
+            }
+            Port2_Buffer[41] = four_bit_hex_cnvt((fault_codes[err_scroll] & 0xF0) / 16);
+            Port2_Buffer[42] = four_bit_hex_cnvt(fault_codes[err_scroll] & 0x0F);
+            Port2_Buffer[43] = 'h';
+        }
+        else{
+            send_string(TXT, "Sys OK ", BigBuffer);
+            err_scroll = 0;
+        }
+
+        //Dispatch the data in the buffers to the display by creating a TX IRQ on PORT 2.
+        CBuff_index = 0;            //Start Index at 0.
+        CBuff_max_data = 43;        //End Index at 43 bytes. 44? Arrays start at 0 right?
+        IFS1bits.U2TXIF = 1;        //Start transmitting by manually send an IRQ.
+    }
+}
+
