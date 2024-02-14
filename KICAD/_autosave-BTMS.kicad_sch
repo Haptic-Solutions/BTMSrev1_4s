@@ -6320,7 +6320,7 @@
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 17a7d292-9c5d-46fe-9cab-6f571fc5ef9a)
     (property "Reference" "J1" (id 0) (at 21.59 170.18 0))
-    (property "Value" "Batt_Ballance" (id 1) (at 21.59 172.72 0))
+    (property "Value" "Conn_01x05_Male" (id 1) (at 21.59 172.72 0))
     (property "Footprint" "Connector_JST:JST_VH_B5PS-VH_1x05_P3.96mm_Horizontal" (id 2) (at 20.955 180.975 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -10903,7 +10903,7 @@
       (reference "F4") (unit 1) (value "0A5") (footprint "Fuse:Fuse_0603_1608Metric_Pad1.05x0.95mm_HandSolder")
     )
     (path "/17a7d292-9c5d-46fe-9cab-6f571fc5ef9a"
-      (reference "J1") (unit 1) (value "Batt_Ballance") (footprint "Connector_JST:JST_VH_B5PS-VH_1x05_P3.96mm_Horizontal")
+      (reference "J1") (unit 1) (value "Conn_01x05_Male") (footprint "Connector_JST:JST_VH_B5PS-VH_1x05_P3.96mm_Horizontal")
     )
     (path "/e3f15083-245b-4e47-a130-b04c1655b065"
       (reference "J2") (unit 1) (value "AUX_Charge") (footprint "Connector_JST:JST_VH_B2PS-VH_1x02_P3.96mm_Horizontal")
