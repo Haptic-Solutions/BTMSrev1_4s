@@ -49,90 +49,49 @@ void temperatureCalc(void){
 
 void outputReg(void){
     ////Check for key power or command power signal, but not soft power signal.
-    if((keySwitch || CONDbits.cmd_power)){
+    if((__PwrKey || CONDbits.cmd_power)){
         //Turn cmd_power off if keySwitch is turned on then off.
-        if(keySwitch)STINGbits.sw_off = on;
-        else if (!keySwitch && STINGbits.sw_off){
+        if(__PwrKey)STINGbits.sw_off = on;
+        else if (!__PwrKey && STINGbits.sw_off){
             CONDbits.cmd_power = off;
             STINGbits.sw_off = off;
         }
-        ctRelay = on;          //contactor relay on, but only if fault shutdown is 0
-        AUXrelay = on;         //Turn on AUX
-        if(contact_rly_timer == 3)
-            contact_rly_timer = 2;         //wait two 0.125ms cycles before allowing charge regulation to start.
-
         //Run heater if needed, but don't run this sub a second time if we are getting charge power while key is on.
         //If we are getting charge power then we need to use it to warm the battery to a higher temp if needed.
         //So check charge input first.
-        if(!chrgSwitch){
+        if(!STINGbits.chargerPresent){
             heat_control(sets.dischrg_target_temp);
         }
-        if(contact_rly_timer == 0){
-            //Integral Mode
-            //High temp limiting.
-            voltage_output += analog_smpl_time * ((dsky.battery_temp - sets.dischrg_max_temp) * temp_proportion);
-            if(voltage_output > sets.battery_rated_voltage){
-                voltage_output = sets.battery_rated_voltage;
+        dsky.max_current = dischrg_current;
+            //Current monitoring.
+            if(dischrg_current > absFloat(dsky.battery_current)){
+                if(soft_OVC_Countdown == 0){
+                    fault_log(0x2F);
+                    STINGbits.fault_shutdown = yes;
+                }
+                else soft_OVC_Countdown--;
             }
-            else if(voltage_output < sets.dischrg_voltage){
-                voltage_output = sets.dischrg_voltage;
-            }
-
-            //Low voltage limiting.
-            current_output += analog_smpl_time * ((dsky.battery_voltage - voltage_output) * vltg_proportion);
-            if(current_output > dischrg_current){
-                current_output = dischrg_current;
-            }
-            else if(current_output < 0){
-                current_output = 0;
-            }
-
-            //Current regulation.
-            crnt_error = (current_output - absFloat(dsky.battery_current)) * crnt_proportion;
-            if(crnt_error > 10000){
-                crnt_error = 10000;
-            }
-            else if(crnt_error < -10000){
-                crnt_error = -10000;
-            }
-            crnt_integral += (analog_smpl_time * crnt_error);
-            if(crnt_integral > 95){
-                crnt_integral = 95;
-            }
-            else if(crnt_integral < 0){
-                crnt_integral = 0;
-            }
-            output_power = crnt_integral;
-        }
+            
     }
     else{
-        output_power = off;
-        outPWM = off;             //set output control to 0 before turning off the relay
-        LATE = off;               //Insure all PORTE outputs are off.
-        PWMCON1bits.PEN3L = off;  //Set PWM3 Low side to standard output so that it can be set to 0
+        PowerOutEnable = off;
         crnt_integral = 0;
-        contact_rly_timer = 3; //Reset contactor relay timer
-        AUXrelay = off; //Turn off AUX
-        ctRelay = off; //Turn off contactor relay
     }
 }
 
 void chargeReg(void){
     //Charge current read and target calculation.
     //// Check for Charger.
-    if(chrgSwitch){
-        chrgLight = 1;          //charger light on.
-        chrgRelay = 1;          //charger relay on, but only if fault shutdown is 0
+    if(STINGbits.chargerPresent){
         if(chrg_rly_timer == 3)chrg_rly_timer = 2;         //wait two 0.125ms cycles before allowing charge regulation to start.
         //Charger timeout check. If charger is plugged in but we aren't getting current then we
         //need to shutdown and log an error code so we don't run down the battery.
-        if(chrg_check < 10000 && dsky.battery_current < -0.01 && !keySwitch &&
-        dsky.battery_voltage < (dsky.chrg_voltage - 0.05) && !heat_power) chrg_check++;
+        if(chrg_check < 10000 && dsky.battery_current < -0.01 && !__PwrKey &&
+        dsky.pack_voltage < (dsky.chrg_voltage - 0.05) && !heat_power) chrg_check++;
         else if(chrg_check >= 10000){
             fault_log(0x1B);            //Log insufficient current from charger.
             STINGbits.fault_shutdown = yes;
             chrg_check = clear;
-            chrgRelay = off;          //charger relay off. Don't waste power on a relay that is doing nothing.
             //This usually happens when we detect a charge voltage but the charge regulator isn't passing enough current or it's voltage is below the battery's voltage.
         }
         else if(chrg_check > 0) chrg_check--;
@@ -146,19 +105,20 @@ void chargeReg(void){
         //Regulate the charger input.
         if(!chrg_rly_timer){
             // Charge regulation routine. Clean this up, it needs to use integral math for regulation.
-            if(((charge_power > 0) && (dsky.battery_voltage >= (dsky.chrg_voltage))) ||
-            (dsky.battery_current > (chrg_current + 0.02)))charge_power--;
-            else if(((charge_power < 101) && (dsky.battery_voltage < dsky.chrg_voltage - 0.07)) ||
-            (dsky.battery_current < chrg_current))charge_power++;
+            if(((charge_power > 0) && (dsky.pack_voltage >= (dsky.chrg_voltage))) ||
+            (dsky.battery_current > (chrg_current + 0.02))){
+                charge_power--;
+            }
+            else if(((charge_power < 101) && (dsky.pack_voltage < dsky.chrg_voltage - 0.07)) ||
+            (dsky.battery_current < chrg_current)){
+                charge_power++;
+            }
         }
         else charge_power = 0;       //Inhibit charging if we are in the middle of heater calibration.
     }
     else{
-        chrgLight = off;          //charger light off.
         charge_power = off;       //charger set to 0
-        chrgPWM = off;            //Set charger output to 0 before turning off relay
-        chrgRelay = off;          //charger relay off.
-        chrg_rly_timer = 3;     //reset charge relay timer.
+        CHctrl = off;            //Set charger output to 0 before turning off relay
         chrg_check = clear;         //Reset charger check timer
     }
 }
@@ -172,13 +132,13 @@ void heat_control(float target_temp){
     if(vars.heat_cal_stage == ready){
         if(dsky.battery_temp < (target_temp - 0.5) && heat_power < heat_set){
             if(heat_rly_timer == 0)heat_power++;
-            heatRelay = on;     //Heat Relay On
+            PowerOutEnable = on;     //Heat Relay On
             if(heat_rly_timer == 3)heat_rly_timer = 2; //wait two 0.125ms cycles before allowing heat regulation to start.
         }
         else if(dsky.battery_temp > (target_temp + 0.5)){
             if(heat_power > 0)heat_power--;
             if(heat_power <= 0){
-                heatRelay = off;     //Heat Relay Off
+                PowerOutEnable = off;     //Heat Relay Off
                 heat_rly_timer = 3;     //Reset heat relay timer
             }
         }

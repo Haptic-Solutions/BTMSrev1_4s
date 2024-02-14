@@ -26,22 +26,25 @@ SOFTWARE. */
 #include "Init.h"
 
 void default_sets(void){
-    sets.R1_resistance = 200;            //R1 resistance in Kohms
-    sets.R2_resistance = 16;             //R2 resistance in Kohms
-    sets.bt_vlt_adjst = -0.1;            //battery voltage input compensation in volts.
+    sets.R1_resistance = 100;            //R1 resistance in Kohms
+    sets.R2_resistance = 10;             //R2 resistance in Kohms
+    sets.S1_vlt_adjst = 0;            //battery voltage input compensation in volts.
+    sets.S2_vlt_adjst = 0;
+    sets.S3_vlt_adjst = 0;
+    sets.S4_vlt_adjst = 0;
     /*****************************/
     //Battery Ratings and setpoints
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
-    sets.max_battery_voltage = 59.2;      //Max battery voltage before shutdown.
-    sets.battery_rated_voltage = 58.8;           //Target max charge voltage
-    sets.dischrg_voltage = 47.5;        //Minimum battery voltage
-    sets.low_voltage_shutdown = 43;    //Battery Low Total Shutdown Voltage
+    sets.max_battery_voltage = 4.25;      //Max battery voltage before shutdown.
+    sets.battery_rated_voltage = 4.2;           //Target max charge voltage
+    sets.dischrg_voltage = 2.6;        //Minimum battery voltage
+    sets.low_voltage_shutdown = 2.5;    //Battery Low Total Shutdown Voltage
     sets.dischrg_C_rating = 2;           //Discharge C rating
-    sets.limp_current = 5;              //Limp mode current in amps. Minimum current to regulate to.
+    sets.limp_current = 1;              //Limp mode current in amps. Minimum current to regulate to.
     sets.chrg_C_rating = 0.5;          //Charge C rating.
-    sets.amp_hour_rating = 23.4;         //Battery amp hour rating.
-    sets.over_current_shutdown = 30;        //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
-    sets.absolute_max_current = 25;      //Max regulating current.
+    sets.amp_hour_rating = 2.6;         //Battery amp hour rating.
+    sets.over_current_shutdown = 8;        //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
+    sets.absolute_max_current = 8.5;      //Max regulating current.
     //Charge temps.
     sets.chrg_min_temp = 10;          //Battery minimum charge temperature. Stop Charging at this temp.
     sets.chrg_reduce_low_temp = 15;      //Reduce charge current when lower than this temp.
@@ -61,7 +64,7 @@ void default_sets(void){
     sets.ctrlr_fan_start = 50;          //Turns on cooling fan.
     sets.batt_fan_start = 30;
     //Some other stuff.
-    sets.max_heat = 50;              //Heater watts that you want to use.
+    sets.max_heat = 10;              //Heater watts that you want to use.
     sets.travel_dist = 0.012;         //Travel Distance in KM per tire rotation or between TAC ticks.
     sets.circuit_draw = 0.014;        //Amount of current that Yeti himself draws at idle. Used for current calibration and idle mode logging.
     sets.PowerOffAfter = 120;    //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours.
@@ -100,9 +103,8 @@ void configure_IO(void){
     //Battery Sensor Input
     dsky.battery_temp = 0;           //Battery Temperature
     dsky.my_temp = 0;                //Controller board Temperature
-    dsky.motor_ctrl_temp = 0;         //Motor or Motor controller Temperature
-    dsky.battery_voltage = 0;        //Battery voltage
-    voltage_percentage = 0;     //Battery Voltage Percentage.
+    dsky.pack_voltage = 0;        //Battery voltage
+    for(int i=0;1<4;i++)voltage_percentage[i] = 0;     //Battery Voltage Percentage.
     dsky.battery_current = 0;        //Battery charge/discharge current
 
     /**************************/
@@ -111,40 +113,39 @@ void configure_IO(void){
     OSCCONbits.OSWEN = 1;
     OSCCONbits.LPOSCEN = 0;
     /**************************/
-    //Disable IRQ on change
+    //Disable IRQ on port change.
     CNEN1 = 0;
     CNEN2 = 0;
-    //Disable IRQ on change pullups
+    //Disable IRQ on port change pullup resistors.
     CNPU1 = 0;
     CNPU2 = 0;
     /**************************/
     /* General 1 IO */
-    GENERAL1_TRIS = 0x0000;
+    GENERAL1_TRIS = GENERAL1_DIR;
     GENERAL1_LAT = 0;
     GENERAL1_PORT = 0;
     /**************************/
-    /* PWM outputs and charge detect input. */
-    PWM_TRIS = 0xFFEF; //set porte to all inputs except RE4
-    PWM_LAT = 0;
-    PWM_PORT = 0;      //Make sure PORTE is 0
-    /**************************/
     /* General 2 IO */
-    GENERAL2_TRIS = 0xFFBE;
+    GENERAL2_TRIS = GENERAL2_DIR;
     GENERAL2_LAT = 0;
     GENERAL2_PORT = 0;
+    /**************************/
+    /* PWM outputs and charge detect input. */
+    PWM_TRIS = PWM_TRIS_DIR; //set porte to all inputs except RE4
+    PWM_LAT = 0;
+    PWM_PORT = 0;      //Make sure PORTE is 0
 /*****************************/
 /* Configure PWM */
 /*****************************/
-    //FBORPOR = 0x82B2;
-    PTCON = 0x0006;     //Set the PWM module and set to up/down mode for center aligned PWM. 6 = 37khz (4 Tcy per bit))
+    PTCON = 0x0004;     //Set the PWM module and set to free running mode for edge aligned PWM.
     PTMR = 0;
     PTPER = 49;         //set period. 0% - 99%
     SEVTCMP = 0;
-    PWMCON1 = 0x00FB;       //Set PWM output for complementary mode.
+    PWMCON1 = 0x0FF0;           //Set PWM output for single mode.
     PWMCON2 = 0x0000;
-    DTCON1 = 0x8181;        //Dead time is 4Tcy (1 bit)
+    DTCON1 = 0x0000;        //0 Dead time. Not needed.
     FLTACON = 0;
-    OVDCON = 0xFF00;
+    OVDCON = 0xAA00;        //Only high-side PWM pins are being used for PWM.
     PDC1 = 0000;            //set output to 0
     PDC2 = 0000;            //set output to 0
     PDC3 = 0000;            //set output to 0
@@ -290,7 +291,7 @@ void Init(void){
     IEC1bits.INT1IE = 1;    //Wheel rotate IRQ
     IEC1bits.INT2IE = 0;  //Disable irq for INT2, not used.
     IEC0bits.T2IE = 1;	// Enable interrupts for timer 2
-    IEC0bits.T3IE = 1;	// Enable interrupts for timer 3
+    //IEC0bits.T3IE = 1;	// Enable interrupts for timer 3
     IEC1bits.T4IE = 1;	// Enable interrupts for timer 4
     IEC1bits.T5IE = 1;	// Enable interrupts for timer 5
     IEC0bits.ADIE = 1;  // Enable ADC IRQs.
@@ -304,7 +305,7 @@ void Init(void){
     PTCONbits.PTEN = 1;     // Enable PWM
     T2CONbits.TON = 1;      // Start Timer 2
     T1CONbits.TON = 1;      // Start Timer 1
-    T3CONbits.TON = 1;      // Start Timer 3
+    //T3CONbits.TON = 1;      // Start Timer 3
     T4CONbits.TON = 1;      // Start Timer 4
     T5CONbits.TON = 1;      // Start Timer 5
     U1MODEbits.UARTEN = 1;  //enable UART1

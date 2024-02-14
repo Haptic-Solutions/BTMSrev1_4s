@@ -34,34 +34,42 @@ SOFTWARE. */
 
 /* Charge Detect IRQ. */
 void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
-    CPUact = 1;
+    //CPUact = 1;
     //Don't do anything here. Charger plug IRQ is only to wake the micro from deep sleep if needed.
     IFS0bits.INT0IF = 0;
 }
 
 /* Analog Input IRQ */
 void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
-    CPUact = on;
+    //CPUact = on;
     //Get 8 samples for averaging.
     if (analog_avg_cnt < 8){
         //Force use of all 0's if we haven't burned the first ADC sample after a startup.
         //The ADC takes a moment to get correct values but it still sends the IRQs anyways.
         if (STINGbits.adc_sample_burn){
-            avgVolt += adcVoltage; //Voltage
-            avgCurnt += adcCurrent; //Current
-            avgBTemp += adcBTemp; //Batt Temp
-            avgMTemp += adcMTemp; //Motor Temp
-            avgSTemp += adcSTemp; //Self Temp
+            CavgVolt += ChargeVoltage; //Charger Voltage
+            BavgCurnt += BCsense; //Battery Current
+            avgBTemp += Btemp; //Batt Temp
+            avgSTemp += Mtemp; //Self Temp
+            BavgVolt[0] += LithCell_V1;
+            BavgVolt[1] += LithCell_V2;
+            BavgVolt[2] += LithCell_V3;
+            BavgVolt[3] += LithCell_V4;
+            CavgCurnt += CCsense; //Charger Current
             //Check for sane values.
             analog_sanity();
         }
         else{
             //Burn the first average.
-            avgVolt = 0;
-            avgCurnt = 0;
+            CavgVolt = 0;
+            BavgCurnt = 0;
             avgBTemp = 0;
-            avgMTemp = 0;
             avgSTemp = 0;
+            BavgVolt[0] = 0;
+            BavgVolt[1] = 0;
+            BavgVolt[2] = 0;
+            BavgVolt[3] = 0;
+            CavgCurnt = 0;
         }
         analog_avg_cnt++;
     }
@@ -69,8 +77,6 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         calcAnalog(); //Calculate analog inputs.
         //Get open circuit voltage percentage if current is less than 0.1 amps
         if(STINGbits.adc_sample_burn)volt_percent();
-        //Copy board temp to battery temp and controller temp for now.
-        dsky.motor_ctrl_temp = dsky.my_temp;
         //Reset analog average count.
         analog_avg_cnt = clear;
         //Do a battery check after each valid sample.
@@ -92,7 +98,7 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
 
 /* Heartbeat IRQ, Once every Second. Lots of stuff goes on here. */
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
-    CPUact = on;
+    //CPUact = on;
     ADCON1bits.ADON = on;    // turn ADC on to get a sample.
     //Check for receive buffer overflow.
     if(U1STAbits.OERR){
@@ -139,16 +145,16 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     //Over current shutdown timer stuff.
     if(oc_shutdown_timer > 0 && dischr_current < sets.over_current_shutdown) oc_shutdown_timer--;
     // Check for charger disconnect.
-    if(!chrgSwitch){
-        chrgLight = off;  //charger light off.
+    if(!BV_Fault){
+        //chrgLight = off;  //charger light off.
         charge_power = 0;
         chrg_check = 0;
     }
     //Fan control
     if(CONDbits.main_power && (dsky.battery_temp > sets.batt_fan_start
-    || dsky.my_temp > sets.ctrlr_fan_start || dsky.motor_ctrl_temp > sets.ctrlr_fan_start))fanRelay = 1;
+    || dsky.my_temp > sets.ctrlr_fan_start))Mult_B3 = 1;
     else if(!CONDbits.main_power || (dsky.battery_temp < (sets.batt_fan_start - 5)
-    && dsky.my_temp < (sets.ctrlr_fan_start - 5) && dsky.motor_ctrl_temp < (sets.ctrlr_fan_start - 5)))fanRelay = 0;
+    && dsky.my_temp < (sets.ctrlr_fan_start - 5)))Mult_B3 = 0;
 
     //Clear fault_shutdown if all power modes are turned off.
     if(!CONDbits.pwr_detect){
@@ -160,14 +166,14 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     if(CONDbits.pwr_detect){
         if(CONDbits.error_blink){
             CONDbits.error_blink = off;
-            errLight = off;
+            //errLight = off;
         }
         else{
             CONDbits.error_blink = on;    //Used for blinking stuff on displays.
-            if(vars.fault_count) errLight = on;
+            if(vars.fault_count) STINGbits.errLight = on;
         }
     }
-    else errLight = off;
+    else STINGbits.errLight = off;
 
     //Get the absolute value of battery_usage and store it in absolute_battery_usage.
     vars.absolute_battery_usage = absFloat(vars.battery_usage);
@@ -200,7 +206,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     //To Do: This isn't exactly right because, for example, ~90% Voltage != ~90% total capacity!!!
     //It's only a few % off so for now it's okay. Will implement real voltage curve calculation later.
     if(STINGbits.p_charge && (vars.battery_remaining > (vars.battery_capacity * sets.partial_charge))
-    && dsky.battery_vltg_average <= (sets.battery_rated_voltage * sets.partial_charge))
+    && dsky.pack_vltg_average <= (sets.battery_rated_voltage * sets.partial_charge))
         vars.battery_remaining = (vars.battery_capacity * sets.partial_charge);
     //**************************************************
     //Circuit draw compensation.
@@ -218,14 +224,14 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
 /* 0.125 second IRQ */
 //Used for some critical math timing operations. Cycles through every 1/8 sec.
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
-    CPUact = on;
-    dsky.watts = dsky.battery_crnt_average * dsky.battery_vltg_average;
+    //CPUact = on;
+    dsky.watts = dsky.battery_crnt_average * dsky.pack_vltg_average;
     //Relay On Timers. Wait a little bit after turning on the relays before trying to regulate.
     if(chrg_rly_timer > 0 && chrg_rly_timer != 3)
         chrg_rly_timer--;
     if(contact_rly_timer > 0 && contact_rly_timer != 3)
         contact_rly_timer--;
-    if(heat_rly_timer > 0 && heat_rly_timer != 3)
+    if(heat_rly_timer > 0 && heat_rly_timer != 3)//
         heat_rly_timer--;
 
     //Get average voltage and current.
@@ -233,23 +239,23 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
         bt_crnt_avg_temp /= 8;
         dsky.battery_crnt_average = bt_crnt_avg_temp;
         bt_vltg_avg_temp /= 8;
-        dsky.battery_vltg_average = bt_vltg_avg_temp;
+        dsky.pack_vltg_average = bt_vltg_avg_temp;
         bt_vltg_avg_temp = 0;
         bt_crnt_avg_temp = 0;
         avg_cnt = 0;
-        current_cal();
+        if(STINGbits.chargerPresent)current_cal();
     }
     else{
         bt_crnt_avg_temp += dsky.battery_current;
-        bt_vltg_avg_temp += dsky.battery_voltage;
+        bt_vltg_avg_temp += dsky.pack_voltage;
         avg_cnt++;
     }
     //*************************
     //Get peak power output.
-    float power = absFloat(dsky.battery_crnt_average * dsky.battery_vltg_average);
+    float power = absFloat(dsky.battery_crnt_average * dsky.pack_vltg_average);
     if (power > dsky.peak_power){
         dsky.peak_power = power;
-        dsky.peak_pwr_vlts = dsky.battery_vltg_average;
+        dsky.peak_pwr_vlts = dsky.pack_vltg_average;
         dsky.peak_pwr_crnt = dsky.battery_crnt_average;
     }
     //*****************************

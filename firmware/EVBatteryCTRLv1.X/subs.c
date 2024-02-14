@@ -31,22 +31,62 @@ void calcAnalog(void){
         * of converting analog inputs into voltages, currents, and temps.
         */
         //Battery current.
-        avgCurnt /= 8;      //Sample average.
-        avgCurnt -= 32768;    //Set zero point.
-        avgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
-        avgCurnt *= 2.5;      //Convert to +-2.5'volts'. It's still a 0 - 5 volt signal on the analog input. The zero point is at 2.5v
-        dsky.battery_current = (avgCurnt / 0.04) + current_compensate; //Offset for ACS780LLRTR-050B-T Current Sensor.
+        BavgCurnt /= 8;      //Sample average.
+        BavgCurnt -= 32768;    //Set zero point.
+        BavgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
+        BavgCurnt *= 1.65;      //Convert to +-1.65 'volts'. It's still a 0 - 3.3 volt signal on the analog input. The zero point is at 1.65v
+        dsky.battery_current = (BavgCurnt * 12.5) + Bcurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
         currentCheck();     //Check for over current condition.
-        avgCurnt = 0;       //Clear average.
+        BavgCurnt = 0;       //Clear average.
+        
+        //Charger current.
+        CavgCurnt /= 8;      //Sample average.
+        CavgCurnt -= 32768;    //Set zero point.
+        CavgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
+        CavgCurnt *= 1.65;      //Convert to +-1.65 'volts'. It's still a 0 - 3.3 volt signal on the analog input. The zero point is at 1.65v
+        dsky.Cin_current = (CavgCurnt * 12.5) + Ccurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
+        currentCheck();     //Check for over current condition.
+        CavgCurnt = 0;       //Clear average.
 
         //Battery voltage.
         //avgVolt /= x;      //Sample average.
         //avgVolt /= 65535;  //Convert to unsigned fractional
         //avgVolt *= 5;      //Converted to 0 - 5V voltage.
         //Do it all at once to save time.
-        avgVolt /= 104856;   //(13107 * 8)Average and Convert to unsigned fractional, 0v - 5v
-        dsky.battery_voltage = (avgVolt / vltg_dvid) + sets.bt_vlt_adjst;    //Use resistor divider values to covert to actual voltage.
-        avgVolt = 0;       //Clear average.
+        BavgVolt[0] /= 104856;   //(13107 * 8)Average and Convert to unsigned fractional, 0v - 5v
+        float S1_V = (BavgVolt[0] / vltg_dvid);    //Use resistor divider values to covert to actual voltage.
+        BavgVolt[0] = 0;       //Clear average.
+
+        BavgVolt[1] /= 104856;   //(13107 * 8)Average and Convert to unsigned fractional, 0v - 5v
+        float S2_V = (BavgVolt[1] / vltg_dvid);    //Use resistor divider values to covert to actual voltage.
+        BavgVolt[1] = 0;       //Clear average.
+        
+        BavgVolt[2] /= 104856;   //(13107 * 8)Average and Convert to unsigned fractional, 0v - 5v
+        float S3_V = (BavgVolt[2] / vltg_dvid);    //Use resistor divider values to covert to actual voltage.
+        BavgVolt[2] = 0;       //Clear average.
+        
+        BavgVolt[3] /= 104856;   //(13107 * 8)Average and Convert to unsigned fractional, 0v - 5v
+        float S4_V = (BavgVolt[3] / vltg_dvid);    //Use resistor divider values to covert to actual voltage.
+        BavgVolt[3] = 0;       //Clear average.
+        
+        dsky.Cell_Voltage[0] = (S4_V - (S3_V+S2_V+S1_V))+ sets.S1_vlt_adjst;
+        dsky.Cell_Voltage[1] = (S3_V - (S2_V+S1_V))+ sets.S2_vlt_adjst;
+        dsky.Cell_Voltage[2] = (S2_V - S1_V)+ sets.S3_vlt_adjst;
+        dsky.Cell_Voltage[3] = (S1_V + sets.S4_vlt_adjst);
+        
+        //Calculate pack voltage. Why not just use S4 input? Because
+        //S4 input includes all errors of the resistor dividers combined.
+        //Recalculating based on calibrated and calculated values should
+        //reduce that error amount.
+        float PackVolts=0;
+        for(int i=0;i<4;i++){
+            PackVolts+=dsky.Cell_Voltage[i];
+        }
+        dsky.pack_voltage=PackVolts;
+        //Charger Voltage
+        CavgVolt /= 104856;   //(13107 * 8)Average and Convert to unsigned fractional, 0v - 5v
+        dsky.Cin_voltage = (CavgVolt / vltg_dvid);    //Use resistor divider values to covert to actual voltage.
+        CavgVolt = 0;       //Clear average.
 
         //Battery temperature.
         //avgBTemp /= x;      //Sample average.
@@ -58,15 +98,7 @@ void calcAnalog(void){
         dsky.battery_temp = avgBTemp / 0.0156;    //Convert to Degrees C
         avgBTemp = 0;       //Clear average.
 
-        //motor controller temperature.
-        //avgMTemp /= x;      //Sample average.
-        //avgMTemp /= 65535;  //Convert to unsigned fractional
-        //avgMTemp *= 5;      //Converted to 0 - 5V voltage.
-        //Do it all at once to save time.
-        avgMTemp /= 104856;   //(13107 * 8)Average and Convert to unsigned fractional, 0v - 5v
-        avgMTemp -= 0.48;   //Offset for LM62 temp sensor.
-        dsky.motor_ctrl_temp = avgMTemp / 0.0156;    //Convert to Degrees C
-        avgMTemp = 0;       //Clear average.
+
         //Snowman's temperature.
         //avgSTemp /= x;      //Sample average.
         //avgSTemp /= 65535;  //Convert to unsigned fractional
@@ -93,9 +125,9 @@ void sysReady(void){
                 else {
                     //Set the PWM output to what the variables are during normal operation.
                     PWMCON1bits.PEN3L = 1;  //Set PWM3 Low side to PWM output.
-                    heatPWM = heat_power;               //set heater control
-                    chrgPWM = charge_power;             //set charge control
-                    outPWM = output_power;             //set output control
+                    Heat_CTRL = heat_power;               //set heater control
+                    CHctrl = charge_power;             //set charge control
+                    CH_Boost = output_power;             //set output control
                 }
             }
             else if (!CONDbits.main_power)io_off();
@@ -105,10 +137,11 @@ void sysReady(void){
 
 //System power off for power saving.
 void power_off(void){
-    vars.voltage_percentage_old = voltage_percentage;    //Save a copy of voltage percentage before we shut down.
+    for(int i=0;i<4;i++)vars.voltage_percentage_old[i] = voltage_percentage[i];    //Save a copy of voltage percentage before we shut down.
+
     // Enough time should have passed by now that the open circuit voltage should be stabilized enough to get an accurate reading.
     save_vars();      //Save variables before power off.
-    keepAlive = 0; //Disable Keep Alive signal.
+    KeepAlive = 0; //Disable Keep Alive signal.
 }
 
 //Get absolute value of a variable
@@ -123,13 +156,14 @@ float absFloat(float number){
 //Battery Percentage Calculation. This does NOT calculate the % total charge of battery, only the total voltage percentage.
 void volt_percent(void){
     if (absFloat(dsky.battery_current) < 0.08 && !CONDbits.charger_detected && STINGbits.adc_sample_burn){
-        dsky.open_voltage = dsky.battery_voltage;
-        voltage_percentage = 100 * ((dsky.open_voltage - sets.dischrg_voltage) / (sets.battery_rated_voltage - sets.dischrg_voltage));
+        dsky.open_voltage = dsky.pack_voltage;
+        for(int i=0;i<4;i++)voltage_percentage[i] = 100 * ((dsky.Cell_Voltage[i] - sets.dischrg_voltage) / (sets.battery_rated_voltage - sets.dischrg_voltage));
+
         CONDbits.got_open_voltage = yes;
     }
-    else if(dsky.battery_voltage <= (sets.dischrg_voltage + 0.05)){
-        voltage_percentage = 0;
-        dsky.open_voltage = sets.dischrg_voltage + 0.05;
+    else if(dsky.pack_voltage <= (sets.dischrg_voltage + 0.01)){
+        for(int i=0;i<4;i++)voltage_percentage[i] = 0;
+        dsky.open_voltage = (sets.dischrg_voltage*4) + 0.01;
         CONDbits.got_open_voltage = yes;
     }
 }
@@ -138,19 +172,19 @@ void volt_percent(void){
 void current_cal(void){
     float signswpd_avg_cnt = dsky.battery_crnt_average * -1;
     //do the current cal.
-    if(curnt_cal_stage == 4){
-        current_compensate = (signswpd_avg_cnt - sets.circuit_draw);
-        curnt_cal_stage = 5;        //Current Cal Complete
+    if(Bcurnt_cal_stage == 4){
+        Bcurrent_compensate = signswpd_avg_cnt;
+        Bcurnt_cal_stage = 5;        //Current Cal Complete
         //Do a heater cal after we have done current cal unless it is disabled.
         if(vars.heat_cal_stage != disabled) vars.heat_cal_stage = initialize;
         CONDbits.soft_power = off;
         //Done with current cal.
     }
     //Initialize current cal.
-    if(curnt_cal_stage == 1){
-        current_compensate = 0;
+    if(Bcurnt_cal_stage == 1){
+        Bcurrent_compensate = 0;
         io_off();    //Turn off all inputs and outputs.
-        curnt_cal_stage = 4;
+        Bcurnt_cal_stage = 4;
         CONDbits.soft_power = on;         //Turn soft power on to run 0.125s IRQ.
     }
 }

@@ -32,7 +32,7 @@ SOFTWARE. */
 
 /* CPU TRAPS, log erros here and shut down if needed.*/
 void __attribute__((interrupt, no_auto_psv)) _FLTAInterrupt (void){
-    CPUact = 1;
+    //CPUact = 1;
     io_off();
     STINGbits.fault_shutdown = 1;
     fault_log(0x0C);        //PWM fault. External.
@@ -46,7 +46,7 @@ void __attribute__((interrupt, no_auto_psv)) _OscillatorFail (void){
             fault_log(0x12);
         }
     }
-    CPUact = 1;
+    //CPUact = 1;
     io_off();
     STINGbits.fault_shutdown = 1;
     if(STINGbits.osc_fail_event){
@@ -57,7 +57,7 @@ void __attribute__((interrupt, no_auto_psv)) _OscillatorFail (void){
     INTCON1bits.OSCFAIL = 0;
 }
 void __attribute__((interrupt, no_auto_psv)) _AddressError (void){
-    CPUact = 1;
+    //CPUact = 1;
     io_off();
     STINGbits.fault_shutdown = 1;
     //send_string(0x03, "Address Error Event.");
@@ -66,7 +66,7 @@ void __attribute__((interrupt, no_auto_psv)) _AddressError (void){
     INTCON1bits.ADDRERR = 0;
 }
 void __attribute__((interrupt, no_auto_psv)) _StackError (void){
-    CPUact = 1;
+    //CPUact = 1;
     SPLIM = stackFaultDefault;
     io_off();
     STINGbits.fault_shutdown = 1;
@@ -76,7 +76,7 @@ void __attribute__((interrupt, no_auto_psv)) _StackError (void){
     INTCON1bits.STKERR = 0;
 }
 void __attribute__((interrupt, no_auto_psv)) _MathError (void){
-    CPUact = 1;
+    //CPUact = 1;
     io_off();
     STINGbits.fault_shutdown = 1;
     //send_string(0x03, "Math Error Event.");
@@ -85,7 +85,7 @@ void __attribute__((interrupt, no_auto_psv)) _MathError (void){
     INTCON1bits.MATHERR = 0;
 }
 void __attribute__((interrupt, no_auto_psv)) _ReservedTrap7 (void){
-    CPUact = 1;
+    //CPUact = 1;
     io_off();
     STINGbits.fault_shutdown = 1;
     fault_log(0x11);

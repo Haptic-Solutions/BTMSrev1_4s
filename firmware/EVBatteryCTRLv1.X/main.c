@@ -54,16 +54,16 @@ SOFTWARE. */
 int main(void){
     CONDbits.EnableChIRQ = 1;
     /* General 3 IO. */
-    GENERAL3_TRIS = 0xFFF1; //set portd to all inputs except for RD2(KEEPALIVE), RD3(UNUSED), and RD1(mainContactor)
+    GENERAL3_TRIS = GENERAL3_DIR;
     GENERAL3_LAT = 0;
     GENERAL3_PORT = 0;
-    keepAlive = 1; //Enable Keep Alive signal. System keeps itself on while main_power is enabled.
+    KeepAlive = 1; //Enable Keep Alive signal. System keeps itself on while main_power is enabled.
     /* Analog inputs and general IO */
     //Initialize PORTB first.
-    ANALOG_TRIS = 0x008F;          //set portb to mix analog inputs and digital outputs.
+    ANALOG_TRIS = ANALOG_DIR;          //set portb to analog inputs.
     ANALOG_LAT = 0;
     ANALOG_PORT = 0; //clear portb
-    CPUact = 1;             //Turn on CPU ACT light.
+    //CPUact = 1;             //Turn on CPU ACT light.
     //Calculate space required for eeprom storage.
     cfg_space = sizeof(sets) / 2;
     vr_space = sizeof(vars) / 2;
@@ -75,7 +75,7 @@ int main(void){
     //Do an initial reset and warm start check.
     first_check();
     //Disable Charge Detect IRQ on power up.
-    CONDbits.EnableChIRQ = 0;
+    //CONDbits.EnableChIRQ = 0;
     //Initialize Systems.
     Init();
 
@@ -90,7 +90,7 @@ int main(void){
         //Deep sleep check.
         if(STINGbits.deep_sleep){
             io_off();               //Turn off all IO before sleeping.
-            CPUact = 0;      //Turn CPU ACT light off.
+            //CPUact = 0;      //Turn CPU ACT light off.
             power_off();        //Cuts main power to self.
             /* If the keep alive pin isn't used or if the power control hardware
              * is faulty then this does nothing and the micro will
@@ -105,7 +105,7 @@ int main(void){
             STINGbits.deep_sleep = 0;
         }
         else{
-            CPUact = 0;      //Turn CPU ACT light off.
+            //CPUact = 0;      //Turn CPU ACT light off.
             Idle();                 //Idle Loop, saves power.
         }
     }

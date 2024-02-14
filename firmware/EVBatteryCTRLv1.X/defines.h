@@ -21,63 +21,74 @@ SOFTWARE. */
 #ifndef DEFINES_H
 #define	DEFINES_H
 //##############################################################################
-#include <p30f3011.h>
+//#include <p30f3011.h>
 //#include <libpic30.h>
 //#include <xc.h>
 // Tm = 32767 * (1 / (((clkSpeedmhz * PLL) / 4) / tiksPerIRQ))
 //#define IPS 29.48;   //million instructions per second.
 #define IPS 14.74   //million instructions per second.
 #define BAUD1 9600  //Default BAUD rate for PORT 1
-#define BAUD2 9600  //Default rate for PORT 2
+#define BAUD2 9600  //Default BAUD rate for PORT 2
 #define calc_125 0.00003472 //Value for calculating the total current in and out of battery every second.
 //Firmware Version String
-#define version "\n\rV1.0A\n\r"
+#define version "\n\rV1.0_2S-4S\n\r"
 //IO inputs
-#define keySwitch !PORTFbits.RF1
-#define chrgSwitch PORTEbits.RE8
+#define __PwrKey !PORTFbits.RF1 //Power on/off switch, button, or key.
+#define BV_Fault PORTEbits.RE8  //Battery Voltage Fault.
+#define V_Bus_Stat PORTEbits.RE4 //USB-C VBus status.
+#define C_Fault PORTDbits.RD0 //Battery or charge input/output current fault.
 //Analog inputs
-#define adcVoltage ADCBUF0 //Voltage
-#define adcCurrent ADCBUF1 //Current
-#define adcBTemp ADCBUF2 //Batt Temp
-#define adcMTemp ADCBUF3 //Motor Temp
-#define adcSTemp ADCBUF4 //Self Temp
+#define ChargeVoltage ADCBUF0 //Voltage
+#define BCsense ADCBUF1 //Current
+#define Btemp ADCBUF2 //Batt Temp
+#define Mtemp ADCBUF3 //My Temp
+#define LithCell_V1 ADCBUF4 //Cell 1 Volts
+#define LithCell_V2 ADCBUF5 //Cell 2 Volts
+#define LithCell_V3 ADCBUF6 //Cell 3 Volts
+#define LithCell_V4 ADCBUF7 //Cell 4 Volts
+#define CCsense ADCBUF8 //CCsense
 //IO outputs
-#define CPUact LATBbits.LATB6
-#define errLight LATBbits.LATB5
-#define chrgLight LATBbits.LATB4
-#define keepAlive LATDbits.LATD2
-#define fanRelay LATFbits.LATF0
-#define heatRelay LATCbits.LATC15
-#define AUXrelay LATBbits.LATB8
-#define ctRelay LATDbits.LATD1
-#define chrgRelay LATFbits.LATF6
-#define outPWM PDC3
-#define heatPWM PDC1
-#define chrgPWM PDC2
+#define KeepAlive LATFbits.LATF0 //Enables power to self and system.
+#define Mult_SEL LATEbits.LATE2 //LED and Cell ballance multiplexed select.
+#define Mult_B1 LATEbits.LATE0
+#define LithCell_V_en LATFbits.LATF6 //Cell voltage divider select.
+#define Mult_B3 LATDbits.LATD2
+#define Mult_B2 LATDbits.LATD1
+#define Mult_B4 LATDbits.LATD3
+#define PowerOutEnable LATCbits.LATC15 //Power output enable.
+
+#define CH_Boost PDC3 //Charge boost PWM.
+#define Heat_CTRL PDC1 //Heater PWM.
+#define CHctrl PDC2 //Charge buck PWM.
 
 //IO
+#define ANALOG_DIR 0x01FF
 #define ANALOG_TRIS TRISB
 #define ANALOG_LAT LATB
 #define ANALOG_PORT PORTB
 
+#define GENERAL1_DIR 0x7FFF
 #define GENERAL1_TRIS TRISC
 #define GENERAL1_LAT LATC
 #define GENERAL1_PORT PORTC
 
-#define GENERAL3_TRIS TRISD
-#define GENERAL3_LAT LATD
-#define GENERAL3_PORT PORTD
-
-#define PWM_TRIS TRISE
-#define PWM_LAT LATE
-#define PWM_PORT PORTE
-
+#define GENERAL2_DIR 0xFFBE
 #define GENERAL2_TRIS TRISF
 #define GENERAL2_LAT LATF
 #define GENERAL2_PORT PORTF
 
+#define GENERAL3_DIR 0xFFF1
+#define GENERAL3_TRIS TRISD
+#define GENERAL3_LAT LATD
+#define GENERAL3_PORT PORTD
+
+#define PWM_TRIS_DIR 0xFFFA
+#define PWM_TRIS TRISE
+#define PWM_LAT LATE
+#define PWM_PORT PORTE
+
 //Memory Defines
-/* This assums the compiler puts the stack at the end of memory space just after
+/* This assumes the compiler puts the stack at the end of memory space just after
  * the user variables and the stack pointer counts up */
 #define ramSize 0x03FF
 #define ramAddressStart 0x0800
@@ -94,8 +105,9 @@ SOFTWARE. */
 #define NULL 0
 #define input 1
 #define output 0
+#define SOC_Cycles 500
 
-//Heater calibration
+//Heater calibration states.
 #define notrun 0
 #define initialize 1
 #define calibrating 2

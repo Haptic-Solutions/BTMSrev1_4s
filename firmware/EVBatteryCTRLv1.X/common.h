@@ -40,7 +40,10 @@ struct Settings{
     int     settingsArray[1];
     float   R1_resistance;              //R1 resistance in Kohms
     float   R2_resistance;              //R2 resistance in Kohms
-    float   bt_vlt_adjst;               //battery voltage input compensation in volts.
+    float   S1_vlt_adjst;               //Cell 1 voltage input compensation in volts.
+    float   S2_vlt_adjst;               //Cell 2 voltage input compensation in volts.
+    float   S3_vlt_adjst;               //Cell 3 voltage input compensation in volts.
+    float   S4_vlt_adjst;               //Cell 4 voltage input compensation in volts.
     /*****************************/
     //Battery Ratings and setpoints
     float   partial_charge;             //Percentage of voltage to charge the battery up to. Set to 0 to disable.
@@ -93,7 +96,7 @@ struct Variables{
 // Calculated Battery Ratings
     float   battery_capacity;           //Calculated total battery capacity in ah
     float   absolute_battery_usage;     //Max total power used from battery.
-    float   voltage_percentage_old;     //Voltage percentage from the last time we where on.
+    float   voltage_percentage_old[4];     //Voltage percentage from the last time we where on.
     float   battery_usage;              //Calculated Ah usage in/out of battery
     float   battery_remaining;          //Calculated remaining capacity in battery.
     // Fault Codes.
@@ -113,37 +116,57 @@ const char V04[] = "TV";
 const char V05[] = "PW";
 const char V06[] = "PWV";
 const char V07[] = "AV";
-const char V08[] = "W";
-const char V09[] = "A";
-const char V0A[] = "C";
-const char V0D[] = "PWA";
-const char V0E[] = "AA";
-const char V0F[] = "OCV";
-const char V10[] = "\n\r";  //Newline + Return
+const char V08[] = "CV";
+const char V09[] = "CA";
+const char V0A[] = "S1";
+const char V0B[] = "S2";
+const char V0C[] = "S3";
+const char V0D[] = "S4";
+const char V0E[] = "W";
+const char V0F[] = "CW";
+const char V10[] = "A";
+const char V11[] = "CB";
+const char V12[] = "CM";
+const char V13[] = "PWA";
+const char V14[] = "AA";
+const char V15[] = "OCV";
+const char V16[] = "MC";
+const char V17[] = "\n\r";  //Newline + Return
 
-const char * const Vlookup[] = {VSPC,V01,V02,V03,V04,V05,V06,V07,V08,V09,V0A,V0A,V0A,V0D,V0E,V0F,V10};
+const char * const Vlookup[] = {VSPC,V01,V02,V03,V04,V05,
+                                     V06,V07,V08,V09,V0A,
+                                     V0B,V0C,V0D,V0E,V0F,
+                                     V10,V11,V12,V13,V14,
+                                     V15,V16,V17};
 
 //Variables that can be sent out the serial port.
 struct dskyvars{
     int     dskyarray[1];           //For sending raw data
     float   dskyarrayFloat[1];      //For sending float data to display
-    float   speed;                  //1: 8char 00.0xxx How fast are we going?
-    float   chrg_percent;           //2: 6char 00.0% Percentage of battery charge
-    float   battery_voltage;        //3: 6char 00.0V Battery voltage
-    float   chrg_voltage;           //4: 7char 00.0TV Charge Target Voltage
-    float   peak_power;             //5: 7char 00.0PW Peak output power
-    float   peak_pwr_vlts;          //6: 8char 00.0PWV Voltage at peak output power
-    float   battery_vltg_average;   //7: 7char 00.0AV Battery average voltage
-    float   watts;                  //8: 7char -0000W watts in or out of battery.
-    float   battery_current;        //9: 7char -00.0A Battery charge/discharge current
-    float   battery_temp;           //A: 7char -00.0C Battery Temperature
-    float   my_temp;                //B: 7char -00.0C Controller board Temperature
-    float   motor_ctrl_temp;        //C: 7char -00.0C Motor or Motor controller Temperature
-    float   peak_pwr_crnt;          //D: 9char -00.0PWA Current at peak output power
-    float   battery_crnt_average;   //E: 8char -00.0AA Battery charge/discharge average current
-    float   open_voltage;           //F: 9char -00.0OCV Battery Open Circuit Voltage
+    float   speed;                  //01: 8char 00.0xxx How fast are we going?
+    float   chrg_percent;           //02: 6char 00.0% Percentage of battery charge
+    float   pack_voltage;           //03: 6char 00.0V Battery pack voltage
+    float   chrg_voltage;           //04: 7char 00.0TV Charge Target Voltage per cell.
+    float   peak_power;             //05: 7char 00.0PW Peak output power
+    float   peak_pwr_vlts;          //06: 8char 00.0PWV Voltage at peak output power
+    float   pack_vltg_average;      //07: 7char 00.0AV Battery average voltage
+    float   Cin_voltage;            //08: 7char 00.0CV Charger input voltage
+    float   Cin_current;            //09: 7char 00.0CA Charger input current
+    float   Cell_Voltage[4];     //0A-0D: 7char 00.0S1 Cell voltage S1-S4
+    float   watts;                  //0E: 7char -0000W watts in or out of battery.
+    float   Cwatts;                 //0F: 8char -0000CW watts in from charger.
+    float   battery_current;        //10: 7char -00.0A Battery charge/discharge current
+    float   battery_temp;           //11: 8char -00.0CB Battery Temperature
+    float   my_temp;                //12: 8char -00.0CM Controller board Temperature
+    float   peak_pwr_crnt;          //13: 9char -00.0PWA Current at peak output power
+    float   battery_crnt_average;   //14: 8char -00.0AA Battery charge/discharge average current
+    float   open_voltage;           //15: 9char -00.0OCV Battery Open Circuit Voltage
+    float   max_current;            //16: 8char -00.0MC Max allowable battery current.
 }dsky;
-#define varLimit 0x0010
+#define varLimit 0x0018
+#define signStart 0x000E
+#define wattsNum 0x000E
+#define nlNum 0x0017
 
 // Calculated battery values. These don't need to be saved on shutdown.
 float   chrge_rate = 0;             //calculated charge rate based off temperature
@@ -152,14 +175,16 @@ int     ADCON3upper8 = 0;
 int     ADCON3lower8 = 0;
 /*****************************/
 /* General Vars */
-float voltage_percentage;     //Battery Open Circuit Voltage Percentage.
-float current_compensate;     //Current compensation.
+float voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
+float Bcurrent_compensate;     //Battery Current compensation.
+float Ccurrent_compensate;      //Charger Current compensation.
 float dischr_current = 0;
 float wheelTime = 0;       //Time it takes for a single rotation of the wheel.
-float avgVolt = 0;     //averaged voltage input
-float avgCurnt = 0;    //averaged current input
+float CavgVolt = 0;     //averaged voltage input
+float BavgVolt[4];     //averaged voltage input
+float BavgCurnt = 0;    //averaged current input for battery
+float CavgCurnt = 0;    //averaged current input from charger
 float avgBTemp = 0;    //averaged battery temperature
-float avgMTemp = 0;    //averaged motor temperature
 float avgSTemp = 0;    //averaged self temperature
 float bt_crnt_avg_temp = 0;
 float bt_vltg_avg_temp = 0;
@@ -168,7 +193,8 @@ char analog_avg_cnt = 0;
 char heat_rly_timer = 3;     //3 is resting, setting to 2 starts the countdown, 0 = relay is ready
 char contact_rly_timer = 3;
 char chrg_rly_timer = 3;
-char curnt_cal_stage = 0;
+char Bcurnt_cal_stage = 0;
+char Ccurnt_cal_stage = 0;
 /* 0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error.
  */
 char power_session = 1;
@@ -224,6 +250,8 @@ typedef struct tagSTINGBITS {
   unsigned osc_fail_event:1;
   unsigned p_charge:1;
   unsigned sw_off:1;
+  unsigned errLight:1;
+  unsigned chargerPresent:1;
 } STINGBITS;
 volatile STINGBITS STINGbits;
 

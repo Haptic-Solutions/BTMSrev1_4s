@@ -34,8 +34,8 @@ void pageOut(int pageNum, int serial_port){
     for(pageVar[serial_port]=0;pageVar[serial_port]<6;pageVar[serial_port]++){
         varNum[serial_port] = sets.page[serial_port][pageNum][pageVar[serial_port]];
         varNum[serial_port] &= 0xFF;
-        if(varNum[serial_port] < 8)dynaSpace[serial_port] = yes;       //Do not reserve a space for a sign char if we don't have to.
-        if(varNum[serial_port] == 8)config_space[serial_port] = yes;   //Reserve spaces for 0's when showing watts so that text isn't jumping around.
+        if(varNum[serial_port] < signStart)dynaSpace[serial_port] = yes;       //Do not reserve a space for a sign char if we don't have to.
+        if(varNum[serial_port] == wattsNum)config_space[serial_port] = yes;   //Reserve spaces for 0's when showing watts so that text isn't jumping around.
         //Skip page if first Var is listed as NULL, or if we get a NULL later then we are done.
         if(varNum[serial_port] == 0)break;
         //Check if loading custom data or not.
@@ -57,9 +57,9 @@ void pageOut(int pageNum, int serial_port){
             dodispatch[serial_port] = yes; //if we have at least one variable to display then dispatch.
         }
         else if(varNum[serial_port] <= varLimit){
-            if(varNum[serial_port] != 0x10)load_float(dsky.dskyarrayFloat[varNum[serial_port]], serial_port);   //Load the number.
+            if(varNum[serial_port] != nlNum)load_float(dsky.dskyarrayFloat[varNum[serial_port]], serial_port);   //Load the number.
             Buff_index[serial_port] -= 2;  //Subtract 2 from buffer index.
-            if(varNum[serial_port] == 1 || varNum[serial_port] == 8)Buff_index[serial_port] -= 2; //If Speed or Watts variable then remove decimal and last '0'
+            if(varNum[serial_port] == 1 || varNum[serial_port] == wattsNum)Buff_index[serial_port] -= 2; //If Speed or Watts variable then remove decimal and last '0'
             load_string(Vlookup[varNum[serial_port]], serial_port);        //Load the number's text.
             if(varNum[serial_port] != 0x10)load_string(" ", serial_port);  //Load a space afterwards.
             dodispatch[serial_port] = yes; //if we have at least one variable to display then dispatch.
@@ -87,10 +87,10 @@ void displayOut(int serial_port){
 //If used, ensure that it is used by an IRQ priority that is lower than TX IRQs.
 void portBusyIdle(int serial_port){
     while(portBSY[serial_port]){
-        CPUact = 0;      //Turn CPU ACT light off.
+        //CPUact = 0;      //Turn CPU ACT light off.
         Idle();                 //Idle Loop, saves power.
     }
-    CPUact = 1;      //Turn CPU ACT light on.
+    //CPUact = 1;      //Turn CPU ACT light on.
 }
 
 /* Read fault codes to serial port.

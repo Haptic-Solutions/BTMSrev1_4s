@@ -44,6 +44,7 @@ float max_chrg_current;       //calculated charge rate based off temp and capaci
 float percentOut;
 float chrg_remaining;
 int  chrg_check = 0;
+int soft_OVC_Countdown = SOC_Cycles;
 
 #endif	/* SUBS_H */
 

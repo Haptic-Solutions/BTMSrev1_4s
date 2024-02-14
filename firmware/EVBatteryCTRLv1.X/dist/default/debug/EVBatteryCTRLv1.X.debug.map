@@ -4,10 +4,14 @@ Tool Name:
   /opt/microchip/xc16/v2.10/bin/bin/../bin/elf-ld
 
 Command:
+  -T/tmp/tmp0004c175.00 \
+  -T/tmp/tmp0004c175.01 \
+  -T/tmp/tmp0004c175.02 \
+  -T/tmp/tmp0004c175.03 \
   -p30F3011 \
   --mdfp=/opt/microchip/mplabx/v6.20/packs/Microchip/dsPIC30F_DFP/1.5.254/xc16 \
   -o \
-  dist/default/production/EVBatteryCTRLv1.X.production.elf \
+  dist/default/debug/EVBatteryCTRLv1.X.debug.elf \
   -L/opt/microchip/xc16/v2.10/bin/bin/.. \
   -L/opt/microchip/mplabx/v6.20/packs/Microchip/dsPIC30F_DFP/1.5.254/xc16/bin/../support/dsPIC30F/gld \
   -L/opt/microchip/xc16/v2.10/bin/bin/../../lib \
@@ -18,9 +22,12 @@ Command:
   -L/opt/microchip/xc16/v2.10/bin/bin/../../support/dsPIC33C/gld \
   -L/opt/microchip/xc16/v2.10/bin/bin/../../support/dsPIC33E/gld \
   -L/opt/microchip/xc16/v2.10/bin/bin/../../support/dsPIC33F/gld \
-  build/default/production/main.o \
+  build/default/debug/main.o \
   --defsym=__MPLAB_BUILD=1 \
-  -Tp30F3011.gld.00 \
+  --defsym=__MPLAB_DEBUG=1 \
+  --defsym=__DEBUG=1 \
+  --defsym=__MPLAB_DEBUGGER_PK3=1 \
+  -Tp30F3011.gld.04 \
   --stack=16 \
   --check-sections \
   --data-init \
@@ -32,10 +39,10 @@ Command:
   --stackguard=16 \
   --no-force-link \
   --smart-io \
-  -Map=dist/default/production/EVBatteryCTRLv1.X.production.map \
+  -Map=dist/default/debug/EVBatteryCTRLv1.X.debug.map \
   --report-mem \
   --memorysummary \
-  dist/default/production/memoryfile.xml \
+  dist/default/debug/memoryfile.xml \
   -start-group \
   --library=c99-pic30-elf \
   --library=m-elf \
@@ -53,25 +60,25 @@ Archive member included because of file (symbol)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(crt_start_mode_normal.Meo)
                               (__crt_start_mode_normal)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(feqltle.XX_o)
-                              build/default/production/main.o (___eqsf2)
+                              build/default/debug/main.o (___eqsf2)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fgtge.XX_o)
-                              build/default/production/main.o (___gtsf2)
+                              build/default/debug/main.o (___gtsf2)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fixsfsi.XX_o)
-                              build/default/production/main.o (_(float, int, long long, short, float, short, int))
+                              build/default/debug/main.o (_(float, int, long long, short, float, short, int))
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fixunssfsi.XX_o)
-                              build/default/production/main.o (___fixunssfsi)
+                              build/default/debug/main.o (___fixunssfsi)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(floatsisf.XX_o)
-                              build/default/production/main.o (___floatsisf)
+                              build/default/debug/main.o (___floatsisf)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(floatunsisf.XX_o)
-                              build/default/production/main.o (___floatunsisf)
+                              build/default/debug/main.o (___floatunsisf)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.XX_o)
                               /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fixsfsi.XX_o) (__funpack)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(addsf3x.XX_o)
-                              build/default/production/main.o (___subsf3)
+                              build/default/debug/main.o (___subsf3)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divsf3x.XX_o)
-                              build/default/production/main.o (___divsf3)
+                              build/default/debug/main.o (___divsf3)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsf3x.XX_o)
-                              build/default/production/main.o (___mulsf3)
+                              build/default/debug/main.o (___mulsf3)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(dnrmpackfx.XX_o)
                               /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(addsf3x.XX_o) (__dnrmpackf)
 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(unpackdnrmfx.XX_o)
@@ -140,11 +147,15 @@ section                    address   length (PC units)   length (bytes) (dec)
 
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
-.nbss                        0x800                   0           0x324  (804)
-.ndata                       0xb24                   0             0xa  (10)
-.nbss                        0xb2e                   0             0x2  (2)
+reserve_data_0x800           0x800                0x20            0x20  (32)
+reserve_data_0x820           0x820                 0x2             0x2  (2)
+reserve_data_0x822           0x822                 0x2             0x2  (2)
+reserve_data_0x824           0x824                0x2c            0x2c  (44)
+.nbss                        0x850                   0           0x324  (804)
+.ndata                       0xb74                   0             0xa  (10)
+.nbss                        0xb7e                   0             0x2  (2)
 
-                 Total "data" memory used (bytes):          0x330  (816) 79%
+                 Total "data" memory used (bytes):          0x380  (896) 87%
 
 
 Dynamic Memory Usage
@@ -152,218 +163,218 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                        0xb30                                0xd0  (208)
+stack                        0xb80                                0x80  (128)
 
-                 Maximum dynamic memory (bytes):           0xd0  (208)
+                 Maximum dynamic memory (bytes):           0x80  (128)
 
 Info: Project is using a large data memory model when small data memory model is sufficient.
 
 
 External Symbols in Data Memory (by address):
 
-                    0x0800                  _sets
-                    0x08e2                  _vars
-                    0x091e                  _dsky
-                    0x097c                  _chrge_rate
-                    0x0980                  _vltg_dvid
-                    0x0984                  _ADCON3upper8
-                    0x0986                  _ADCON3lower8
-                    0x0988                  _voltage_percentage
-                    0x0998                  _Bcurrent_compensate
-                    0x099c                  _Ccurrent_compensate
-                    0x09a0                  _dischr_current
-                    0x09a4                  _wheelTime
-                    0x09a8                  _CavgVolt
-                    0x09ac                  _BavgVolt
-                    0x09bc                  _BavgCurnt
-                    0x09c0                  _CavgCurnt
-                    0x09c4                  _avgBTemp
-                    0x09c8                  _avgSTemp
-                    0x09cc                  _bt_crnt_avg_temp
-                    0x09d0                  _bt_vltg_avg_temp
-                    0x09d4                  _avg_cnt
-                    0x09d5                  _analog_avg_cnt
-                    0x09d6                  _Bcurnt_cal_stage
-                    0x09d7                  _Ccurnt_cal_stage
-                    0x09d8                  _start_timer
-                    0x09d9                  _diag_count
-                    0x09da                  _PowerOffTimer
-                    0x09db                  _cfg_space
-                    0x09dc                  _vr_space
-                    0x09dd                  _dsky_space
-                    0x09de                  _v_test
-                    0x09df                  _first_cal
-                    0x09e0                  _output_power
-                    0x09e2                  _charge_power
-                    0x09e4                  _heat_power
-                    0x09e6                  _COND
-                    0x09e8                  _CONDbits
-                    0x09ea                  _STING
-                    0x09ec                  _STINGbits
-                    0x09ee                  _tx_float
-                    0x09f6                  _Buff_index
-                    0x09fa                  _StempIndex
-                    0x09fe                  _FtempIndex
-                    0x0a02                  _nibble
-                    0x0a0a                  _float_out
-                    0x0a18                  _Buffer
-                    0x0a90                  _config_space
-                    0x0a92                  _tx_temp
-                    0x0a94                  _portBSY
-                    0x0a96                  _writingbuff
-                    0x0a98                  _dynaSpace
-                    0x0a9a                  _CMD_Point
-                    0x0a9e                  _bufsize
-                    0x0aa2                  _CMD_buff
-                    0x0aae                  _cmdRDY
-                    0x0ab0                  _cmdOVFL
-                    0x0ab2                  _Terr
-                    0x0ab4                  _tempPoint
-                    0x0ab8                  _flt_index
-                    0x0abc                  _PxPage
-                    0x0ac0                  _pageVar
-                    0x0ac4                  _varNum
-                    0x0ac8                  _dodispatch
-                    0x0acc                  _PxVtimer
-                    0x0ace                  _upperMem
-                    0x0ad0                  _printSets
-                    0x0ad2                  _eRead
-                    0x0ad4                  _offset
-                    0x0ad6                  _address
-                    0x0ad8                  _flash_chksum
-                    0x0ada                  _rom_chksum
-                    0x0adc                  _nvSets_chksum
-                    0x0ade                  _ramSets_chksum
-                    0x0ae0                  _ramSets_chksum_old
-                    0x0ae2                  _check_timer
-                    0x0ae4                  _ram_err_count
-                    0x0ae6                  _heat_set
-                    0x0ae8                  _oc_shutdown_timer
-                    0x0aea                  _shutdown_timer
-                    0x0aec                  _dischrg_current
-                    0x0af0                  _chrg_current
-                    0x0af4                  _dischrg_read
-                    0x0af8                  _analog_smpl_time
-                    0x0afc                  _crnt_error
-                    0x0b00                  _crnt_integral
-                    0x0b04                  _current_output
-                    0x0b08                  _voltage_output
-                    0x0b0c                  _temp_dischrg_rate
-                    0x0b10                  _temp_chrg_rate
-                    0x0b14                  _max_chrg_current
-                    0x0b18                  _percentOut
-                    0x0b1c                  _chrg_remaining
-                    0x0b20                  _chrg_check
-                    0x0b24                  _heat_rly_timer
-                    0x0b25                  _contact_rly_timer
-                    0x0b26                  _chrg_rly_timer
-                    0x0b27                  _power_session
-                    0x0b28                  _PowerOffTimerSec
-                    0x0b29                  _Lecho
-                    0x0b2c                  _soft_OVC_Countdown
+                    0x0850                  _sets
+                    0x0932                  _vars
+                    0x096e                  _dsky
+                    0x09cc                  _chrge_rate
+                    0x09d0                  _vltg_dvid
+                    0x09d4                  _ADCON3upper8
+                    0x09d6                  _ADCON3lower8
+                    0x09d8                  _voltage_percentage
+                    0x09e8                  _Bcurrent_compensate
+                    0x09ec                  _Ccurrent_compensate
+                    0x09f0                  _dischr_current
+                    0x09f4                  _wheelTime
+                    0x09f8                  _CavgVolt
+                    0x09fc                  _BavgVolt
+                    0x0a0c                  _BavgCurnt
+                    0x0a10                  _CavgCurnt
+                    0x0a14                  _avgBTemp
+                    0x0a18                  _avgSTemp
+                    0x0a1c                  _bt_crnt_avg_temp
+                    0x0a20                  _bt_vltg_avg_temp
+                    0x0a24                  _avg_cnt
+                    0x0a25                  _analog_avg_cnt
+                    0x0a26                  _Bcurnt_cal_stage
+                    0x0a27                  _Ccurnt_cal_stage
+                    0x0a28                  _start_timer
+                    0x0a29                  _diag_count
+                    0x0a2a                  _PowerOffTimer
+                    0x0a2b                  _cfg_space
+                    0x0a2c                  _vr_space
+                    0x0a2d                  _dsky_space
+                    0x0a2e                  _v_test
+                    0x0a2f                  _first_cal
+                    0x0a30                  _output_power
+                    0x0a32                  _charge_power
+                    0x0a34                  _heat_power
+                    0x0a36                  _COND
+                    0x0a38                  _CONDbits
+                    0x0a3a                  _STING
+                    0x0a3c                  _STINGbits
+                    0x0a3e                  _tx_float
+                    0x0a46                  _Buff_index
+                    0x0a4a                  _StempIndex
+                    0x0a4e                  _FtempIndex
+                    0x0a52                  _nibble
+                    0x0a5a                  _float_out
+                    0x0a68                  _Buffer
+                    0x0ae0                  _config_space
+                    0x0ae2                  _tx_temp
+                    0x0ae4                  _portBSY
+                    0x0ae6                  _writingbuff
+                    0x0ae8                  _dynaSpace
+                    0x0aea                  _CMD_Point
+                    0x0aee                  _bufsize
+                    0x0af2                  _CMD_buff
+                    0x0afe                  _cmdRDY
+                    0x0b00                  _cmdOVFL
+                    0x0b02                  _Terr
+                    0x0b04                  _tempPoint
+                    0x0b08                  _flt_index
+                    0x0b0c                  _PxPage
+                    0x0b10                  _pageVar
+                    0x0b14                  _varNum
+                    0x0b18                  _dodispatch
+                    0x0b1c                  _PxVtimer
+                    0x0b1e                  _upperMem
+                    0x0b20                  _printSets
+                    0x0b22                  _eRead
+                    0x0b24                  _offset
+                    0x0b26                  _address
+                    0x0b28                  _flash_chksum
+                    0x0b2a                  _rom_chksum
+                    0x0b2c                  _nvSets_chksum
+                    0x0b2e                  _ramSets_chksum
+                    0x0b30                  _ramSets_chksum_old
+                    0x0b32                  _check_timer
+                    0x0b34                  _ram_err_count
+                    0x0b36                  _heat_set
+                    0x0b38                  _oc_shutdown_timer
+                    0x0b3a                  _shutdown_timer
+                    0x0b3c                  _dischrg_current
+                    0x0b40                  _chrg_current
+                    0x0b44                  _dischrg_read
+                    0x0b48                  _analog_smpl_time
+                    0x0b4c                  _crnt_error
+                    0x0b50                  _crnt_integral
+                    0x0b54                  _current_output
+                    0x0b58                  _voltage_output
+                    0x0b5c                  _temp_dischrg_rate
+                    0x0b60                  _temp_chrg_rate
+                    0x0b64                  _max_chrg_current
+                    0x0b68                  _percentOut
+                    0x0b6c                  _chrg_remaining
+                    0x0b70                  _chrg_check
+                    0x0b74                  _heat_rly_timer
+                    0x0b75                  _contact_rly_timer
+                    0x0b76                  _chrg_rly_timer
+                    0x0b77                  _power_session
+                    0x0b78                  _PowerOffTimerSec
+                    0x0b79                  _Lecho
+                    0x0b7c                  _soft_OVC_Countdown
 
 External Symbols in Data Memory (by name):
 
-                    0x0986                  _ADCON3lower8
-                    0x0984                  _ADCON3upper8
-                    0x09bc                  _BavgCurnt
-                    0x09ac                  _BavgVolt
-                    0x09d6                  _Bcurnt_cal_stage
-                    0x0998                  _Bcurrent_compensate
-                    0x09f6                  _Buff_index
-                    0x0a18                  _Buffer
-                    0x0a9a                  _CMD_Point
-                    0x0aa2                  _CMD_buff
-                    0x09e6                  _COND
-                    0x09e8                  _CONDbits
-                    0x09c0                  _CavgCurnt
-                    0x09a8                  _CavgVolt
-                    0x09d7                  _Ccurnt_cal_stage
-                    0x099c                  _Ccurrent_compensate
-                    0x09fe                  _FtempIndex
-                    0x0b29                  _Lecho
-                    0x09da                  _PowerOffTimer
-                    0x0b28                  _PowerOffTimerSec
-                    0x0abc                  _PxPage
-                    0x0acc                  _PxVtimer
-                    0x09ea                  _STING
-                    0x09ec                  _STINGbits
-                    0x09fa                  _StempIndex
-                    0x0ab2                  _Terr
-                    0x0ad6                  _address
-                    0x09d5                  _analog_avg_cnt
-                    0x0af8                  _analog_smpl_time
-                    0x09c4                  _avgBTemp
-                    0x09c8                  _avgSTemp
-                    0x09d4                  _avg_cnt
-                    0x09cc                  _bt_crnt_avg_temp
-                    0x09d0                  _bt_vltg_avg_temp
-                    0x0a9e                  _bufsize
-                    0x09db                  _cfg_space
-                    0x09e2                  _charge_power
-                    0x0ae2                  _check_timer
-                    0x0b20                  _chrg_check
-                    0x0af0                  _chrg_current
-                    0x0b1c                  _chrg_remaining
-                    0x0b26                  _chrg_rly_timer
-                    0x097c                  _chrge_rate
-                    0x0ab0                  _cmdOVFL
-                    0x0aae                  _cmdRDY
-                    0x0a90                  _config_space
-                    0x0b25                  _contact_rly_timer
-                    0x0afc                  _crnt_error
-                    0x0b00                  _crnt_integral
-                    0x0b04                  _current_output
-                    0x09d9                  _diag_count
-                    0x09a0                  _dischr_current
-                    0x0aec                  _dischrg_current
-                    0x0af4                  _dischrg_read
-                    0x0ac8                  _dodispatch
-                    0x091e                  _dsky
-                    0x09dd                  _dsky_space
-                    0x0a98                  _dynaSpace
-                    0x0ad2                  _eRead
-                    0x09df                  _first_cal
-                    0x0ad8                  _flash_chksum
-                    0x0a0a                  _float_out
-                    0x0ab8                  _flt_index
-                    0x09e4                  _heat_power
-                    0x0b24                  _heat_rly_timer
-                    0x0ae6                  _heat_set
-                    0x0b14                  _max_chrg_current
-                    0x0a02                  _nibble
-                    0x0adc                  _nvSets_chksum
-                    0x0ae8                  _oc_shutdown_timer
-                    0x0ad4                  _offset
-                    0x09e0                  _output_power
-                    0x0ac0                  _pageVar
-                    0x0b18                  _percentOut
-                    0x0a94                  _portBSY
-                    0x0b27                  _power_session
-                    0x0ad0                  _printSets
-                    0x0ade                  _ramSets_chksum
-                    0x0ae0                  _ramSets_chksum_old
-                    0x0ae4                  _ram_err_count
-                    0x0ada                  _rom_chksum
-                    0x0800                  _sets
-                    0x0aea                  _shutdown_timer
-                    0x0b2c                  _soft_OVC_Countdown
-                    0x09d8                  _start_timer
-                    0x0ab4                  _tempPoint
-                    0x0b10                  _temp_chrg_rate
-                    0x0b0c                  _temp_dischrg_rate
-                    0x09ee                  _tx_float
-                    0x0a92                  _tx_temp
-                    0x0ace                  _upperMem
-                    0x09de                  _v_test
-                    0x0ac4                  _varNum
-                    0x08e2                  _vars
-                    0x0980                  _vltg_dvid
-                    0x0b08                  _voltage_output
-                    0x0988                  _voltage_percentage
-                    0x09dc                  _vr_space
-                    0x09a4                  _wheelTime
-                    0x0a96                  _writingbuff
+                    0x09d6                  _ADCON3lower8
+                    0x09d4                  _ADCON3upper8
+                    0x0a0c                  _BavgCurnt
+                    0x09fc                  _BavgVolt
+                    0x0a26                  _Bcurnt_cal_stage
+                    0x09e8                  _Bcurrent_compensate
+                    0x0a46                  _Buff_index
+                    0x0a68                  _Buffer
+                    0x0aea                  _CMD_Point
+                    0x0af2                  _CMD_buff
+                    0x0a36                  _COND
+                    0x0a38                  _CONDbits
+                    0x0a10                  _CavgCurnt
+                    0x09f8                  _CavgVolt
+                    0x0a27                  _Ccurnt_cal_stage
+                    0x09ec                  _Ccurrent_compensate
+                    0x0a4e                  _FtempIndex
+                    0x0b79                  _Lecho
+                    0x0a2a                  _PowerOffTimer
+                    0x0b78                  _PowerOffTimerSec
+                    0x0b0c                  _PxPage
+                    0x0b1c                  _PxVtimer
+                    0x0a3a                  _STING
+                    0x0a3c                  _STINGbits
+                    0x0a4a                  _StempIndex
+                    0x0b02                  _Terr
+                    0x0b26                  _address
+                    0x0a25                  _analog_avg_cnt
+                    0x0b48                  _analog_smpl_time
+                    0x0a14                  _avgBTemp
+                    0x0a18                  _avgSTemp
+                    0x0a24                  _avg_cnt
+                    0x0a1c                  _bt_crnt_avg_temp
+                    0x0a20                  _bt_vltg_avg_temp
+                    0x0aee                  _bufsize
+                    0x0a2b                  _cfg_space
+                    0x0a32                  _charge_power
+                    0x0b32                  _check_timer
+                    0x0b70                  _chrg_check
+                    0x0b40                  _chrg_current
+                    0x0b6c                  _chrg_remaining
+                    0x0b76                  _chrg_rly_timer
+                    0x09cc                  _chrge_rate
+                    0x0b00                  _cmdOVFL
+                    0x0afe                  _cmdRDY
+                    0x0ae0                  _config_space
+                    0x0b75                  _contact_rly_timer
+                    0x0b4c                  _crnt_error
+                    0x0b50                  _crnt_integral
+                    0x0b54                  _current_output
+                    0x0a29                  _diag_count
+                    0x09f0                  _dischr_current
+                    0x0b3c                  _dischrg_current
+                    0x0b44                  _dischrg_read
+                    0x0b18                  _dodispatch
+                    0x096e                  _dsky
+                    0x0a2d                  _dsky_space
+                    0x0ae8                  _dynaSpace
+                    0x0b22                  _eRead
+                    0x0a2f                  _first_cal
+                    0x0b28                  _flash_chksum
+                    0x0a5a                  _float_out
+                    0x0b08                  _flt_index
+                    0x0a34                  _heat_power
+                    0x0b74                  _heat_rly_timer
+                    0x0b36                  _heat_set
+                    0x0b64                  _max_chrg_current
+                    0x0a52                  _nibble
+                    0x0b2c                  _nvSets_chksum
+                    0x0b38                  _oc_shutdown_timer
+                    0x0b24                  _offset
+                    0x0a30                  _output_power
+                    0x0b10                  _pageVar
+                    0x0b68                  _percentOut
+                    0x0ae4                  _portBSY
+                    0x0b77                  _power_session
+                    0x0b20                  _printSets
+                    0x0b2e                  _ramSets_chksum
+                    0x0b30                  _ramSets_chksum_old
+                    0x0b34                  _ram_err_count
+                    0x0b2a                  _rom_chksum
+                    0x0850                  _sets
+                    0x0b3a                  _shutdown_timer
+                    0x0b7c                  _soft_OVC_Countdown
+                    0x0a28                  _start_timer
+                    0x0b04                  _tempPoint
+                    0x0b60                  _temp_chrg_rate
+                    0x0b5c                  _temp_dischrg_rate
+                    0x0a3e                  _tx_float
+                    0x0ae2                  _tx_temp
+                    0x0b1e                  _upperMem
+                    0x0a2e                  _v_test
+                    0x0b14                  _varNum
+                    0x0932                  _vars
+                    0x09d0                  _vltg_dvid
+                    0x0b58                  _voltage_output
+                    0x09d8                  _voltage_percentage
+                    0x0a2c                  _vr_space
+                    0x09f4                  _wheelTime
+                    0x0ae6                  _writingbuff
 
 External Symbols in Program Memory (by address):
 
@@ -804,8 +815,31 @@ FICD             0xf8000c           0x000002
 
 Linker script and memory map
 
-LOAD build/default/production/main.o
+
+reserve_data_0x800
+                    0x0800         0x20
+                    0x0820                  . = 0x20
+ *fill*             0x0800         0x2000
+
+reserve_data_0x820
+                    0x0820          0x2
+                    0x0822                  . = 0x2
+ *fill*             0x0820          0x200
+
+reserve_data_0x822
+                    0x0822          0x2
+                    0x0824                  . = 0x2
+ *fill*             0x0822          0x200
+
+reserve_data_0x824
+                    0x0824         0x2c
+                    0x0850                  . = 0x2c
+ *fill*             0x0824         0x2c00
+LOAD build/default/debug/main.o
                     0x0001                  __MPLAB_BUILD = 0x1
+                    0x0001                  __MPLAB_DEBUG = 0x1
+                    0x0001                  __DEBUG = 0x1
+                    0x0001                  __MPLAB_DEBUGGER_PK3 = 0x1
 LOAD p30F3011
 LOAD /opt/microchip/xc16/v2.10/bin/bin/../../lib/libfx-elf.a
                     0x8005c0                  __FUID0 = 0x8005c0
@@ -849,7 +883,7 @@ LOAD /opt/microchip/xc16/v2.10/bin/bin/../../lib/libfx-elf.a
  *(.user_init)
  *(.handle)
  *(.isr*)
- .isr.text        0x0001c8        0x7f4 build/default/production/main.o
+ .isr.text        0x0001c8        0x7f4 build/default/debug/main.o
                   0x0001c8                  __INT0Interrupt
                   0x0001d0                  __ADCInterrupt
                   0x000338                  __T1Interrupt
@@ -969,7 +1003,7 @@ __RESERVED2
 
 __FGS             0xf8000a          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf8000a          0x2 /CW/_FGS(S[Â	V
+ __FGS.sec        0xf8000a          0x2 /CW/_FGS˜4«GV
                   0xf8000a                  __FGS.sec
 
 __FICD
@@ -986,7 +1020,7 @@ userdata
 
 .debug_info       0x000000       0x77ab
  *(.debug_info)
- .debug_info      0x000000       0x6b73 build/default/production/main.o
+ .debug_info      0x000000       0x6b73 build/default/debug/main.o
  .debug_info      0x006b73         0x8d /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(feqltle.XX_o)
  .debug_info      0x006c00         0x8b /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fgtge.XX_o)
  .debug_info      0x006c8b         0x8d /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fixsfsi.XX_o)
@@ -1012,7 +1046,7 @@ userdata
 
 .debug_abbrev     0x000000        0x418
  *(.debug_abbrev)
- .debug_abbrev    0x000000        0x274 build/default/production/main.o
+ .debug_abbrev    0x000000        0x274 build/default/debug/main.o
  .debug_abbrev    0x000274         0x14 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(feqltle.XX_o)
  .debug_abbrev    0x000288         0x14 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fgtge.XX_o)
  .debug_abbrev    0x00029c         0x14 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fixsfsi.XX_o)
@@ -1037,7 +1071,7 @@ userdata
 
 .debug_line       0x000000       0x1216
  *(.debug_line)
- .debug_line      0x000000        0x8b8 build/default/production/main.o
+ .debug_line      0x000000        0x8b8 build/default/debug/main.o
  .debug_line      0x0008b8         0x37 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(feqltle.XX_o)
  .debug_line      0x0008ef         0x35 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fgtge.XX_o)
  .debug_line      0x000924         0x56 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(fixsfsi.XX_o)
@@ -1063,11 +1097,11 @@ userdata
 
 .debug_frame      0x000000        0xbb4
  *(.debug_frame)
- .debug_frame     0x000000        0xbb4 build/default/production/main.o
+ .debug_frame     0x000000        0xbb4 build/default/debug/main.o
 
 .debug_str        0x000000        0x4f9
  *(.debug_str)
- .debug_str       0x000000        0x4f9 build/default/production/main.o
+ .debug_str       0x000000        0x4f9 build/default/debug/main.o
 
 .debug_loc
  *(.debug_loc)
@@ -1079,7 +1113,7 @@ userdata
                   0x000000        0xf19
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000        0xf19 build/default/production/main.o
+                  0x000000        0xf19 build/default/debug/main.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1087,7 +1121,7 @@ userdata
 .debug_aranges    0x000000        0x2b8
  *(.debug_aranges)
  .debug_aranges
-                  0x000000         0x18 build/default/production/main.o
+                  0x000000         0x18 build/default/debug/main.o
  .debug_aranges
                   0x000018         0x20 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(feqltle.XX_o)
  .debug_aranges
@@ -1630,20 +1664,20 @@ LOAD /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a
 LOAD /opt/microchip/xc16/v2.10/bin/bin/../../lib/libm-elf.a
 LOAD /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a
 END GROUP
-OUTPUT(dist/default/production/EVBatteryCTRLv1.X.production.elf elf32-pic30)
-LOAD /CW/_FGS(S[Â	V
+OUTPUT(dist/default/debug/EVBatteryCTRLv1.X.debug.elf elf32-pic30)
+LOAD /CW/_FGS˜4«GV
 LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
                   0x0002b8        0x486
  .debug_pubtypes
-                  0x0002b8        0x486 build/default/production/main.o
+                  0x0002b8        0x486 build/default/debug/main.o
 
 __c30_signature
                   0x00073e         0x60
  __c30_signature
-                  0x00073e          0x6 build/default/production/main.o
+                  0x00073e          0x6 build/default/debug/main.o
  __c30_signature
                   0x000744          0x6 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(crt0_standard.o)
  __c30_signature
@@ -1675,222 +1709,222 @@ __c30_signature
  __c30_signature
                   0x000798          0x6 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack2.XX_o)
 
-.nbss               0x0800        0x324
- .nbss              0x0800        0x324 build/default/production/main.o
-                    0x0800                  _sets
-                    0x08e2                  _vars
-                    0x091e                  _dsky
-                    0x097c                  _chrge_rate
-                    0x0980                  _vltg_dvid
-                    0x0984                  _ADCON3upper8
-                    0x0986                  _ADCON3lower8
-                    0x0988                  _voltage_percentage
-                    0x0998                  _Bcurrent_compensate
-                    0x099c                  _Ccurrent_compensate
-                    0x09a0                  _dischr_current
-                    0x09a4                  _wheelTime
-                    0x09a8                  _CavgVolt
-                    0x09ac                  _BavgVolt
-                    0x09bc                  _BavgCurnt
-                    0x09c0                  _CavgCurnt
-                    0x09c4                  _avgBTemp
-                    0x09c8                  _avgSTemp
-                    0x09cc                  _bt_crnt_avg_temp
-                    0x09d0                  _bt_vltg_avg_temp
-                    0x09d4                  _avg_cnt
-                    0x09d5                  _analog_avg_cnt
-                    0x09d6                  _Bcurnt_cal_stage
-                    0x09d7                  _Ccurnt_cal_stage
-                    0x09d8                  _start_timer
-                    0x09d9                  _diag_count
-                    0x09da                  _PowerOffTimer
-                    0x09db                  _cfg_space
-                    0x09dc                  _vr_space
-                    0x09dd                  _dsky_space
-                    0x09de                  _v_test
-                    0x09df                  _first_cal
-                    0x09e0                  _output_power
-                    0x09e2                  _charge_power
-                    0x09e4                  _heat_power
-                    0x09e6                  _COND
-                    0x09e8                  _CONDbits
-                    0x09ea                  _STING
-                    0x09ec                  _STINGbits
-                    0x09ee                  _tx_float
-                    0x09f6                  _Buff_index
-                    0x09fa                  _StempIndex
-                    0x09fe                  _FtempIndex
-                    0x0a02                  _nibble
-                    0x0a0a                  _float_out
-                    0x0a18                  _Buffer
-                    0x0a90                  _config_space
-                    0x0a92                  _tx_temp
-                    0x0a94                  _portBSY
-                    0x0a96                  _writingbuff
-                    0x0a98                  _dynaSpace
-                    0x0a9a                  _CMD_Point
-                    0x0a9e                  _bufsize
-                    0x0aa2                  _CMD_buff
-                    0x0aae                  _cmdRDY
-                    0x0ab0                  _cmdOVFL
-                    0x0ab2                  _Terr
-                    0x0ab4                  _tempPoint
-                    0x0ab8                  _flt_index
-                    0x0abc                  _PxPage
-                    0x0ac0                  _pageVar
-                    0x0ac4                  _varNum
-                    0x0ac8                  _dodispatch
-                    0x0acc                  _PxVtimer
-                    0x0ace                  _upperMem
-                    0x0ad0                  _printSets
-                    0x0ad2                  _eRead
-                    0x0ad4                  _offset
-                    0x0ad6                  _address
-                    0x0ad8                  _flash_chksum
-                    0x0ada                  _rom_chksum
-                    0x0adc                  _nvSets_chksum
-                    0x0ade                  _ramSets_chksum
-                    0x0ae0                  _ramSets_chksum_old
-                    0x0ae2                  _check_timer
-                    0x0ae4                  _ram_err_count
-                    0x0ae6                  _heat_set
-                    0x0ae8                  _oc_shutdown_timer
-                    0x0aea                  _shutdown_timer
-                    0x0aec                  _dischrg_current
-                    0x0af0                  _chrg_current
-                    0x0af4                  _dischrg_read
-                    0x0af8                  _analog_smpl_time
-                    0x0afc                  _crnt_error
-                    0x0b00                  _crnt_integral
-                    0x0b04                  _current_output
-                    0x0b08                  _voltage_output
-                    0x0b0c                  _temp_dischrg_rate
-                    0x0b10                  _temp_chrg_rate
-                    0x0b14                  _max_chrg_current
-                    0x0b18                  _percentOut
-                    0x0b1c                  _chrg_remaining
-                    0x0b20                  _chrg_check
+.nbss               0x0850        0x324
+ .nbss              0x0850        0x324 build/default/debug/main.o
+                    0x0850                  _sets
+                    0x0932                  _vars
+                    0x096e                  _dsky
+                    0x09cc                  _chrge_rate
+                    0x09d0                  _vltg_dvid
+                    0x09d4                  _ADCON3upper8
+                    0x09d6                  _ADCON3lower8
+                    0x09d8                  _voltage_percentage
+                    0x09e8                  _Bcurrent_compensate
+                    0x09ec                  _Ccurrent_compensate
+                    0x09f0                  _dischr_current
+                    0x09f4                  _wheelTime
+                    0x09f8                  _CavgVolt
+                    0x09fc                  _BavgVolt
+                    0x0a0c                  _BavgCurnt
+                    0x0a10                  _CavgCurnt
+                    0x0a14                  _avgBTemp
+                    0x0a18                  _avgSTemp
+                    0x0a1c                  _bt_crnt_avg_temp
+                    0x0a20                  _bt_vltg_avg_temp
+                    0x0a24                  _avg_cnt
+                    0x0a25                  _analog_avg_cnt
+                    0x0a26                  _Bcurnt_cal_stage
+                    0x0a27                  _Ccurnt_cal_stage
+                    0x0a28                  _start_timer
+                    0x0a29                  _diag_count
+                    0x0a2a                  _PowerOffTimer
+                    0x0a2b                  _cfg_space
+                    0x0a2c                  _vr_space
+                    0x0a2d                  _dsky_space
+                    0x0a2e                  _v_test
+                    0x0a2f                  _first_cal
+                    0x0a30                  _output_power
+                    0x0a32                  _charge_power
+                    0x0a34                  _heat_power
+                    0x0a36                  _COND
+                    0x0a38                  _CONDbits
+                    0x0a3a                  _STING
+                    0x0a3c                  _STINGbits
+                    0x0a3e                  _tx_float
+                    0x0a46                  _Buff_index
+                    0x0a4a                  _StempIndex
+                    0x0a4e                  _FtempIndex
+                    0x0a52                  _nibble
+                    0x0a5a                  _float_out
+                    0x0a68                  _Buffer
+                    0x0ae0                  _config_space
+                    0x0ae2                  _tx_temp
+                    0x0ae4                  _portBSY
+                    0x0ae6                  _writingbuff
+                    0x0ae8                  _dynaSpace
+                    0x0aea                  _CMD_Point
+                    0x0aee                  _bufsize
+                    0x0af2                  _CMD_buff
+                    0x0afe                  _cmdRDY
+                    0x0b00                  _cmdOVFL
+                    0x0b02                  _Terr
+                    0x0b04                  _tempPoint
+                    0x0b08                  _flt_index
+                    0x0b0c                  _PxPage
+                    0x0b10                  _pageVar
+                    0x0b14                  _varNum
+                    0x0b18                  _dodispatch
+                    0x0b1c                  _PxVtimer
+                    0x0b1e                  _upperMem
+                    0x0b20                  _printSets
+                    0x0b22                  _eRead
+                    0x0b24                  _offset
+                    0x0b26                  _address
+                    0x0b28                  _flash_chksum
+                    0x0b2a                  _rom_chksum
+                    0x0b2c                  _nvSets_chksum
+                    0x0b2e                  _ramSets_chksum
+                    0x0b30                  _ramSets_chksum_old
+                    0x0b32                  _check_timer
+                    0x0b34                  _ram_err_count
+                    0x0b36                  _heat_set
+                    0x0b38                  _oc_shutdown_timer
+                    0x0b3a                  _shutdown_timer
+                    0x0b3c                  _dischrg_current
+                    0x0b40                  _chrg_current
+                    0x0b44                  _dischrg_read
+                    0x0b48                  _analog_smpl_time
+                    0x0b4c                  _crnt_error
+                    0x0b50                  _crnt_integral
+                    0x0b54                  _current_output
+                    0x0b58                  _voltage_output
+                    0x0b5c                  _temp_dischrg_rate
+                    0x0b60                  _temp_chrg_rate
+                    0x0b64                  _max_chrg_current
+                    0x0b68                  _percentOut
+                    0x0b6c                  _chrg_remaining
+                    0x0b70                  _chrg_check
 
-.ndata              0x0b24          0xa
- .ndata             0x0b24          0xa build/default/production/main.o
-                    0x0b24                  _heat_rly_timer
-                    0x0b25                  _contact_rly_timer
-                    0x0b26                  _chrg_rly_timer
-                    0x0b27                  _power_session
-                    0x0b28                  _PowerOffTimerSec
-                    0x0b29                  _Lecho
-                    0x0b2c                  _soft_OVC_Countdown
+.ndata              0x0b74          0xa
+ .ndata             0x0b74          0xa build/default/debug/main.o
+                    0x0b74                  _heat_rly_timer
+                    0x0b75                  _contact_rly_timer
+                    0x0b76                  _chrg_rly_timer
+                    0x0b77                  _power_session
+                    0x0b78                  _PowerOffTimerSec
+                    0x0b79                  _Lecho
+                    0x0b7c                  _soft_OVC_Countdown
 
-.nbss               0x0b2e          0x2
- .nbss              0x0b2e          0x2 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(errno.XX_o)
-                    0x0b2e                  _errno
+.nbss               0x0b7e          0x2
+ .nbss              0x0b7e          0x2 /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(errno.XX_o)
+                    0x0b7e                  _errno
 
 .config_ICS       0xf8000c          0x2
- .config_ICS      0xf8000c          0x2 build/default/production/main.o
+ .config_ICS      0xf8000c          0x2 build/default/debug/main.o
 
 .config_MCLRE     0xf80004          0x2
- .config_MCLRE    0xf80004          0x2 build/default/production/main.o
+ .config_MCLRE    0xf80004          0x2 build/default/debug/main.o
 
 .config_WDT       0xf80002          0x2
- .config_WDT      0xf80002          0x2 build/default/production/main.o
+ .config_WDT      0xf80002          0x2 build/default/debug/main.o
 
 .config_FCKSMEN
                   0xf80000          0x2
  .config_FCKSMEN
-                  0xf80000          0x2 build/default/production/main.o
+                  0xf80000          0x2 build/default/debug/main.o
 
 .ivt._INT0Interrupt
                   0x000014          0x2
  .ivt._INT0Interrupt
-                  0x000014          0x2 build/default/production/main.o
+                  0x000014          0x2 build/default/debug/main.o
 
 .ivt._ADCInterrupt
                   0x00002a          0x2
  .ivt._ADCInterrupt
-                  0x00002a          0x2 build/default/production/main.o
+                  0x00002a          0x2 build/default/debug/main.o
 
 .ivt._T1Interrupt
                   0x00001a          0x2
  .ivt._T1Interrupt
-                  0x00001a          0x2 build/default/production/main.o
+                  0x00001a          0x2 build/default/debug/main.o
 
 .ivt._T2Interrupt
                   0x000020          0x2
  .ivt._T2Interrupt
-                  0x000020          0x2 build/default/production/main.o
+                  0x000020          0x2 build/default/debug/main.o
 
 .ivt._INT1Interrupt
                   0x000034          0x2
  .ivt._INT1Interrupt
-                  0x000034          0x2 build/default/production/main.o
+                  0x000034          0x2 build/default/debug/main.o
 
 .ivt._T3Interrupt
                   0x000022          0x2
  .ivt._T3Interrupt
-                  0x000022          0x2 build/default/production/main.o
+                  0x000022          0x2 build/default/debug/main.o
 
 .ivt._T4Interrupt
                   0x00003e          0x2
  .ivt._T4Interrupt
-                  0x00003e          0x2 build/default/production/main.o
+                  0x00003e          0x2 build/default/debug/main.o
 
 .ivt._T5Interrupt
                   0x000040          0x2
  .ivt._T5Interrupt
-                  0x000040          0x2 build/default/production/main.o
+                  0x000040          0x2 build/default/debug/main.o
 
 .ivt._U1RXInterrupt
                   0x000026          0x2
  .ivt._U1RXInterrupt
-                  0x000026          0x2 build/default/production/main.o
+                  0x000026          0x2 build/default/debug/main.o
 
 .ivt._U2RXInterrupt
                   0x000044          0x2
  .ivt._U2RXInterrupt
-                  0x000044          0x2 build/default/production/main.o
+                  0x000044          0x2 build/default/debug/main.o
 
 .ivt._U1TXInterrupt
                   0x000028          0x2
  .ivt._U1TXInterrupt
-                  0x000028          0x2 build/default/production/main.o
+                  0x000028          0x2 build/default/debug/main.o
 
 .ivt._U2TXInterrupt
                   0x000046          0x2
  .ivt._U2TXInterrupt
-                  0x000046          0x2 build/default/production/main.o
+                  0x000046          0x2 build/default/debug/main.o
 
 .ivt._FLTAInterrupt
                   0x00006a          0x2
  .ivt._FLTAInterrupt
-                  0x00006a          0x2 build/default/production/main.o
+                  0x00006a          0x2 build/default/debug/main.o
 
 .ivt._OscillatorFail
                   0x000006          0x2
  .ivt._OscillatorFail
-                  0x000006          0x2 build/default/production/main.o
+                  0x000006          0x2 build/default/debug/main.o
 
 .ivt._AddressError
                   0x000008          0x2
  .ivt._AddressError
-                  0x000008          0x2 build/default/production/main.o
+                  0x000008          0x2 build/default/debug/main.o
 
 .ivt._StackError
                   0x00000a          0x2
  .ivt._StackError
-                  0x00000a          0x2 build/default/production/main.o
+                  0x00000a          0x2 build/default/debug/main.o
 
 .ivt._MathError
                   0x00000c          0x2
  .ivt._MathError
-                  0x00000c          0x2 build/default/production/main.o
+                  0x00000c          0x2 build/default/debug/main.o
 
 .ivt._ReservedTrap7
                   0x000012          0x2
  .ivt._ReservedTrap7
-                  0x000012          0x2 build/default/production/main.o
+                  0x000012          0x2 build/default/debug/main.o
 
 .const              0x9230        0x3f2 load address 0x001230  
- .const             0x9230        0x3f2 build/default/production/main.o
+ .const             0x9230        0x3f2 build/default/debug/main.o
                     0x9230                  _VSPC
                     0x9232                  _V01
                     0x9236                  _V02
@@ -1975,7 +2009,7 @@ __c30_signature
                     0x94ca                  _errArray
 
 .text             0x001622       0x2664
- .text            0x001622       0x2664 build/default/production/main.o
+ .text            0x001622       0x2664 build/default/debug/main.o
                   0x001622                  _calcAnalog
                   0x0018a0                  _sysReady
                   0x001914                  _power_off
