@@ -48,7 +48,13 @@
           "min_clearance": 0.508
         }
       },
-      "diff_pair_dimensions": [],
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
       "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
@@ -115,14 +121,14 @@
       },
       "track_widths": [
         0.0,
+        0.25,
         0.5,
+        0.75,
         1.0,
         1.5,
         2.0,
-        3.0,
-        4.0,
-        5.0,
-        6.0
+        2.5,
+        3.0
       ],
       "via_dimensions": [
         {
@@ -130,8 +136,16 @@
           "drill": 0.0
         },
         {
+          "diameter": 0.5,
+          "drill": 0.25
+        },
+        {
           "diameter": 1.0,
           "drill": 0.5
+        },
+        {
+          "diameter": 1.5,
+          "drill": 0.75
         },
         {
           "diameter": 2.0,
@@ -139,10 +153,18 @@
         },
         {
           "diameter": 3.0,
-          "drill": 2.0
+          "drill": 1.5
         },
         {
           "diameter": 4.0,
+          "drill": 2.0
+        },
+        {
+          "diameter": 5.0,
+          "drill": 2.5
+        },
+        {
+          "diameter": 6.0,
           "drill": 3.0
         }
       ],
