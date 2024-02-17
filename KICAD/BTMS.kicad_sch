@@ -9374,7 +9374,7 @@
   (symbol (lib_id "Device:R") (at 272.415 108.585 90) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid a9d1f6bc-926a-4206-95e1-10bfe156bf35)
-    (property "Reference" "R?" (id 0) (at 273.685 106.553 90)
+    (property "Reference" "R15" (id 0) (at 273.685 106.553 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "27R" (id 1) (at 274.447 108.585 90)
@@ -11492,6 +11492,9 @@
     (path "/4c88e8a9-3f54-47bc-94e2-327d6dc10224"
       (reference "R14") (unit 1) (value "12") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
+    (path "/a9d1f6bc-926a-4206-95e1-10bfe156bf35"
+      (reference "R15") (unit 1) (value "27R") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
     (path "/26e7321b-39c7-46e7-b3a0-1de446d5bd59"
       (reference "R16") (unit 1) (value "27R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
@@ -11518,9 +11521,6 @@
     )
     (path "/cf15f661-d9af-49b5-bbe2-3a4c5a31bd69"
       (reference "R24") (unit 1) (value "10K") (footprint "Resistor_SMD:R_0603_1608Metric")
-    )
-    (path "/a9d1f6bc-926a-4206-95e1-10bfe156bf35"
-      (reference "R?") (unit 1) (value "27R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/6d1558b7-32bb-4234-9884-0300df2238db"
       (reference "RN1") (unit 1) (value "1K") (footprint "Resistor_SMD:R_Array_Convex_4x1206")
