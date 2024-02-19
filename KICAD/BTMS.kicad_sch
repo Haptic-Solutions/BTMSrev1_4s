@@ -8431,7 +8431,7 @@
   (symbol (lib_id "Switch:SW_SPST") (at 320.04 34.925 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 67647a8b-db66-4202-969a-7d17a16bd4a5)
-    (property "Reference" "SW?" (id 0) (at 320.04 28.575 0))
+    (property "Reference" "SW1" (id 0) (at 320.04 28.575 0))
     (property "Value" "PTS526" (id 1) (at 320.04 31.115 0))
     (property "Footprint" "Button_Switch_SMD:SW_SPST_SKQG_WithStem" (id 2) (at 320.04 34.925 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -8677,7 +8677,7 @@
   (symbol (lib_id "power:GND") (at 314.96 34.925 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 765cf6f4-9db5-4d66-8293-e4e2a047eae9)
-    (property "Reference" "#PWR?" (id 0) (at 314.96 41.275 0)
+    (property "Reference" "#PWR0106" (id 0) (at 314.96 41.275 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 315.087 39.3192 0))
@@ -11250,7 +11250,7 @@
       (reference "#PWR0105") (unit 1) (value "GND") (footprint "")
     )
     (path "/765cf6f4-9db5-4d66-8293-e4e2a047eae9"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+      (reference "#PWR0106") (unit 1) (value "GND") (footprint "")
     )
     (path "/64c76206-53c0-4f04-b9c5-7beac0937b65"
       (reference "C1") (unit 1) (value "0.1uf film") (footprint "Capacitor_SMD:C_0603_1608Metric")
@@ -11652,7 +11652,7 @@
       (reference "RN11") (unit 1) (value "10K") (footprint "Resistor_SMD:R_Array_Convex_4x1206")
     )
     (path "/67647a8b-db66-4202-969a-7d17a16bd4a5"
-      (reference "SW?") (unit 1) (value "PTS526") (footprint "Button_Switch_SMD:SW_SPST_SKQG_WithStem")
+      (reference "SW1") (unit 1) (value "PTS526") (footprint "Button_Switch_SMD:SW_SPST_SKQG_WithStem")
     )
     (path "/3202d53d-0910-47b2-a7db-5c708ae895e8"
       (reference "U1") (unit 1) (value "ACS711xLCTR-25AB") (footprint "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm")
