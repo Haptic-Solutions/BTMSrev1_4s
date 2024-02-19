@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/jarrett/Desktop/BTMSrev1_4S/KICAD/BTMS.kicad_sch</source>
-    <date>Sun 18 Feb 2024 09:53:15 PM CST</date>
+    <date>Mon 19 Feb 2024 09:30:05 AM CST</date>
     <tool>Eeschema 6.0.11+dfsg-1~bpo11+1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -25,75 +25,75 @@
   </design>
   <components>
     <comp ref="C1">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>64c76206-53c0-4f04-b9c5-7beac0937b65</tstamps>
     </comp>
     <comp ref="C2">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>a6827c9a-400c-4bb7-afb9-769ee7761a4c</tstamps>
     </comp>
     <comp ref="C3">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>bbc01d4b-6db7-4d2e-8adc-8806630054ee</tstamps>
     </comp>
     <comp ref="C4">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>1a1e49e2-22ce-4eb7-9bfe-eb68a74d796f</tstamps>
     </comp>
     <comp ref="C5">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -130,45 +130,45 @@
       <tstamps>14b77fdb-fd1a-4daf-9a08-60a16910a3cd</tstamps>
     </comp>
     <comp ref="C8">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>24d342ba-dcaa-4330-82ee-42ec10fde45f</tstamps>
     </comp>
     <comp ref="C9">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>02e066bf-32b3-4dc2-91a1-29bd73d07321</tstamps>
     </comp>
     <comp ref="C10">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -190,15 +190,15 @@
       <tstamps>0498be24-d49a-491e-adfd-35929c490cdb</tstamps>
     </comp>
     <comp ref="C12">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -235,15 +235,15 @@
       <tstamps>2197573d-71b3-41cc-ba36-a109856e13b3</tstamps>
     </comp>
     <comp ref="C15">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -265,15 +265,15 @@
       <tstamps>8b3a5815-7482-4f58-bb30-414a7da6fcf2</tstamps>
     </comp>
     <comp ref="C17">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -295,15 +295,15 @@
       <tstamps>e66d4d20-e5b2-4f55-9b54-109ace90e267</tstamps>
     </comp>
     <comp ref="C19">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -325,15 +325,15 @@
       <tstamps>57f5cc00-3dca-4faa-a435-75bbc6d7235a</tstamps>
     </comp>
     <comp ref="C21">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -400,15 +400,15 @@
       <tstamps>61d778e4-19b4-4404-9ed8-2e40bc0faef0</tstamps>
     </comp>
     <comp ref="C26">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -610,15 +610,15 @@
       <tstamps>5fda4a60-1c02-4a38-8571-79aacf0582f2</tstamps>
     </comp>
     <comp ref="C40">
-      <value>0.1uf film</value>
+      <value>0.1uf BF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A</field>
-        <field name="Digi-Key_PN">PCF1126CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797</field>
+        <field name="Digi-Key_PN">478-KGF15AR71H104KTCT-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/panasonic-electronic-components/ECP-U1C104MA5/285446?s=N4IgTCBcDaIIxzANgCIGkBKBaAcikAugL5A"/>
-      <property name="Digi-Key_PN" value="PCF1126CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/kyocera-avx/KGF15AR71H104KT/1024797"/>
+      <property name="Digi-Key_PN" value="478-KGF15AR71H104KTCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -745,7 +745,7 @@
       <tstamps>2416a0bd-1b72-4a0c-8807-cd851cf45dd1</tstamps>
     </comp>
     <comp ref="D5">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -760,7 +760,7 @@
       <tstamps>32e0be57-a683-4bff-8c19-38f7c8685567</tstamps>
     </comp>
     <comp ref="D6">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -865,7 +865,7 @@
       <tstamps>b076c518-0955-4f02-949c-137f196b3c84</tstamps>
     </comp>
     <comp ref="D13">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -895,7 +895,7 @@
       <tstamps>5162066d-b0d0-4bd0-b7bc-0e888a7d9ad4</tstamps>
     </comp>
     <comp ref="D15">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -910,7 +910,7 @@
       <tstamps>bbab0327-445c-4ba9-8d56-83c6c577bfb8</tstamps>
     </comp>
     <comp ref="D16">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -925,19 +925,19 @@
       <tstamps>23f86247-8b25-4a91-aaa5-381484573c4d</tstamps>
     </comp>
     <comp ref="D17">
-      <value>D_Schottky100V</value>
-      <footprint>Diode_SMD:D_SOD-123</footprint>
+      <value>D_Schottky40V</value>
+      <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/micro-commercial-co/MBR0580-TP/2423323</field>
-        <field name="Digi-Key_PN">MBR0580-TPMSCT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
+        <field name="Digi-Key_PN">CCS15S40L3FCT-ND</field>
       </fields>
-      <libsource lib="Device" part="D_Schottky" description="Schottky diode"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/micro-commercial-co/MBR0580-TP/2423323"/>
-      <property name="Digi-Key_PN" value="MBR0580-TPMSCT-ND"/>
+      <libsource lib="Device" part="D" description="Diode"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646"/>
+      <property name="Digi-Key_PN" value="CCS15S40L3FCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>08ee43dc-32b2-40b6-af8c-4f2cd5d2f5d3</tstamps>
+      <tstamps>51f5d96b-62f2-44b0-93ec-ddc8d9cf2728</tstamps>
     </comp>
     <comp ref="D18">
       <value>15V</value>
@@ -955,7 +955,7 @@
       <tstamps>4b2a1c22-6cb3-4b33-b3a1-84aeecd71b74</tstamps>
     </comp>
     <comp ref="D19">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -970,7 +970,7 @@
       <tstamps>e28eceb2-ccac-479e-8ec8-cd08aa53c89f</tstamps>
     </comp>
     <comp ref="D20">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -985,7 +985,7 @@
       <tstamps>50f55da3-b923-45cc-961e-4323d768fe6e</tstamps>
     </comp>
     <comp ref="D21">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -1015,7 +1015,7 @@
       <tstamps>68f436f1-a698-43ee-a970-558ca2480408</tstamps>
     </comp>
     <comp ref="D23">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -1030,7 +1030,7 @@
       <tstamps>930c609e-5003-4618-a7e6-2169f70dbe69</tstamps>
     </comp>
     <comp ref="D24">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -1045,7 +1045,7 @@
       <tstamps>f0dc0909-97ec-4010-aa50-217d409ae079</tstamps>
     </comp>
     <comp ref="D25">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -1075,7 +1075,7 @@
       <tstamps>cb36a8bc-a578-4055-bd4d-a6ed510ae16e</tstamps>
     </comp>
     <comp ref="D27">
-      <value>Diode40V</value>
+      <value>D_Schottky40V</value>
       <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
@@ -2729,25 +2729,6 @@
         <pin num="2" name="A" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="Device" part="D_Schottky">
-      <description>Schottky diode</description>
-      <docs>~</docs>
-      <footprints>
-        <fp>TO-???*</fp>
-        <fp>*_Diode_*</fp>
-        <fp>*SingleDiode*</fp>
-        <fp>D_*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">D</field>
-        <field name="Value">D_Schottky</field>
-        <field name="Datasheet">~</field>
-      </fields>
-      <pins>
-        <pin num="1" name="K" type="passive"/>
-        <pin num="2" name="A" type="passive"/>
-      </pins>
-    </libpart>
     <libpart lib="Device" part="D_Schottky_AAK">
       <description>Schottky diode, anode on pins 1 and 2</description>
       <docs>~</docs>
@@ -3622,6 +3603,7 @@
       <node ref="U18" pin="13" pinfunction="GND" pintype="power_in"/>
       <node ref="U18" pin="17" pinfunction="GND" pintype="power_in"/>
       <node ref="U18" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U18" pin="4" pinfunction="~{CTS}" pintype="input"/>
       <node ref="U2" pin="11" pinfunction="VSEL2" pintype="bidirectional"/>
       <node ref="U2" pin="25" pinfunction="PAD" pintype="free"/>
       <node ref="U2" pin="3" pinfunction="GND" pintype="input"/>
@@ -4082,22 +4064,19 @@
     <net code="156" name="unconnected-(U17-Pad34)">
       <node ref="U17" pin="34" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="157" name="unconnected-(U18-Pad4)">
-      <node ref="U18" pin="4" pinfunction="~{CTS}" pintype="input"/>
-    </net>
-    <net code="158" name="unconnected-(U18-Pad5)">
+    <net code="157" name="unconnected-(U18-Pad5)">
       <node ref="U18" pin="5" pinfunction="CBUS2" pintype="bidirectional"/>
     </net>
-    <net code="159" name="unconnected-(U18-Pad11)">
+    <net code="158" name="unconnected-(U18-Pad11)">
       <node ref="U18" pin="11" pinfunction="CBUS1" pintype="bidirectional"/>
     </net>
-    <net code="160" name="unconnected-(U18-Pad12)">
+    <net code="159" name="unconnected-(U18-Pad12)">
       <node ref="U18" pin="12" pinfunction="CBUS0" pintype="bidirectional"/>
     </net>
-    <net code="161" name="unconnected-(U18-Pad14)">
+    <net code="160" name="unconnected-(U18-Pad14)">
       <node ref="U18" pin="14" pinfunction="CBUS3" pintype="bidirectional"/>
     </net>
-    <net code="162" name="unconnected-(U18-Pad16)">
+    <net code="161" name="unconnected-(U18-Pad16)">
       <node ref="U18" pin="16" pinfunction="~{RTS}" pintype="output"/>
     </net>
   </nets>
