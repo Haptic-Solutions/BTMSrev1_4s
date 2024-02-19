@@ -3983,6 +3983,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 5a71863a-3c99-4d0c-aab9-54ae0570fc2e)
   )
+  (wire (pts (xy 367.665 109.22) (xy 371.475 109.22))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 5ca70729-7e27-4bb6-980d-97f49141efb2)
+  )
   (wire (pts (xy 396.24 139.7) (xy 386.08 139.7))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 5dea40c6-6492-4c2c-8fd6-9fd6b8809923)
@@ -6213,6 +6217,22 @@
     )
     (pin "1" (uuid b9d61260-6b06-4250-9447-ea86785e7b19))
     (pin "2" (uuid b64d6478-151a-4763-a6bf-c7487ab1b40d))
+  )
+
+  (symbol (lib_id "power:GND") (at 371.475 109.22 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid 03e2ee64-2c01-41a8-b8e3-25bc34cb7229)
+    (property "Reference" "#PWR?" (id 0) (at 371.475 115.57 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (id 1) (at 374.015 107.95 0))
+    (property "Footprint" "" (id 2) (at 371.475 109.22 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (id 3) (at 371.475 109.22 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 75d84387-cb69-4db2-ad6d-62ee26d1b537))
   )
 
   (symbol (lib_id "Device:C") (at 161.925 29.21 0) (unit 1)
@@ -11361,6 +11381,9 @@
     )
     (path "/08dcb5c3-f129-4ec5-8278-3dc3347d58e2"
       (reference "#PWR0108") (unit 1) (value "+3C3") (footprint "")
+    )
+    (path "/03e2ee64-2c01-41a8-b8e3-25bc34cb7229"
+      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
     (path "/64c76206-53c0-4f04-b9c5-7beac0937b65"
       (reference "C1") (unit 1) (value "0.1uf film") (footprint "Capacitor_SMD:C_0603_1608Metric")
