@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/jarrett/Desktop/BTMSrev1_4S/KICAD/BTMS.kicad_sch</source>
-    <date>Sun 18 Feb 2024 05:27:24 PM CST</date>
+    <date>Sun 18 Feb 2024 09:53:15 PM CST</date>
     <tool>Eeschema 6.0.11+dfsg-1~bpo11+1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -1964,6 +1964,36 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>cf15f661-d9af-49b5-bbe2-3a4c5a31bd69</tstamps>
     </comp>
+    <comp ref="R25">
+      <value>10K</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
+        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
+      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>25af85ed-4d99-4b06-810c-8020a57e613d</tstamps>
+    </comp>
+    <comp ref="R26">
+      <value>10K</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
+        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
+      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e72ebb1b-6dff-4341-94fe-9fc818944816</tstamps>
+    </comp>
     <comp ref="RN1">
       <value>1K</value>
       <footprint>Resistor_SMD:R_Array_Convex_4x1206</footprint>
@@ -3181,6 +3211,8 @@
       <node ref="J8" pin="2" pintype="passive"/>
       <node ref="Q5" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R23" pin="1" pintype="passive"/>
+      <node ref="R25" pin="2" pintype="passive"/>
+      <node ref="R26" pin="2" pintype="passive"/>
       <node ref="RN10" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="RN11" pin="6" pinfunction="R3.2" pintype="passive"/>
       <node ref="RN3" pin="6" pinfunction="R3.2" pintype="passive"/>
@@ -3461,6 +3493,7 @@
     </net>
     <net code="45" name="/U1RX">
       <node ref="R19" pin="2" pintype="passive"/>
+      <node ref="R26" pin="1" pintype="passive"/>
       <node ref="U17" pin="35" pinfunction="EMUC1/SOSCO/T1CK/U1ARX/CN0/RC14" pintype="bidirectional"/>
     </net>
     <net code="46" name="/U1TX">
@@ -3469,6 +3502,7 @@
     </net>
     <net code="47" name="/U2RX">
       <node ref="R12" pin="2" pintype="passive"/>
+      <node ref="R25" pin="1" pintype="passive"/>
       <node ref="U17" pin="3" pinfunction="U2RX/CN17/RF4" pintype="bidirectional"/>
     </net>
     <net code="48" name="/U2TX">
