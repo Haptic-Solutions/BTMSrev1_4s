@@ -28,7 +28,7 @@ extern void explody_preventy_check(void);
 extern void currentCheck(void);
 extern void heater_calibration(void);
 extern void fault_log(int);
-extern void general_shutdown(void);
+extern void ALL_shutdown(void);
 extern void io_off(void);
 extern void reset_check(void);
 extern void hud_vars(int);
@@ -38,7 +38,7 @@ extern void analog_sanity(void);
 extern void death_loop(void);
 extern void initialCal(void);
 extern void chargeDetect(void);
-extern char D_Flag_Check();
+extern int D_Flag_Check();
 
 /*****************************/
 /* Init vars and stuff. */

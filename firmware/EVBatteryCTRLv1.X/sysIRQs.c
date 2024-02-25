@@ -143,13 +143,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     if(!BV_Fault){
         //chrgLight = off;  //charger light off.
         charge_power = 0;
-        chrg_check = 0;
     }
-    //Fan control
-    if(CONDbits.main_power && (dsky.battery_temp > sets.batt_fan_start
-    || dsky.my_temp > sets.ctrlr_fan_start))Mult_B3 = 1;
-    else if(!CONDbits.main_power || (dsky.battery_temp < (sets.batt_fan_start - 5)
-    && dsky.my_temp < (sets.ctrlr_fan_start - 5)))Mult_B3 = 0;
 
     //Clear fault_shutdown if all power modes are turned off.
     if(!CONDbits.pwr_detect){
@@ -231,6 +225,14 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
         }
         else soft_OVC_Timer++;
     }
+    //Low voltage monitoring and auto off.
+    for(int i=0;i<4;i++){
+        if(dsky.Cell_Voltage[i] < sets.dischrg_voltage){
+            CONDbits.cmd_power = off;
+            //fault_log(0x04);
+            //STINGbits.fault_shutdown = yes;
+        }
+    }
     dsky.watts = dsky.battery_crnt_average * dsky.pack_vltg_average;
     //Relay On Timers. Wait a little bit after turning on the relays before trying to regulate.
     if(heat_rly_timer > 0 && heat_rly_timer != 3)//
@@ -257,8 +259,6 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     float power = absFloat(dsky.battery_crnt_average * dsky.pack_vltg_average);
     if (power > dsky.peak_power){
         dsky.peak_power = power;
-        dsky.peak_pwr_vlts = dsky.pack_vltg_average;
-        dsky.peak_pwr_crnt = dsky.battery_crnt_average;
     }
     //*****************************
     //Calculate and Log AH usage for battery remaining and total usage.

@@ -71,7 +71,7 @@ void chargeDetect(void){
                     Max_Charger_Current=0; //USB_3.1 error? Voltage should not be this high from any supported USB chargers.
                     charge_mode = Stop;
                     fault_log(0x1B);
-                    general_shutdown();
+                    ALL_shutdown();
                 }
                 else {
                     Max_Charger_Current=AuxFuse; //Assume solar or some other input. Target voltage will be determined by MPPT.
@@ -82,7 +82,7 @@ void chargeDetect(void){
                 //Overvoltage condition.
                 charge_mode = Stop;
                 fault_log(0x38);
-                general_shutdown();
+                ALL_shutdown();
             }
             STINGbits.charge_GO=1;
         }
@@ -188,7 +188,7 @@ void initialCal(void){
 
 //System debug safemode
 void death_loop(void){
-    general_shutdown();     //Turn everything off.
+    ALL_shutdown();     //Turn everything off.
     sys_debug();    //Disable everything that is not needed. Only Serial Ports and Timer 1 Active.
     STINGbits.errLight = 1;  //Turn Error light solid on to show fatal error.
     for(;;){
@@ -250,65 +250,65 @@ void analog_sanity(void){
     //Charger input Voltage
     if(ChargeVoltage > 0xFFFD){
         fault_log(0x1D);
-        general_shutdown();
+        ALL_shutdown();
     }
     if(ChargeVoltage < 0x0002){
         fault_log(0x1E);
-        general_shutdown();
+        ALL_shutdown();
     }
     //Charger Current
     if(CCsense > 0xFFFD){
         fault_log(0x1F);
-        general_shutdown();
+        ALL_shutdown();
     }
     if(CCsense < 0x0002){
         fault_log(0x20);
-        general_shutdown();
+        ALL_shutdown();
     }
     //Cell 1 Voltage
     if(LithCell_V1 > 0xFFFD){
         fault_log(0x30);
-        general_shutdown();
+        ALL_shutdown();
     }
     if(LithCell_V1 < 0x0002){
         fault_log(0x31);
-        general_shutdown();
+        ALL_shutdown();
     }
     //Cell 2 Voltage
     if(LithCell_V2 > 0xFFFD){
         fault_log(0x32);
-        general_shutdown();
+        ALL_shutdown();
     }
     if(LithCell_V2 < 0x0002){
         fault_log(0x33);
-        general_shutdown();
+        ALL_shutdown();
     }
     //Cell 3 Voltage
     if(LithCell_V3 > 0xFFFD){
         fault_log(0x34);
-        general_shutdown();
+        ALL_shutdown();
     }
     if(LithCell_V3 < 0x0002){
         fault_log(0x35);
-        general_shutdown();
+        ALL_shutdown();
     }
     //Cell 4 Voltage
     if(LithCell_V4 > 0xFFFD){
         fault_log(0x36);
-        general_shutdown();
+        ALL_shutdown();
     }
     if(LithCell_V4 < 0x0002){
         fault_log(0x37);
-        general_shutdown();
+        ALL_shutdown();
     }
     //Battery Current
     if(BCsense > 0xFFFD){
         fault_log(0x23);
-        general_shutdown();
+        ALL_shutdown();
     }
     if(BCsense < 0x0002){
         fault_log(0x24);
-        general_shutdown();
+        ALL_shutdown();
     }
     //Battery temperature.
     if(Btemp > 0xFFFD){
@@ -433,24 +433,32 @@ void explody_preventy_check(void){
     //Battery over voltage check
     if(dsky.pack_voltage >= sets.max_battery_voltage){
         fault_log(0x07);    //Log a high battery voltage shutdown event.
-        general_shutdown();
+        URFLAGbits.HighVLT = 1;
+        ALL_shutdown();
     }
     //Battery under voltage check.
     if(dsky.pack_voltage < sets.low_voltage_shutdown && !STINGbits.charge_GO){
         fault_log(0x04);    //Log a low battery shutdown event.
+        URFLAGbits.LowVLT = 1;
         low_battery_shutdown();
     }
     //Battery temp shutdown check
     if(dsky.battery_temp > sets.battery_shutdown_temp){
         fault_log(0x08);    //Log a battery over temp shutdown event.
-        general_shutdown();
+        URFLAGbits.BattOverheated = 1;
+        ALL_shutdown();
     }
     //My temp shutdown check
     if(dsky.my_temp > sets.ctrlr_shutdown_temp){
         fault_log(0x0A);    //Log a My Temp over temp shutdown event.
-        general_shutdown();
+        URFLAGbits.SysOverheated = 1;
+        ALL_shutdown();
     }
     if(CONDbits.failSave)save_vars();
+    if(D_Flag_Check()){
+        fault_log(0x09);    //Log a compromised flag error.
+        death_loop();
+    }
 }
 
 
@@ -464,22 +472,22 @@ void currentCheck(void){
     }
     if(dischr_current > sets.over_current_shutdown){
         if(oc_shutdown_timer > 5){
-            general_shutdown();
+            ALL_shutdown();
             oc_shutdown_timer = 0;
             fault_log(0x05);    //Log a discharge over current shutdown event.
         }
         oc_shutdown_timer++;
     }
     //Battery charge over current check.
-    if(dsky.battery_current > max_chrg_current){
-        general_shutdown();
+    if(dsky.battery_current > sets.chrg_C_rating * sets.amp_hour_rating){
+        ALL_shutdown();
         fault_log(0x06);    //Log a charge over current shutdown event.
     }
     if(CONDbits.failSave)save_vars();
 }
 
 //Turns off all outputs and logs a general shutdown event.
-void general_shutdown(void){
+void ALL_shutdown(void){
     io_off();               //Shutdown all IO except Serial Comms.
     STINGbits.fault_shutdown = 1;       //Tells other stuff that we had a general shutdown.
     CONDbits.cmd_power = 0;
@@ -498,9 +506,9 @@ void io_off(void){
 }
 
 //Check un-resettable flags.
-char D_Flag_Check(){
+int D_Flag_Check(){
   if(URFLAGbits.OverVLT_Fault) return yes;
-  if(STINGbits.OverCRNT_Fault) return yes;
+  //if(STINGbits.OverCRNT_Fault) return yes;
   if(URFLAGbits.LowVLT) return yes;
   if(URFLAGbits.BattOverheated) return yes;
   if(URFLAGbits.SysOverheated) return yes;

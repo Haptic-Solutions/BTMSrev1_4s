@@ -105,7 +105,7 @@ SOFTWARE. */
 #define NULL 0
 #define input 1
 #define output 0
-#define SOC_Cycles 4
+#define SOC_Cycles 8
 #define AuxFuse 5   //Aux charge port fuse rating placeholder.
 #define PreChargeTime 2 //Output pre-charge timer placeholder.
 

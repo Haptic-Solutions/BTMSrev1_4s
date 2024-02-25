@@ -73,7 +73,6 @@ void outputReg(void){
         PreCharge = off;
         PowerOutEnable = off;
         precharge_timer = 0;
-        crnt_integral = 0;
     }
 }
 
@@ -96,7 +95,7 @@ void chargeReg(void){
             STINGbits.charge_GO=0;
             charge_mode = Stop;
             fault_log(0x38);
-            general_shutdown();
+            ALL_shutdown();
         }
         //Run heater if needed, but don't turn it up more than what the charger can handle.
         //This way we don't discharge the battery from trying to run the heater while the charger is plugged in, but

@@ -37,7 +37,7 @@ extern void calcAnalog(void);
 #pragma pack(1)
 struct Settings{
     //Analog input constants
-    int     settingsArray[1];
+    int     settingsArray[1];           //This space used for unique ID to determine if settings has been written to at least once.
     float   R1_resistance;              //R1 resistance in Kohms
     float   R2_resistance;              //R2 resistance in Kohms
     float   S1_vlt_adjst;               //Cell 1 voltage input compensation in volts.
@@ -72,12 +72,8 @@ struct Settings{
     //Shutdown temps.
     float   battery_shutdown_temp;      //Max battery temp before shutting down everything.
     float   ctrlr_shutdown_temp;        //Max motor or motor controller temp shutdown.
-    //Fan ctrl temps.
-    float   ctrlr_fan_start;            //Turns on cooling fan.
-    float   batt_fan_start;
     //Some other stuff.
     float   max_heat;           //Heater watts that you want to use.
-    float   travel_dist;        //Travel Distance in CM per tire rotation.
     float   circuit_draw;       //Amount of current that Yeti himself draws. Used for current calibration.
     unsigned int     PowerOffAfter;      //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours.
     unsigned int     flash_chksum_old;   //System Flash Checksum as stored in NV-mem
@@ -92,7 +88,7 @@ struct Settings{
 }sets;
 
 struct Variables{
-    int     variablesArray[1];
+    int     variablesArray[1];          //This space used for unique ID to determine if vars has been written to at least once.
 // Calculated Battery Ratings
     float   battery_capacity;           //Calculated total battery capacity in ah
     float   absolute_battery_usage;     //Max total power used from battery.
@@ -109,64 +105,58 @@ struct Variables{
 }vars;
 
 const char VSPC[] = " ";
-const char V01[] = "MPH";
-const char V02[] = "%";
-const char V03[] = "V";
-const char V04[] = "TV";
-const char V05[] = "PW";
-const char V06[] = "PWV";
-const char V07[] = "AV";
-const char V08[] = "CV";
-const char V09[] = "CA";
-const char V0A[] = "S1";
-const char V0B[] = "S2";
-const char V0C[] = "S3";
-const char V0D[] = "S4";
-const char V0E[] = "W";
-const char V0F[] = "CW";
-const char V10[] = "A";
-const char V11[] = "CB";
-const char V12[] = "CM";
-const char V13[] = "PWA";
-const char V14[] = "AA";
-const char V15[] = "OCV";
-const char V16[] = "MC";
-const char V17[] = "\n\r";  //Newline + Return
+const char V01[] = "%";
+const char V02[] = "V";
+const char V03[] = "TV";
+const char V04[] = "PW";
+const char V05[] = "AV";
+const char V06[] = "CV";
+const char V07[] = "CA";
+const char V08[] = "S1";
+const char V09[] = "S2";
+const char V0A[] = "S3";
+const char V0B[] = "S4";
+const char V0C[] = "W";
+const char V0D[] = "CW";
+const char V0E[] = "A";
+const char V0F[] = "CB";
+const char V10[] = "CM";
+const char V11[] = "AA";
+const char V12[] = "OCV";
+const char V13[] = "MC";
+const char V14[] = "\n\r";  //Newline + Return
 
-const char * const Vlookup[] = {VSPC,V01,V02,V03,V04,V05,
-                                     V06,V07,V08,V09,V0A,
-                                     V0B,V0C,V0D,V0E,V0F,
-                                     V10,V11,V12,V13,V14,
-                                     V15,V16,V17};
+const char * const Vlookup[] = {VSPC,V01,V02,V03,V04,
+                                     V05,V06,V07,V08,
+                                     V09,V0A,V0B,V0C,V0D,
+                                     V0E,V0F,V10,V11,
+                                     V12,V13,V14};
 
 //Variables that can be sent out the serial port.
 struct dskyvars{
     int     dskyarray[1];           //For sending raw data
     float   dskyarrayFloat[1];      //For sending float data to display
-    float   speed;                  //01: 8char 00.0xxx How fast are we going?
-    float   chrg_percent;           //02: 6char 00.0% Percentage of battery charge
-    float   pack_voltage;           //03: 6char 00.0V Battery pack voltage
-    float   chrg_voltage;           //04: 7char 00.0TV Charge Target Voltage per cell.
-    float   peak_power;             //05: 7char 00.0PW Peak output power
-    float   peak_pwr_vlts;          //06: 8char 00.0PWV Voltage at peak output power
-    float   pack_vltg_average;      //07: 7char 00.0AV Battery average voltage
-    float   Cin_voltage;            //08: 7char 00.0CV Charger input voltage
-    float   Cin_current;            //09: 7char 00.0CA Charger input current
-    float   Cell_Voltage[4];     //0A-0D: 7char 00.0S1 Cell voltage S1-S4
-    float   watts;                  //0E: 7char -0000W watts in or out of battery.
-    float   Cwatts;                 //0F: 8char -0000CW watts in from charger.
-    float   battery_current;        //10: 7char -00.0A Battery charge/discharge current
-    float   battery_temp;           //11: 8char -00.0CB Battery Temperature
-    float   my_temp;                //12: 8char -00.0CM Controller board Temperature
-    float   peak_pwr_crnt;          //13: 9char -00.0PWA Current at peak output power
-    float   battery_crnt_average;   //14: 8char -00.0AA Battery charge/discharge average current
-    float   open_voltage;           //15: 9char -00.0OCV Battery Open Circuit Voltage
-    float   max_current;            //16: 8char -00.0MC Max allowable battery current.
+    float   chrg_percent;           //01: 6char 00.0% Percentage of battery charge
+    float   pack_voltage;           //02: 6char 00.0V Battery pack voltage
+    float   chrg_voltage;           //03: 7char 00.0TV Charge Target Voltage per cell.
+    float   peak_power;             //04: 7char 00.0PW Peak output power
+    float   pack_vltg_average;      //05: 7char 00.0AV Battery average voltage
+    float   Cin_voltage;            //06: 7char 00.0CV Charger input voltage
+    float   Cin_current;            //07: 7char 00.0CA Charger input current
+    float   Cell_Voltage[4];     //08-0B: 7char 00.0S1 Cell voltage S1-S4
+    float   watts;                  //0C: 7char -0000W watts in or out of battery.
+    float   Cwatts;                 //0D: 8char -0000CW watts in from charger.
+    float   battery_current;        //0E: 7char -00.0A Battery charge/discharge current
+    float   battery_temp;           //0F: 8char -00.0CB Battery Temperature
+    float   my_temp;                //10: 8char -00.0CM Controller board Temperature
+    float   battery_crnt_average;   //11: 8char -00.0AA Battery charge/discharge average current
+    float   open_voltage;           //12: 9char -00.0OCV Battery Open Circuit Voltage
+    float   max_current;            //13: 8char -00.0MC Max allowable battery current.
 }dsky;
-#define varLimit 0x0018
-#define signStart 0x000E
-#define wattsNum 0x000E
-#define nlNum 0x0017
+#define varLimit 0x0015
+#define signStart 0x000B
+#define wattsNum 0x000B
+#define nlNum 0x0014
 
 // Calculated battery values. These don't need to be saved on shutdown.
 float   chrge_rate = 0;             //calculated charge rate based off temperature
@@ -190,6 +180,7 @@ float bt_crnt_avg_temp = 0;
 float bt_vltg_avg_temp = 0;
 float Max_Charger_Current = 0;
 float Charger_Target_Voltage = 0;
+float analog_smpl_time = 0;
 char soft_OVC_Timer = 0;
 char precharge_timer = 0;
 char charge_mode = 0;
@@ -219,8 +210,7 @@ unsigned int     heat_power = 0;   //heater power
 
 /* Boolean Variables */
 //Conditions.
-#define COND COND
-volatile unsigned int COND;
+unsigned int COND = 0;
 typedef struct tagCONDBITS {
   unsigned error_blink:1;
   unsigned wheelSpin:1; //Is the wheel spinning?
@@ -241,8 +231,7 @@ typedef struct tagCONDBITS {
 } CONDBITS;
 volatile CONDBITS CONDbits;
 
-#define STING STING
-volatile unsigned int STING;
+unsigned int STING = 0;
 typedef struct tagSTINGBITS {
   unsigned lw_pwr:1;
   unsigned deep_sleep:1;
@@ -260,11 +249,10 @@ typedef struct tagSTINGBITS {
 volatile STINGBITS STINGbits;
 
 
-
-#define unresettableFlags unresettableFlags
-volatile unsigned int unresettableFlags;
+unsigned int unresettableFlags = 0;
 typedef struct tagunresettableFlagsBITS {
   unsigned OverVLT_Fault:1;
+  unsigned HighVLT:1;
   unsigned LowVLT:1;
   unsigned BattOverheated:1;
   unsigned SysOverheated:1;

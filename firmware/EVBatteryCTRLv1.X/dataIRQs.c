@@ -33,16 +33,6 @@ SOFTWARE. */
 /* IRQs go here. */
 /*****************/
 
-
-/* Wheel Rotate Timer 3 IRQ */
-void __attribute__((interrupt, no_auto_psv)) _T3Interrupt (void){
-    //CPUact = on;
-    dsky.speed = clear;
-    CONDbits.wheelSpin = no;
-    //End IRQ
-    IFS0bits.T3IF = clear;
-}
-
 /* Non time-critical systems. Timer 4 IRQ. 1 Second.*/
 //For low priority CPU intensive processes and checks.
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){

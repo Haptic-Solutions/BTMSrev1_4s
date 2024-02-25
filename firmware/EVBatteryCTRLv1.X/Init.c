@@ -35,10 +35,10 @@ void default_sets(void){
     /*****************************/
     //Battery Ratings and setpoints
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
-    sets.max_battery_voltage = 4.25;      //Max battery voltage before shutdown.
+    sets.max_battery_voltage = 4.28;      //Max battery voltage before shutdown.
     sets.battery_rated_voltage = 4.2;           //Target max charge voltage
-    sets.dischrg_voltage = 2.6;        //Minimum battery voltage
-    sets.low_voltage_shutdown = 2.5;    //Battery Low Total Shutdown Voltage
+    sets.dischrg_voltage = 2.8;        //Minimum battery voltage
+    sets.low_voltage_shutdown = 2.2;    //Battery Low Total Shutdown Voltage
     sets.dischrg_C_rating = 2;           //Discharge C rating
     sets.limp_current = 1;              //Limp mode current in amps. Minimum current to regulate to.
     sets.chrg_C_rating = 0.5;          //Charge C rating.
@@ -60,12 +60,8 @@ void default_sets(void){
     //Shutdown temps.
     sets.battery_shutdown_temp = 60;      //Max battery temp before shutting down everything.
     sets.ctrlr_shutdown_temp = 80;        //Max motor or motor controller temp shutdown.
-    //Fan ctrl temps.
-    sets.ctrlr_fan_start = 50;          //Turns on cooling fan.
-    sets.batt_fan_start = 30;
     //Some other stuff.
     sets.max_heat = 10;              //Heater watts that you want to use.
-    sets.travel_dist = 0.012;         //Travel Distance in KM per tire rotation or between TAC ticks.
     sets.circuit_draw = 0.014;        //Amount of current that Yeti himself draws at idle. Used for current calibration and idle mode logging.
     sets.PowerOffAfter = 120;    //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours.
     //page[2][5][6];              //Display page holder. (PORT)(Page#)(Variable to Display: A '0' at the start = Skip Page)
@@ -97,8 +93,6 @@ void default_sets(void){
 void configure_IO(void){
     STINGbits.zero_current = 0;
     dsky.peak_power = 0;
-    dsky.peak_pwr_vlts = 0;
-    dsky.peak_pwr_crnt = 0;
     /*****************************/
     //Battery Sensor Input
     dsky.battery_temp = 0;           //Battery Temperature
@@ -194,11 +188,11 @@ void configure_IO(void){
 /*For speed calculation. */
 /*****************************/
 /* For exactly 1 second timing operations. */
-    PR3 = 0xE0EA;   //57,578
+//    PR3 = 0xE0EA;   //57,578
     //PR3 = 0x7271;     //29,297
-    TMR3 = 0x0000;
-    T3CON = 0x0000;
-    T3CONbits.TCKPS = 3;        //1:256 prescale
+//    TMR3 = 0x0000;
+//    T3CON = 0x0000;
+//    T3CONbits.TCKPS = 3;        //1:256 prescale
 
 /*****************************/
 /* Configure Timer 4 */
@@ -243,7 +237,7 @@ void configure_IO(void){
     IPC6bits.U2TXIP = 3;    //TX 2 IRQ, Text can wait
     IPC2bits.U1RXIP = 2;    //RX 1 IRQ, Text can wait
     IPC6bits.U2RXIP = 2;    //RX 2 IRQ, Text can wait
-    IPC1bits.T3IP = 2;      //Timer 3 IRQ for wheel rotate timeout. Not critical.
+//    IPC1bits.T3IP = 2;      //Timer 3 IRQ for wheel rotate timeout. Not critical.
     IPC0bits.INT0IP = 1;    //Charger detect IRQ, only for waking up the system.
     IPC5bits.T4IP = 1;      //1 Sec Checksum timer IRQ, CPU intensive and other's need more priority.
     IPC5bits.INT2IP = 1;    //Not yet used.
@@ -260,8 +254,6 @@ void Init(void){
     STINGbits.init_done = 1;
     //We aren't in low power mode
     STINGbits.lw_pwr = 0;
-    //Calculate max charge current.
-    max_chrg_current = sets.chrg_C_rating * sets.amp_hour_rating;
     //Configure the inputs, outputs, and device.
     configure_IO();
 
@@ -285,7 +277,7 @@ void Init(void){
     IEC0bits.U1RXIE = 1; //Enable interrupts for UART1 Rx.
     IEC0bits.U1TXIE = 1; //Enable interrupts for UART1 Tx.
     IEC1bits.U2RXIE = 1; //Enable interrupts for UART2 Rx.
-    IEC1bits.U2TXIE = 1; //Enable interrupts for UART2 Tx.
+    IEC1bits.U2TXIE = 1; //Enable interrupts for UART2 Tx.           //We use this space to store a unique ID to indicate if the EEPROM has been written to at least once.
     IEC0bits.INT0IE = 1;    //Charge Detect IRQ
     CONDbits.EnableChIRQ = 1;    //By default, enable charge detect IRQ on init.
     IEC1bits.INT1IE = 1;    //Wheel rotate IRQ

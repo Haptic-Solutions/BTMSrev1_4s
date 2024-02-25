@@ -100,8 +100,8 @@ int main(void){
              * It's what I had on hand when I first started developing this.
              * Oh well, we have ways of getting around it so it works for now.
              */
-            Idle();
-            //Sleep();
+            //Idle();
+            Sleep();
             STINGbits.deep_sleep = 0;
         }
         else{
