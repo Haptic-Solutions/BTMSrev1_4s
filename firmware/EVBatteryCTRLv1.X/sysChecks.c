@@ -26,10 +26,81 @@ SOFTWARE. */
 #include "eeprom.h"
 
 void chargeDetect(void){
-    if(dsky.Cin_voltage>5)STINGbits.chargerPresent=1;
-    else if(dsky.Cin_voltage<4)STINGbits.chargerPresent=0;
+    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage > calibrating){
+        //Check for various charging standards.
+        if(charge_mode == Ready){
+            if(dsky.Cin_voltage<5.2){
+                if(V_Bus_Stat){
+                    //Mom! Can we get USB 3.1 charging?
+                    //No sweetie, we have USB 3.1 charging at home.
+                    //*USB 3.1 charging at home*
+                    Max_Charger_Current=2.5; //USB_3.1 up to 25v. Probably a cheap wimpy charger if it can only do 5v, don't overload it.
+                    Charger_Target_Voltage = 4.8; //Don't pull so much current that the charger voltage goes below this.
+                    charge_mode = USB3_Wimp;
+                }
+                else{ 
+                    Max_Charger_Current=1.4; //USB_2.0 and down. Likely USB_2.0 charger.
+                    Charger_Target_Voltage = 4.8; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
+                    charge_mode = USB2;
+                }
+            }
+            else if(dsky.Cin_voltage<19){
+                if(V_Bus_Stat){
+                    Max_Charger_Current=3; //USB_3.1 up to 25v.
+                    Charger_Target_Voltage = dsky.Cin_voltage-0.5; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
+                    charge_mode = USB3;
+                }
+                else {
+                    Max_Charger_Current=AuxFuse; //Assume solar or some other input. Target voltage will be determined by MPPT.
+                    charge_mode = Solar;
+                }
+            }
+            else if(dsky.Cin_voltage<21){
+                if(V_Bus_Stat){
+                    Max_Charger_Current=5; //USB_3.1 up to 25v.
+                    Charger_Target_Voltage = 19.5; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
+                    charge_mode = USB3_Fast;
+                }
+                else {
+                    Max_Charger_Current=AuxFuse; //Assume solar or some other input. Target voltage will be determined by MPPT.
+                    charge_mode = Solar;
+                }
+            }
+            else if(dsky.Cin_voltage<26){
+                if(V_Bus_Stat){
+                    Max_Charger_Current=0; //USB_3.1 error? Voltage should not be this high from any supported USB chargers.
+                    charge_mode = Stop;
+                    fault_log(0x1B);
+                    general_shutdown();
+                }
+                else {
+                    Max_Charger_Current=AuxFuse; //Assume solar or some other input. Target voltage will be determined by MPPT.
+                    charge_mode = Solar;
+                }
+            }
+            else {
+                //Overvoltage condition.
+                charge_mode = Stop;
+                fault_log(0x38);
+                general_shutdown();
+            }
+            STINGbits.charge_GO=1;
+        }
+        if(CHwaitTimer < 2)CHwaitTimer++;
+        else charge_mode = Ready;
+    }
+    if(dsky.Cin_voltage<3 && charge_mode != Wait){
+        charge_mode = Wait;
+        CHwaitTimer=0;
+    }
+    
+    //Check to see if we got set to USB2 mode during sunrise while plugged into solar.
+    //if(charge_mode == USB2 && dsky.Cin_voltage>5.2){
+    //    charge_mode = Solar;
+    //}
+
     //Check to see if charger has been plugged in, if this routine has been run already, and that initial calibration is done.
-    if(!CONDbits.charger_detected && STINGbits.chargerPresent && first_cal == fCalReady){
+    if(!CONDbits.charger_detected && STINGbits.charge_GO && first_cal == fCalReady){
         //reset peak power when we plug in a charger.
         dsky.peak_power = 0;
         //Check for partial charge status to see if we need to do a full charge to ballance the cells.
@@ -138,7 +209,7 @@ void first_check(void){
 //Main Power Check.
 void main_power_check(void){
     /* Check for charger, key, or software power up. */
-    if((STINGbits.chargerPresent || __PwrKey || CONDbits.soft_power || CONDbits.cmd_power)){
+    if((STINGbits.charge_GO || __PwrKey || CONDbits.soft_power || CONDbits.cmd_power)){
         CONDbits.pwr_detect = 1;         //Used for blinking error light when in a fault shutdown.
         //Reset Overcurrent shutdown timers.
         if(shutdown_timer){
@@ -146,7 +217,7 @@ void main_power_check(void){
             STINGbits.osc_fail_event = 0;
             shutdown_timer = 0;
         }
-        soft_OVC_Countdown = SOC_Cycles;
+        soft_OVC_Timer = SOC_Cycles;
         //Check for fault shutdown. Turn off non-critical systems if it is a 1.
         if(!STINGbits.fault_shutdown){
             CONDbits.main_power = 1;     //Main power is ON.
@@ -365,7 +436,7 @@ void explody_preventy_check(void){
         general_shutdown();
     }
     //Battery under voltage check.
-    if(dsky.pack_voltage < sets.low_voltage_shutdown && !STINGbits.chargerPresent){
+    if(dsky.pack_voltage < sets.low_voltage_shutdown && !STINGbits.charge_GO){
         fault_log(0x04);    //Log a low battery shutdown event.
         low_battery_shutdown();
     }
@@ -418,10 +489,10 @@ void general_shutdown(void){
 
 //Turns off all outputs.
 void io_off(void){
-    CH_Boost = off;          //set charge boost control off.
-    CHctrl = off;            //set charge control off.
-    Heat_CTRL = off;         //set heater control off.
-    LithCell_V_en = off;      //Cell voltage read off.
+    CH_Boost = off;           //set charge boost control off.
+    CHctrl = off;             //set charge control off.
+    Heat_CTRL = off;          //set heater control off.
+    PreCharge = off;          //Turn off pre-charge circuit.
     PowerOutEnable = off;     //Output off.
     heat_power = off;         //set heater routine control off.
 }

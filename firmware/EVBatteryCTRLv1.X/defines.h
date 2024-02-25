@@ -51,15 +51,15 @@ SOFTWARE. */
 #define KeepAlive LATFbits.LATF0 //Enables power to self and system.
 #define Mult_SEL LATEbits.LATE2 //LED and Cell ballance multiplexed select.
 #define Mult_B1 LATEbits.LATE0
-#define LithCell_V_en LATFbits.LATF6 //Cell voltage divider select.
 #define Mult_B3 LATDbits.LATD2
 #define Mult_B2 LATDbits.LATD1
 #define Mult_B4 LATDbits.LATD3
+#define PreCharge LATFbits.LATF6 //Power Output pre-charge
 #define PowerOutEnable LATCbits.LATC15 //Power output enable.
 
-#define CH_Boost PDC3 //Charge boost PWM.
-#define Heat_CTRL PDC1 //Heater PWM.
-#define CHctrl PDC2 //Charge buck PWM.
+#define Heat_CTRL PDC1  //Heater PWM.
+#define CHctrl PDC2     //Charge buck PWM.
+#define CH_Boost PDC3   //Charge boost PWM.
 
 //IO
 #define ANALOG_DIR 0x01FF
@@ -105,7 +105,9 @@ SOFTWARE. */
 #define NULL 0
 #define input 1
 #define output 0
-#define SOC_Cycles 500
+#define SOC_Cycles 4
+#define AuxFuse 5   //Aux charge port fuse rating placeholder.
+#define PreChargeTime 2 //Output pre-charge timer placeholder.
 
 //Heater calibration states.
 #define notrun 0
@@ -114,6 +116,16 @@ SOFTWARE. */
 #define ready 3
 #define error 4
 #define disabled 5
+
+//Charger modes.
+#define Stop 0
+#define Wait 1
+#define Ready 2
+#define USB2 3
+#define USB3_Wimp 4
+#define USB3 5
+#define USB3_Fast 6
+#define Solar 7
 
 //##############################################################################
 #endif

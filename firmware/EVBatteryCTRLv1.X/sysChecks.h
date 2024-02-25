@@ -46,6 +46,7 @@ extern void chargeDetect(void);
 int heat_set;               //Calculated heater output for wattage chosen by user.
 int oc_shutdown_timer = 0;
 int shutdown_timer = 0;
+char CHwaitTimer = 0;
 
 #endif	/* SUBS_H */
 

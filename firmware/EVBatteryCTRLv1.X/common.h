@@ -180,19 +180,22 @@ float Bcurrent_compensate;     //Battery Current compensation.
 float Ccurrent_compensate;      //Charger Current compensation.
 float dischr_current = 0;
 float wheelTime = 0;       //Time it takes for a single rotation of the wheel.
-float CavgVolt = 0;     //averaged voltage input
-float BavgVolt[4];     //averaged voltage input
+float CavgVolt = 0;     //averaged voltage from charger
+float BavgVolt[4];     //averaged voltage from battery
 float BavgCurnt = 0;    //averaged current input for battery
 float CavgCurnt = 0;    //averaged current input from charger
 float avgBTemp = 0;    //averaged battery temperature
 float avgSTemp = 0;    //averaged self temperature
 float bt_crnt_avg_temp = 0;
 float bt_vltg_avg_temp = 0;
+float Max_Charger_Current = 0;
+float Charger_Target_Voltage = 0;
+char soft_OVC_Timer = 0;
+char precharge_timer = 0;
+char charge_mode = 0;
 char avg_cnt = 0;
 char analog_avg_cnt = 0;
 char heat_rly_timer = 3;     //3 is resting, setting to 2 starts the countdown, 0 = relay is ready
-char contact_rly_timer = 3;
-char chrg_rly_timer = 3;
 char Bcurnt_cal_stage = 0;
 char Ccurnt_cal_stage = 0;
 /* 0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error.
@@ -209,8 +212,8 @@ char v_test = 0;
 char first_cal = 0;
 /*****************************/
 //Control Output
-unsigned int     output_power = 0; //output power
 unsigned int     charge_power = 0; //charge rate
+unsigned int     ch_boost_power = 0; //charge rate
 unsigned int     heat_power = 0;   //heater power
 /*****************************/
 
@@ -251,7 +254,7 @@ typedef struct tagSTINGBITS {
   unsigned p_charge:1;
   unsigned sw_off:1;
   unsigned errLight:1;
-  unsigned chargerPresent:1;
+  unsigned charge_GO:1;
 } STINGBITS;
 volatile STINGBITS STINGbits;
 

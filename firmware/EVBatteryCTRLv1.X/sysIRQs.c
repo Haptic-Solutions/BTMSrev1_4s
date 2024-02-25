@@ -225,12 +225,19 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
 //Used for some critical math timing operations. Cycles through every 1/8 sec.
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     //CPUact = on;
+    //Check pre-charge timer.
+    if(CONDbits.cmd_power && precharge_timer<PreChargeTime)precharge_timer++;
+    //Soft over-current monitoring.
+    if(absFloat(dsky.battery_current) > dsky.max_current){
+        if(soft_OVC_Timer > SOC_Cycles){
+            CONDbits.cmd_power = off;
+            fault_log(0x2F);
+            STINGbits.fault_shutdown = yes;
+        }
+        else soft_OVC_Timer++;
+    }
     dsky.watts = dsky.battery_crnt_average * dsky.pack_vltg_average;
     //Relay On Timers. Wait a little bit after turning on the relays before trying to regulate.
-    if(chrg_rly_timer > 0 && chrg_rly_timer != 3)
-        chrg_rly_timer--;
-    if(contact_rly_timer > 0 && contact_rly_timer != 3)
-        contact_rly_timer--;
     if(heat_rly_timer > 0 && heat_rly_timer != 3)//
         heat_rly_timer--;
 
@@ -243,7 +250,7 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
         bt_vltg_avg_temp = 0;
         bt_crnt_avg_temp = 0;
         avg_cnt = 0;
-        if(STINGbits.chargerPresent)current_cal();
+        if(STINGbits.charge_GO)current_cal();
     }
     else{
         bt_crnt_avg_temp += dsky.battery_current;

@@ -124,10 +124,9 @@ void sysReady(void){
                 if(STINGbits.fault_shutdown)io_off();
                 else {
                     //Set the PWM output to what the variables are during normal operation.
-                    PWMCON1bits.PEN3L = 1;  //Set PWM3 Low side to PWM output.
                     Heat_CTRL = heat_power;               //set heater control
                     CHctrl = charge_power;             //set charge control
-                    CH_Boost = output_power;             //set output control
+                    CH_Boost = ch_boost_power;         //set charge boost control
                 }
             }
             else if (!CONDbits.main_power)io_off();
