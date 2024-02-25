@@ -32,11 +32,25 @@ SOFTWARE. */
 #include "regulate.h"
 
 
-/* Charge Detect IRQ. */
+/* Batter OV fault IRQ. */
 void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
     //CPUact = 1;
-    //Don't do anything here. Charger plug IRQ is only to wake the micro from deep sleep if needed.
+    io_off();
+    STINGbits.fault_shutdown = 1;
+    fault_log(0x3A);
+    URFLAGbits.OverVLT_Fault = set;
+    save_vars();
     IFS0bits.INT0IF = 0;
+}
+
+/* Current sensor Fault IRQ. */
+void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
+    //CPUact = on;
+    io_off();
+    STINGbits.fault_shutdown = 1;
+    fault_log(0x39);
+    save_vars();
+    IFS1bits.INT1IF = clear;
 }
 
 /* Analog Input IRQ */
@@ -121,26 +135,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     chargeDetect();
     //Calculate limit currents based on temperature.
     temperatureCalc();
-    /* Power off TIMER stuff. Do this to save power.
-     * This is so that this system doesn't drain your 1000wh battery over the
-     * course of a couple weeks while being unplugged from a charger.
-     * The dsPIC30F3011 is a power hog even in Idle and Sleep modes.
-     * For future people, KEEP USING IRQs FOR STUFF!!! Don't make the CPU wait
-     * for anything! The dsPIC30F3011 is an impatient hog and will consume all
-     * your electrons and burn your lunch and house down from the heat that it generates! */
-    if(CONDbits.main_power){
-        PowerOffTimer = sets.PowerOffAfter;      //reset the timer when main_power is on.
-        PowerOffTimerSec = 59;                   //60 seconds.
-    }
-    else{
-        //When main_power is off count down in minutes.
-        if(PowerOffTimerSec <= 0){
-            PowerOffTimerSec = 59;
-            if(PowerOffTimer <= 0) STINGbits.deep_sleep = 1; //set deep_sleep to 1. Power off the system to save power after all IRQ's are finished.
-            else PowerOffTimer--;
-        }
-        else PowerOffTimerSec--;
-    }
+
     /***************************************************************************/
     //Over current shutdown timer stuff.
     if(oc_shutdown_timer > 0 && dischr_current < sets.over_current_shutdown) oc_shutdown_timer--;

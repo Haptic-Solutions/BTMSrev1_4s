@@ -255,8 +255,21 @@ typedef struct tagSTINGBITS {
   unsigned sw_off:1;
   unsigned errLight:1;
   unsigned charge_GO:1;
+  unsigned OverCRNT_Fault:1;
 } STINGBITS;
 volatile STINGBITS STINGbits;
+
+
+
+#define unresettableFlags unresettableFlags
+volatile unsigned int unresettableFlags;
+typedef struct tagunresettableFlagsBITS {
+  unsigned OverVLT_Fault:1;
+  unsigned LowVLT:1;
+  unsigned BattOverheated:1;
+  unsigned SysOverheated:1;
+} unresettableFlagsBITS;
+volatile unresettableFlagsBITS URFLAGbits;
 
 #endif	/* SUBS_H */
 

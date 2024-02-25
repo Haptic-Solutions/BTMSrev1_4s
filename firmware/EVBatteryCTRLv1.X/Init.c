@@ -202,7 +202,7 @@ void configure_IO(void){
 
 /*****************************/
 /* Configure Timer 4 */
-/* Non-Critical Timing. */
+/* Non-Critical 1S Timing. */
 /*****************************/
 /* For low priority 1 second timing operations. */
     PR4 = 0xE0EA;   //57,578
@@ -329,16 +329,17 @@ void sys_debug(void){
     IEC0bits.U1TXIE = 1; //Enable interrupts for UART1 Tx.
     IEC1bits.U2RXIE = 1; //Enable interrupts for UART2 Rx.
     IEC1bits.U2TXIE = 1; //Enable interrupts for UART2 Tx.
+    IEC1bits.T4IE = 1;	// Enable interrupts for timer 4
     DISICNT = 0;
 /*****************************/
-/* Disable our devices. */
+/* Disable our devices except T4. */
 /*****************************/
     ADCON1bits.ADON = 0;    // Disable ADC
     PTCONbits.PTEN = 0;     // Disable PWM
     T2CONbits.TON = 0;      // Disable Timer 2
     T1CONbits.TON = 0;      // Disable Timer 1
     T3CONbits.TON = 0;      // Disable Timer 3
-    T4CONbits.TON = 0;      // Disable Timer 4
+    T4CONbits.TON = 1;      // Enable Timer 4
     T5CONbits.TON = 0;      // Disable Timer 5
     U1MODEbits.UARTEN = 1;  //enable UART1
     U1STAbits.UTXEN = 1;    //enable UART1 TX

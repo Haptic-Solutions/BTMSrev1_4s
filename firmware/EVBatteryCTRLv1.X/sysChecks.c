@@ -26,7 +26,7 @@ SOFTWARE. */
 #include "eeprom.h"
 
 void chargeDetect(void){
-    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage > calibrating){
+    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage > calibrating && !D_Flag_Check()){
         //Check for various charging standards.
         if(charge_mode == Ready){
             if(dsky.Cin_voltage<5.2){
@@ -495,6 +495,16 @@ void io_off(void){
     PreCharge = off;          //Turn off pre-charge circuit.
     PowerOutEnable = off;     //Output off.
     heat_power = off;         //set heater routine control off.
+}
+
+//Check un-resettable flags.
+char D_Flag_Check(){
+  if(URFLAGbits.OverVLT_Fault) return yes;
+  if(STINGbits.OverCRNT_Fault) return yes;
+  if(URFLAGbits.LowVLT) return yes;
+  if(URFLAGbits.BattOverheated) return yes;
+  if(URFLAGbits.SysOverheated) return yes;
+  return no;
 }
 
 #endif

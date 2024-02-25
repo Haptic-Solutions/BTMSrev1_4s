@@ -77,14 +77,16 @@ const char code35[] = "VL S3";
 const char code36[] = "VH S4";
 const char code37[] = "VL S4";
 const char code38[] = "Chrg OV";
+const char code39[] = "OC Fault";
+const char code3A[] = "OV Fault, Battery disconnected.";
 const char codeDefault[] = "Unknown";
 
 const char * const errArray[] = {code01,code02,code03,code04,code05,code06,code07,code08,code09,code0A,code0B,code0C
                          ,code0D,code0E,code0F,code10,code11,code12,code13,code14,code15,code16,code17,code18
                          ,code19,code1A,code1B,code1C,code1D,code1E,code1F,code20,code21,code22,code23,code24
                          ,code25,code26,code27,code28,code29,code2A,code2B,code2C,code2D,code2E,code2F,code30
-                         ,code31,code32,code33,code34,code35,code36,code37,code38,codeDefault};
-#define numOfCodes 0x38
+                         ,code31,code32,code33,code34,code35,code36,code37,code38,code39,code3A,codeDefault};
+#define numOfCodes 0x3A
 
 #endif	/* ERRORCODES_H */
 

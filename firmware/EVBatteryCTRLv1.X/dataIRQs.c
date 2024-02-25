@@ -33,12 +33,7 @@ SOFTWARE. */
 /* IRQs go here. */
 /*****************/
 
-/* Current sensor Fault IRQ. */
-void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
-    //CPUact = on;
-    
-    IFS1bits.INT1IF = clear;
-}
+
 /* Wheel Rotate Timer 3 IRQ */
 void __attribute__((interrupt, no_auto_psv)) _T3Interrupt (void){
     //CPUact = on;
@@ -48,21 +43,48 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt (void){
     IFS0bits.T3IF = clear;
 }
 
-/* Non time-critical systems. Timer 4 IRQ */
+/* Non time-critical systems. Timer 4 IRQ. 1 Second.*/
 //For low priority CPU intensive processes and checks.
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
     //CPUact = on;
+    /* Power off TIMER stuff. Do this to save power.
+     * This is so that this system doesn't drain your 1000wh battery over the
+     * course of a couple weeks while being unplugged from a charger.
+     * The dsPIC30F3011 is a power hog even in Idle and Sleep modes.
+     * For future people, KEEP USING IRQs FOR STUFF!!! Don't make the CPU wait
+     * for anything! The dsPIC30F3011 is an impatient hog and will consume all
+     * your electrons and burn your lunch and house down from the heat that it generates! */
+    if(CONDbits.main_power){
+        if(STINGbits.OverCRNT_Fault){
+            //If there has been a hardware over-current event then we need to power off sooner to reset the OC latches.
+            PowerOffTimer=0;
+            PowerOffTimerSec = 19;
+        }
+        else {
+            PowerOffTimer = sets.PowerOffAfter;      //reset the timer when main_power is on.
+            PowerOffTimerSec = 59;                   //60 seconds.
+        }
+    }
+    else{
+        //When main_power is off count down in minutes.
+        if(PowerOffTimerSec <= 0){
+            PowerOffTimerSec = 59;
+            if(PowerOffTimer <= 0) STINGbits.deep_sleep = 1; //set deep_sleep to 1. Power off the system to save power after all IRQ's are finished.
+            else PowerOffTimer--;
+        }
+        else PowerOffTimerSec--;
+    }
     //Check settings ram in background. (lowest priority IRQ))
     if(check_ramSets()){
         //If failed, shutdown and attempt to recover.
         get_settings();
         //Make no more than 5 attempts to recover before going into debug mode.
-        if(ram_err_count >= 5) death_loop();
+        if(ram_err_count >= 5) death_loop(); //Settings memory is corrupted and cannot be trusted.
         else ram_err_count++;
     }
     //Runtime program memory check. Checks every half hour.
     if(check_timer == 0x0708){
-        check_prog();
+        if(check_prog()) death_loop();   //Program memory is corrupted and cannot be trusted.
         check_timer = clear;
     }
     else check_timer++;

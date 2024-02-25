@@ -38,6 +38,7 @@ extern void analog_sanity(void);
 extern void death_loop(void);
 extern void initialCal(void);
 extern void chargeDetect(void);
+extern char D_Flag_Check();
 
 /*****************************/
 /* Init vars and stuff. */
