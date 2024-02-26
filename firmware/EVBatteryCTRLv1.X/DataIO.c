@@ -113,13 +113,19 @@ void load_string(const char *string_point, int serial_port){
     writingbuff[serial_port] = no;
 }
 
+//Send text to buffer and auto dispatch the serial port.
+void send_string(const char *string_point, int serial_port){
+    load_string(string_point, serial_port);
+    dispatch_Serial(serial_port);
+}
+
 //Copy float data to buffer.
 void cpyFLT(int serial_port){
     Buffer[serial_port][Buff_index[serial_port]] = float_out[serial_port][FtempIndex[serial_port]];
     //Do not overrun the buffer.
     if (Buff_index[serial_port] < bfsize-1)Buff_index[serial_port]++;
 }
-/* Sends a float to buffer. */
+/* Sends a float to buffer as plane text. */
 void load_float(float f_data, int serial_port){
     FtempIndex[serial_port] = 0;
     tx_float[serial_port] = 0;
@@ -187,10 +193,10 @@ void load_float(float f_data, int serial_port){
     writingbuff[serial_port] = 0;
 }
 
-unsigned int BaudCalc(double BD, double mlt){
+unsigned int BaudCalc(float BD, float mlt){
     /* Calculate baud rate. */
-    double INS = mlt * 1000000;
-    double OutPut = ((INS/BD)/16)-1;
+    float INS = mlt * 1000000;
+    float OutPut = ((INS/BD)/16)-1;
     unsigned int Oputs = OutPut;
     return Oputs;             //Weird things happen when you try to calculate
                               //a float directly into an int. Don't do this.

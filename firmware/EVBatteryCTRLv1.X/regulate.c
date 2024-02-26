@@ -26,7 +26,7 @@ SOFTWARE. */
 #include "Init.h"
 
 char Cell_HV_Check(){
-    for(int i=0;i<4;i++){
+    for(int i=0;i<Cell_Count;i++){
         if(dsky.Cell_Voltage[i]>=dsky.chrg_voltage) return 1;
     }
     return 0;

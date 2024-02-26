@@ -62,29 +62,10 @@ void default_sets(void){
     sets.ctrlr_shutdown_temp = 80;        //Max motor or motor controller temp shutdown.
     //Some other stuff.
     sets.max_heat = 10;              //Heater watts that you want to use.
-    sets.circuit_draw = 0.014;        //Amount of current that Yeti himself draws at idle. Used for current calibration and idle mode logging.
     sets.PowerOffAfter = 120;    //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours.
     //page[2][5][6];              //Display page holder. (PORT)(Page#)(Variable to Display: A '0' at the start = Skip Page)
-    //Port 2 display defaults
-    sets.custom_data1[0] = 0x12; //Auto Return Off.
-    sets.custom_data1[1] = 0x0E; //Cursor Off.
-    sets.custom_data1[2] = 0x16; //Cursor Home.
-    sets.custom_data1[3] = NULL; //NULL terminator.
-    sets.page[PORT2][0][0] = 0xFC;  //Display Init
-    sets.page[PORT2][0][1] = 3;  //V 6char
-    sets.page[PORT2][0][2] = 8;  //W 7char
-    sets.page[PORT2][0][3] = 10;  //BT 7char
-    sets.page[PORT2][0][4] = 16; //NEWLINE + RETURN.
-    sets.page[PORT2][0][5] = 2;  //% 6char
-    sets.page[PORT2][1][0] = 15;  //Open Circuit Voltage //Speed 6char
-    sets.page[PORT2][1][1] = 4;  //Charge Target Voltage 7char
-    sets.page[PORT2][1][2] = NULL;  //NULL terminator
-    sets.pageDelay[PORT2][0] = 0;
-    sets.pageDelay[PORT2][1] = 4;   //0.5 seconds.
-    sets.pageDelay[PORT2][2] = 0;
-    sets.pageDelay[PORT2][3] = 0;
     sets.PxVenable[PORT1] = off;         //Port 1 display out is disabled by default.
-    sets.PxVenable[PORT2] = on;         //Port 2 display out is enabled by default.
+    sets.PxVenable[PORT2] = off;         //Port 2 display out is disabled by default.
     sets.testBYTE = 0x3335;
     vars.testBYTE = 0x46;
     ram_chksum_update();        //Generate new checksum.
@@ -217,9 +198,7 @@ void configure_IO(void){
 /*****************************/
 /* Configure and Enable analog inputs */
 /*****************************/
-    ADCON3upper8 = 0x0F;
-    ADCON3lower8 = 0x0F;
-    analog_smpl_time = 1 / (((IPS * 1000000) / (ADCON3upper8 + ADCON3lower8)) / 45);
+    analog_smpl_time = 1 / (((IPS * 1000000) / 0x1E) / 45);
     ADCON1 = 0x02E4;
     ADCON2 = 0x0410;
     ADCON3 = 0x0F0F;
@@ -279,7 +258,6 @@ void Init(void){
     IEC1bits.U2RXIE = 1; //Enable interrupts for UART2 Rx.
     IEC1bits.U2TXIE = 1; //Enable interrupts for UART2 Tx.           //We use this space to store a unique ID to indicate if the EEPROM has been written to at least once.
     IEC0bits.INT0IE = 1;    //Charge Detect IRQ
-    CONDbits.EnableChIRQ = 1;    //By default, enable charge detect IRQ on init.
     IEC1bits.INT1IE = 1;    //Wheel rotate IRQ
     IEC1bits.INT2IE = 0;  //Disable irq for INT2, not used.
     IEC0bits.T2IE = 1;	// Enable interrupts for timer 2

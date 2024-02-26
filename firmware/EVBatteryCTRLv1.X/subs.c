@@ -75,11 +75,11 @@ void calcAnalog(void){
         dsky.Cell_Voltage[3] = (S1_V + sets.S4_vlt_adjst);
         
         //Calculate pack voltage. Why not just use S4 input? Because
-        //S4 input includes all errors of the resistor dividers combined.
+        //S4 may not be used in smaller packs.
         //Recalculating based on calibrated and calculated values should
         //reduce that error amount.
         float PackVolts=0;
-        for(int i=0;i<4;i++){
+        for(int i=0;i<Cell_Count;i++){
             PackVolts+=dsky.Cell_Voltage[i];
         }
         dsky.pack_voltage=PackVolts;

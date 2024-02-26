@@ -98,6 +98,9 @@ SOFTWARE. */
 //General
 #define yes 1
 #define no 0
+#define none 0
+#define Debug 3
+#define Ballance 2
 #define on 1
 #define off 0
 #define set 1
@@ -106,8 +109,9 @@ SOFTWARE. */
 #define input 1
 #define output 0
 #define SOC_Cycles 8
-#define AuxFuse 5   //Aux charge port fuse rating placeholder.
+#define AuxFuse 5       //Aux charge port fuse rating placeholder.
 #define PreChargeTime 2 //Output pre-charge timer placeholder.
+#define Cell_Count 4    //Number of cells placeholder.
 
 //Heater calibration states.
 #define notrun 0
@@ -126,6 +130,7 @@ SOFTWARE. */
 #define USB3 5
 #define USB3_Fast 6
 #define Solar 7
+
 
 //##############################################################################
 #endif

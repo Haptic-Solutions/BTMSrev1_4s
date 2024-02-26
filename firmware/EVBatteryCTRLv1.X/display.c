@@ -94,19 +94,16 @@ void portBusyIdle(int serial_port){
 }
 
 /* Read fault codes to serial port.
- * This takes up over 5% of program space.*/
+ * This takes up about 2% of program space.*/
 void fault_read(int serial_port){
-    load_string("Reading Faults.\n\r", serial_port);
-    dispatch_Serial(serial_port);
+    send_string("Reading Faults.\n\r", serial_port);
     flt_index[serial_port] = 0;
     portBusyIdle(serial_port);  //Check to see if port is ready.
     if(vars.fault_count > 10){
-        load_string("Fault Log Full.\n\r", serial_port);
-        dispatch_Serial(serial_port);
+        send_string("Fault Log Full.\n\r", serial_port);
     }
     if(vars.fault_count == 0){
-        load_string("No fault codes.\n\r", serial_port);
-        dispatch_Serial(serial_port);
+        send_string("No fault codes.\n\r", serial_port);
     }
     else{
         while(flt_index[serial_port] < vars.fault_count){
@@ -117,8 +114,7 @@ void fault_read(int serial_port){
             int ecode = vars.fault_codes[flt_index[serial_port]];
             if(!ecode || ecode < numOfCodes)load_string(errArray[ecode-1], serial_port);
             else load_string(codeDefault, serial_port);
-            load_string("\n\r", serial_port);
-            dispatch_Serial(serial_port);
+            send_string("\n\r", serial_port);
             flt_index[serial_port]++;
         }
     }
@@ -277,4 +273,70 @@ void Command_Interp(int serial_port){
     dispatch_Serial(serial_port);
 }
 
+void BAL_Out(char LEDS){
+    Mult_SEL = 0;
+    Mult_B1 = LEDS & 0x01;
+    Mult_B2 = LEDS & 0x02;
+    Mult_B3 = LEDS & 0x04;
+    Mult_B4 = LEDS & 0x08;
+}
+
+void LED_Out(char LEDS){
+    Mult_SEL = 1;
+    Mult_B1 = (LEDS^0x0F) & 0x01;
+    Mult_B2 = (LEDS^0x0F) & 0x02;
+    Mult_B3 = (LEDS^0x0F) & 0x04;
+    Mult_B4 = (LEDS^0x0F) & 0x08;
+}
+
+void LED_ChrgLVL(float LEVEL){
+    if(LEVEL > 95)LED_Out(0x0F);
+    else if(LEVEL > 75)LED_Out(0x07);
+    else if(LEVEL > 50)LED_Out(0x03);
+    else if(LEVEL >= 25)LED_Out(0x01);
+    else if(LEVEL < 25 && !STINGbits.charge_GO){
+        if(Blinkbits.T1_2sec)LED_Out(0x01);      //Low battery indication.
+        else LED_Out(0x00);
+    }
+    else LED_Out(0x00);
+}
+
+
+void LED_Mult(char attributes){
+    if(attributes >= on){
+        //Run multiplexed routine.
+        if((mult_timer >= 3 && attributes == on) || attributes == Debug){
+            //Display LEDs
+            mult_timer = 0;
+            //Debug mode LEDs
+            if(attributes == Debug){
+                LED_Out(0x06);
+            }
+            //Error blink LEDs
+            else if(STINGbits.errLight){
+                if(Blinkbits.T1sec)LED_Out(0x02);
+                else LED_Out(0x00);
+            }
+            //Charging level indication.
+            else if(STINGbits.charge_GO){
+                if(Blinkbits.T1_8sec && (charge_mode == USB3_Fast || CONDbits.fastCharge))LED_ChrgLVL(dsky.chrg_percent+25); //Fast charging indication.
+                else if(Blinkbits.T1_4sec && charge_mode != USB3_Fast && !CONDbits.fastCharge)LED_ChrgLVL(dsky.chrg_percent+25);  //Normal charging indication.
+                else LED_ChrgLVL(dsky.chrg_percent);
+            }
+            //Power level indication.
+            else LED_ChrgLVL(dsky.chrg_percent);
+        }
+        else{
+            //Balance LEDs
+            if(mult_timer<3)mult_timer++;
+            BAL_Out(Ballance_LEDS);
+        }
+    }
+    else {
+        //Turn all multiplexed outputs off.
+        BAL_Out(0x00);
+    }
+}
+
 #endif
+//CONDbits.pwr_detect

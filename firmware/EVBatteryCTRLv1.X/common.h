@@ -33,6 +33,8 @@ extern void calcAnalog(void);
 /*****************************/
 /* Init vars and stuff. */
 /* Temperatures are in C */
+/* int's are 16 bit */
+typedef int int16_t;    //Make sure our int's are actually only 16 bit rather than assuming.
 /*********;********************/
 #pragma pack(1)
 struct Settings{
@@ -46,7 +48,7 @@ struct Settings{
     float   S4_vlt_adjst;               //Cell 4 voltage input compensation in volts.
     /*****************************/
     //Battery Ratings and setpoints
-    float   partial_charge;             //Percentage of voltage to charge the battery up to. Set to 0 to disable.
+    int   partial_charge;             //Percentage of voltage to charge the battery up to. Set to 0 to disable.
     float   max_battery_voltage;        //Max battery voltage before shutdown.
     float   battery_rated_voltage;      //Target max charge voltage
     float   dischrg_voltage;            //Minimum battery voltage
@@ -58,23 +60,22 @@ struct Settings{
     float   over_current_shutdown;      //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
     float   absolute_max_current;       //Max regulating current.
     //Charge temps.
-    float   chrg_min_temp;              //Battery minimum charge temperature. Stop Charging at this temp.
-    float   chrg_reduce_low_temp;       //Reduce charge current when lower than this temp.
-    float   chrg_max_temp;              //Battery max charge temp. Stop charging at this temp.
-    float   chrg_reduce_high_temp;      //Reduce charge current when higher than this temp.
-    float   chrg_target_temp;           //Battery heater charge target temp. Keeps us nice and warm in the winter time.
+    int   chrg_min_temp;              //Battery minimum charge temperature. Stop Charging at this temp.
+    int   chrg_reduce_low_temp;       //Reduce charge current when lower than this temp.
+    int   chrg_max_temp;              //Battery max charge temp. Stop charging at this temp.
+    int   chrg_reduce_high_temp;      //Reduce charge current when higher than this temp.
+    int   chrg_target_temp;           //Battery heater charge target temp. Keeps us nice and warm in the winter time.
     //Discharge temps.
-    float   dischrg_min_temp;           //Battery minimum discharge temperature.
-    float   dischrg_reduce_low_temp;    //Reduced current discharge low temperature.
-    float   dischrg_max_temp;           //Battery max discharge temperature.
-    float   dischrg_reduce_high_temp;   //Battery reduced discharge high temperature.
-    float   dischrg_target_temp;        //Battery heater discharge target temp. Keeps us nice and warm in the winter time.
+    int   dischrg_min_temp;           //Battery minimum discharge temperature.
+    int   dischrg_reduce_low_temp;    //Reduced current discharge low temperature.
+    int   dischrg_max_temp;           //Battery max discharge temperature.
+    int   dischrg_reduce_high_temp;   //Battery reduced discharge high temperature.
+    int   dischrg_target_temp;        //Battery heater discharge target temp. Keeps us nice and warm in the winter time.
     //Shutdown temps.
-    float   battery_shutdown_temp;      //Max battery temp before shutting down everything.
-    float   ctrlr_shutdown_temp;        //Max motor or motor controller temp shutdown.
+    int   battery_shutdown_temp;      //Max battery temp before shutting down everything.
+    int   ctrlr_shutdown_temp;        //Max motor or motor controller temp shutdown.
     //Some other stuff.
-    float   max_heat;           //Heater watts that you want to use.
-    float   circuit_draw;       //Amount of current that Yeti himself draws. Used for current calibration.
+    int   max_heat;           //Heater watts that you want to use.
     unsigned int     PowerOffAfter;      //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours.
     unsigned int     flash_chksum_old;   //System Flash Checksum as stored in NV-mem
     char    PxVenable[2];
@@ -161,15 +162,13 @@ struct dskyvars{
 // Calculated battery values. These don't need to be saved on shutdown.
 float   chrge_rate = 0;             //calculated charge rate based off temperature
 float   vltg_dvid = 0;              //Value for calculating the ratio of the input voltage divider.
-int     ADCON3upper8 = 0;
-int     ADCON3lower8 = 0;
+
 /*****************************/
 /* General Vars */
 float voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
 float Bcurrent_compensate;     //Battery Current compensation.
 float Ccurrent_compensate;      //Charger Current compensation.
 float dischr_current = 0;
-float wheelTime = 0;       //Time it takes for a single rotation of the wheel.
 float CavgVolt = 0;     //averaged voltage from charger
 float BavgVolt[4];     //averaged voltage from battery
 float BavgCurnt = 0;    //averaged current input for battery
@@ -192,8 +191,6 @@ char Ccurnt_cal_stage = 0;
 /* 0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error.
  */
 char power_session = 1;
-char start_timer = 0;
-char diag_count = 0;
 char PowerOffTimer = 0;
 char PowerOffTimerSec = 59;      //default state.
 char cfg_space = 0;
@@ -201,6 +198,7 @@ char vr_space = 0;
 char dsky_space = 0;
 char v_test = 0;
 char first_cal = 0;
+
 /*****************************/
 //Control Output
 unsigned int     charge_power = 0; //charge rate
@@ -212,22 +210,16 @@ unsigned int     heat_power = 0;   //heater power
 //Conditions.
 unsigned int COND = 0;
 typedef struct tagCONDBITS {
-  unsigned error_blink:1;
-  unsigned wheelSpin:1; //Is the wheel spinning?
   unsigned soft_power:1;
   unsigned main_power:1;
   unsigned pwr_detect:1;
   unsigned cmd_power:1;
-  unsigned charger_detected:1; //Used for confirming the charger is plugged in.
+  unsigned charger_detected:1; //Used for when the charger is plugged in.
   unsigned diagmode:1;
-  unsigned diag_state:1;
-  unsigned EnableChIRQ:1; // = 1  //By default, enable charge detect IRQ on init.
   unsigned got_open_voltage:1;
   unsigned failSave:1;
   unsigned chkInProgress:1;
-  unsigned gotBatteryAmps:1;
-  unsigned P1display:1;
-  unsigned P2display:1;
+  unsigned fastCharge:1;
 } CONDBITS;
 volatile CONDBITS CONDbits;
 
@@ -258,6 +250,20 @@ typedef struct tagunresettableFlagsBITS {
   unsigned SysOverheated:1;
 } unresettableFlagsBITS;
 volatile unresettableFlagsBITS URFLAGbits;
+
+//LED stuff used for gas gauge and cell ballance control.
+unsigned char BlinknLights = 0;
+typedef struct tagBlinknLightsBITS {
+  unsigned T1_8sec:1;
+  unsigned T1_4sec:1;
+  unsigned T1_2sec:1;
+  unsigned T1sec:1;
+} BlinknLightsBITS;
+volatile BlinknLightsBITS Blinkbits;
+
+char mult_timer = 0;
+char Ballance_LEDS = 0;
+
 
 #endif	/* SUBS_H */
 

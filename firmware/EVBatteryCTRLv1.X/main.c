@@ -52,7 +52,6 @@ SOFTWARE. */
 /***********************************************************
 ***********************************************************/
 int main(void){
-    CONDbits.EnableChIRQ = 1;
     /* General 3 IO. */
     GENERAL3_TRIS = GENERAL3_DIR;
     GENERAL3_LAT = 0;

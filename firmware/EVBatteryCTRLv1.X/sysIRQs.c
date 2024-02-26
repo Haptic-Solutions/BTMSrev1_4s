@@ -105,6 +105,8 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
             STINGbits.adc_sample_burn = no;     //Burn the first ADC sample on every power up of ADC.
         }
         else STINGbits.adc_sample_burn = yes;      //We have burned the first set.
+        //Run the LED routine
+        LED_Mult(on);
     }
     //End IRQ
     IFS0bits.ADIF = 0;
@@ -114,6 +116,28 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     //CPUact = on;
     ADCON1bits.ADON = on;    // turn ADC on to get a sample.
+    //Check for how fast we are charging.
+    if(dsky.battery_crnt_average > (sets.chrg_C_rating*sets.amp_hour_rating)*0.75)CONDbits.fastCharge = 1;
+    else CONDbits.fastCharge = 1;
+    //Check if a cell has reached it's ballance voltage.
+    int bal_L = 0;
+    for(int i=0;i<Cell_Count;i++){
+        if(dsky.Cell_Voltage[i]>=sets.battery_rated_voltage){
+            switch(i){
+                case 0 : bal_L = bal_L | 0x01;
+                break;
+                case 1 : bal_L = bal_L | 0x02;
+                break;
+                case 2 : bal_L = bal_L | 0x04;
+                break;
+                case 3 : bal_L = bal_L | 0x08;
+                break;
+                default:
+                break;
+            }
+        }
+    }
+    Ballance_LEDS = bal_L;
     //Check for receive buffer overflow.
     if(U1STAbits.OERR){
         fault_log(0x2D);
@@ -151,18 +175,6 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
         STINGbits.fault_shutdown = no;
     }
 
-    //Blink Check Light if any faults are logged and any power modes are on regardless of what fault_shutdown says.
-    if(CONDbits.pwr_detect){
-        if(CONDbits.error_blink){
-            CONDbits.error_blink = off;
-            //errLight = off;
-        }
-        else{
-            CONDbits.error_blink = on;    //Used for blinking stuff on displays.
-            if(vars.fault_count) STINGbits.errLight = on;
-        }
-    }
-    else STINGbits.errLight = off;
 
     //Get the absolute value of battery_usage and store it in absolute_battery_usage.
     vars.absolute_battery_usage = absFloat(vars.battery_usage);
@@ -198,9 +210,6 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     && dsky.pack_vltg_average <= (sets.battery_rated_voltage * sets.partial_charge))
         vars.battery_remaining = (vars.battery_capacity * sets.partial_charge);
     //**************************************************
-    //Circuit draw compensation.
-    //Heart beat draws power even when the system is off. This logs that current draw.
-    if(!CONDbits.main_power) vars.battery_remaining -= (sets.circuit_draw * 0.0002777);
     //Calculate battery %
     dsky.chrg_percent = ((vars.battery_remaining / vars.battery_capacity) * 100);
     /****************************************/
@@ -214,6 +223,8 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
 //Used for some critical math timing operations. Cycles through every 1/8 sec.
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     //CPUact = on;
+    //Blink some LEDs
+    BlinknLights++; //Just count up all the time once every 1/8 second.
     //Check pre-charge timer.
     if(CONDbits.cmd_power && precharge_timer<PreChargeTime)precharge_timer++;
     //Soft over-current monitoring.

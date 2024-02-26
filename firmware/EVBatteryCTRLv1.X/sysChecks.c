@@ -177,7 +177,6 @@ void initialCal(void){
         }
         //Get a first startup value for amp hours and battery remaining.
         else{
-            CONDbits.gotBatteryAmps = 1;
             vars.battery_capacity = sets.amp_hour_rating; //Just use the amp hour rating on first start.
             vars.battery_remaining = sets.amp_hour_rating * (voltage_percentage[lowestCell] / 100);   //Rough estimation of how much power is left.
         }
@@ -190,7 +189,7 @@ void initialCal(void){
 void death_loop(void){
     ALL_shutdown();     //Turn everything off.
     sys_debug();    //Disable everything that is not needed. Only Serial Ports and Timer 1 Active.
-    STINGbits.errLight = 1;  //Turn Error light solid on to show fatal error.
+    LED_Mult(Debug);  //Turn debug lights solid on to show fatal error.
     for(;;){
         //CPUact = 0;      //Turn CPU ACT light off.
         Idle();
@@ -210,7 +209,6 @@ void first_check(void){
 void main_power_check(void){
     /* Check for charger, key, or software power up. */
     if((STINGbits.charge_GO || __PwrKey || CONDbits.soft_power || CONDbits.cmd_power)){
-        CONDbits.pwr_detect = 1;         //Used for blinking error light when in a fault shutdown.
         //Reset Overcurrent shutdown timers.
         if(shutdown_timer){
             STINGbits.fault_shutdown = 0;
@@ -237,7 +235,7 @@ void main_power_check(void){
     }
     else{
         io_off();
-        CONDbits.pwr_detect = 0;     //Used for blinking error light when in a fault shutdown.
+        LED_Mult(Ballance);     //Run LED system as ballance only.
         CONDbits.main_power = 0;     //Main power is OFF.
         //Deinit if we haven't already.
         if (!STINGbits.lw_pwr){
@@ -362,6 +360,8 @@ void reset_check(void){
 
 //Used to log fault codes. Simple eh? Just call it with the code you want to log.
 void fault_log(int f_code){
+    //Turn on fault light.
+    STINGbits.errLight = 1;
     if (vars.fault_count < 10){
         vars.fault_codes[vars.fault_count] = f_code;
         vars.fault_count++;

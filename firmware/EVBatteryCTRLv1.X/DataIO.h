@@ -25,11 +25,12 @@ SOFTWARE. */
 #define PORT2 1
 #define simple 1
 #define full 0
-#define bfsize 60
+#define bfsize 50
 
-extern unsigned int BaudCalc(double, double);
+extern unsigned int BaudCalc(float, float);
 extern void load_float(float, int);
 extern void load_string(const char*, int);
+extern void send_string(const char*, int);
 extern void copy_string(char*, int);
 extern void dispatch_Serial(int);
 extern char four_bit_hex_cnvt(int);
