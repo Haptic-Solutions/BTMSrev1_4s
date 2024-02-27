@@ -59,6 +59,7 @@ struct Settings{
     float   amp_hour_rating;            //Battery amp hour rating.
     float   over_current_shutdown;      //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
     float   absolute_max_current;       //Max regulating current.
+    unsigned int cycles_to_80;          //Number of charge cycles to 80% capacity.
     //Charge temps.
     int   chrg_min_temp;              //Battery minimum charge temperature. Stop Charging at this temp.
     int   chrg_reduce_low_temp;       //Reduce charge current when lower than this temp.
@@ -96,6 +97,8 @@ struct Variables{
     float   voltage_percentage_old[4];     //Voltage percentage from the last time we where on.
     float   battery_usage;              //Calculated Ah usage in/out of battery
     float   battery_remaining;          //Calculated remaining capacity in battery.
+    float   chargeCycleLevel;           //% of a charge cycle completed. Rolls over to 0 once it reaches capacity of battery (for 100%) and increments 'TotalChargeCycles' by 1.
+    unsigned int     TotalChargeCycles;  //Total number of charge cycles this battery has been through.
     // Fault Codes.
     unsigned int     fault_codes[10];
     unsigned int     fault_count;

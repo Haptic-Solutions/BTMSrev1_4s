@@ -154,12 +154,19 @@ float absFloat(float number){
     else return number;
 }
 
-//Battery Percentage Calculation. This does NOT calculate the % total charge of battery, only the total voltage percentage.
+float simpleCube(float NumInput){
+    return NumInput*NumInput*NumInput;
+}
+
+//Battery SOC Percentage Calculation. y=2(X-0.5)^3+0.5(X-0.5)+0.5 <- Equation used as an approximate SOC
 void volt_percent(void){
     if (absFloat(dsky.battery_current) < 0.08 && !CONDbits.charger_detected && STINGbits.adc_sample_burn){
         dsky.open_voltage = dsky.pack_voltage;
-        for(int i=0;i<4;i++)voltage_percentage[i] = 100 * ((dsky.Cell_Voltage[i] - sets.dischrg_voltage) / (sets.battery_rated_voltage - sets.dischrg_voltage));
-
+        float batteryVoltDiff = sets.battery_rated_voltage - sets.dischrg_voltage;
+        for(int i=0;i<4;i++){
+            float BX = ((dsky.Cell_Voltage[i] - sets.dischrg_voltage) / batteryVoltDiff);
+            voltage_percentage[i] = 100 * ((2*simpleCube(BX-0.5))+(0.5*(BX-0.5))+0.5); //Battery SOC curve approximation.
+        }
         CONDbits.got_open_voltage = yes;
     }
     else if(dsky.pack_voltage <= (sets.dischrg_voltage + 0.01)){

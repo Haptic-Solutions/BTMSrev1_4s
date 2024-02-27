@@ -35,16 +35,17 @@ void default_sets(void){
     /*****************************/
     //Battery Ratings and setpoints
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
-    sets.max_battery_voltage = 4.28;      //Max battery voltage before shutdown.
-    sets.battery_rated_voltage = 4.2;           //Target max charge voltage
-    sets.dischrg_voltage = 2.8;        //Minimum battery voltage
-    sets.low_voltage_shutdown = 2.2;    //Battery Low Total Shutdown Voltage
+    sets.max_battery_voltage = 4.28;      //Max battery voltage before lockout.
+    sets.battery_rated_voltage = 4.2;     //Target max charge voltage
+    sets.dischrg_voltage = 3.2;         //Minimum battery voltage
+    sets.low_voltage_shutdown = 2.4;    //Battery Low lockout voltage
     sets.dischrg_C_rating = 2;           //Discharge C rating
     sets.limp_current = 1;              //Limp mode current in amps. Minimum current to regulate to.
     sets.chrg_C_rating = 0.5;          //Charge C rating.
     sets.amp_hour_rating = 2.6;         //Battery amp hour rating.
     sets.over_current_shutdown = 8;        //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
     sets.absolute_max_current = 8.5;      //Max regulating current.
+    sets.cycles_to_80 = 2000;           //Number of charge cycles to 80% capacity.
     //Charge temps.
     sets.chrg_min_temp = 10;          //Battery minimum charge temperature. Stop Charging at this temp.
     sets.chrg_reduce_low_temp = 15;      //Reduce charge current when lower than this temp.

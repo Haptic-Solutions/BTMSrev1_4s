@@ -161,11 +161,6 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     temperatureCalc();
 
     /***************************************************************************/
-    // Check for charger disconnect.
-    if(!BV_Fault){
-        //chrgLight = off;  //charger light off.
-        charge_power = 0;
-    }
 
     //Clear fault_shutdown if all power modes are turned off.
     if(CONDbits.Run_Level < Cal_Mode){
@@ -173,26 +168,31 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
         STINGbits.fault_shutdown = no;
     }
 
-
     //Get the absolute value of battery_usage and store it in absolute_battery_usage.
     vars.absolute_battery_usage = absFloat(vars.battery_usage);
     //Calculate the max capacity of the battery once the battery has been fully charged and fully discharged.
-    if(voltage_percentage > 99 && power_session != 4){
+    float LOW_VP = 100;
+    //Always use lowest cell.
+    for(int i=0;i<Cell_Count;i++){
+        if(voltage_percentage[i]<LOW_VP)LOW_VP=voltage_percentage[i];
+    }
+    //Estimate how much capacity the battery can hold.
+    if(LOW_VP > 99 && power_session != FullStart){
         //battery_capacity = absolute_battery_usage;
         vars.battery_remaining = vars.battery_capacity;
-        power_session = 4;
+        power_session = FullStart;
         vars.battery_usage = 0;  //reset battery usage session.
     }
-    //At about 82% voltage the battery is at about 50% actual capacity for lithium ion.
-    else if(voltage_percentage < 83 && voltage_percentage > 81 && (power_session == 4 || power_session == 0)){
+    //Check 50% charge.
+    else if(LOW_VP < 51 && LOW_VP > 49 && (power_session == FullStart || power_session == EmptyStart)){
         vars.battery_capacity = vars.absolute_battery_usage;  //Calculate the max capacity of the battery after a half discharge.
         vars.battery_capacity *= 2;
-        power_session = 2;
+        power_session = HalfStart;
     }
-    else if(voltage_percentage < 1 && power_session != 0){
+    else if(LOW_VP < 1 && power_session != EmptyStart){
         vars.battery_capacity = vars.absolute_battery_usage;  //Calculate the max capacity of the battery after a full discharge.
         vars.battery_remaining = 0;  // Set ah remaining to 0 when less than 2% voltage.
-        power_session = 0;
+        power_session = EmptyStart;
         vars.battery_usage = 0;  //reset battery usage session.
     }
     //Don't let battery_remaining go below 0;
@@ -211,6 +211,17 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     //Calculate battery %
     dsky.chrg_percent = ((vars.battery_remaining / vars.battery_capacity) * 100);
     /****************************************/
+    //Calculate number of charge cycles the battery is going through
+    if(dsky.battery_crnt_average>0.015){
+        vars.chargeCycleLevel+=dsky.battery_crnt_average/3600;
+        if(vars.chargeCycleLevel>=vars.battery_capacity){
+            vars.chargeCycleLevel = 0;
+            if(vars.TotalChargeCycles<65535)vars.TotalChargeCycles++;
+            //And decrease battery capacity after every full charge cycle.
+            float capDec = sets.cycles_to_80 * 5;
+            vars.battery_capacity *= 1-(1/capDec);
+        }
+    }
     //Initial startup sequence and calibration.
     initialCal();
     /* End the IRQ. */

@@ -121,6 +121,11 @@ SOFTWARE. */
 #define On_W_Err 4
 #define All_Sys_Go 5
 
+//Charge Session Levels
+#define EmptyStart 0
+#define HalfStart 2
+#define FullStart 4
+
 //Heater calibration states.
 #define notrun 0
 #define initialize 1
