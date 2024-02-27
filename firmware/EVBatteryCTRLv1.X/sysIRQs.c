@@ -35,7 +35,7 @@ SOFTWARE. */
 /* Batter OV fault IRQ. */
 void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
     //CPUact = 1;
-    io_off();
+    Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
     fault_log(0x3A);
     URFLAGbits.OverVLT_Fault = set;
@@ -46,7 +46,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
 /* Current sensor Fault IRQ. */
 void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
     //CPUact = on;
-    io_off();
+    Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
     fault_log(0x39);
     save_vars();
@@ -98,9 +98,9 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         //Shutdown and log the reason why if they aren't safe.
         if(STINGbits.adc_sample_burn && !STINGbits.fault_shutdown) explody_preventy_check();
         //Check to see if the system is ready to run.
-        sysReady(); //If there is a fault, keep it from running.
+        IsSysReady(); //If there is a fault, keep it from running.
         //ADC sample burn check. Only burn once when main power is on.
-        if (!CONDbits.main_power && STINGbits.adc_sample_burn){
+        if (CONDbits.Run_Level < Cal_Mode && STINGbits.adc_sample_burn == yes){
             ADCON1bits.ADON = off;                // turn ADC off to save power.
             STINGbits.adc_sample_burn = no;     //Burn the first ADC sample on every power up of ADC.
         }
@@ -161,8 +161,6 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     temperatureCalc();
 
     /***************************************************************************/
-    //Over current shutdown timer stuff.
-    if(oc_shutdown_timer > 0 && dischr_current < sets.over_current_shutdown) oc_shutdown_timer--;
     // Check for charger disconnect.
     if(!BV_Fault){
         //chrgLight = off;  //charger light off.
@@ -170,7 +168,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     }
 
     //Clear fault_shutdown if all power modes are turned off.
-    if(!CONDbits.pwr_detect){
+    if(CONDbits.Run_Level < Cal_Mode){
         shutdown_timer = 1;     //Acts like a resettable circuit breaker.
         STINGbits.fault_shutdown = no;
     }
@@ -226,11 +224,11 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     //Blink some LEDs
     BlinknLights++; //Just count up all the time once every 1/8 second.
     //Check pre-charge timer.
-    if(CONDbits.cmd_power && precharge_timer<PreChargeTime)precharge_timer++;
+    if(CONDbits.Power_Out_EN && precharge_timer<PreChargeTime)precharge_timer++;
     //Soft over-current monitoring.
     if(absFloat(dsky.battery_current) > dsky.max_current){
         if(soft_OVC_Timer > SOC_Cycles){
-            CONDbits.cmd_power = off;
+            CONDbits.Power_Out_EN = off;
             fault_log(0x2F);
             STINGbits.fault_shutdown = yes;
         }
@@ -239,7 +237,7 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     //Low voltage monitoring and auto off.
     for(int i=0;i<4;i++){
         if(dsky.Cell_Voltage[i] < sets.dischrg_voltage){
-            CONDbits.cmd_power = off;
+            CONDbits.Power_Out_EN = off;
             //fault_log(0x04);
             //STINGbits.fault_shutdown = yes;
         }

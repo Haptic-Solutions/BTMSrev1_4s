@@ -113,6 +113,14 @@ SOFTWARE. */
 #define PreChargeTime 2 //Output pre-charge timer placeholder.
 #define Cell_Count 4    //Number of cells placeholder.
 
+//Run Levels
+#define Shutdown 0
+#define Crit_Err 1
+#define Heartbeat 2
+#define Cal_Mode 3
+#define On_W_Err 4
+#define All_Sys_Go 5
+
 //Heater calibration states.
 #define notrun 0
 #define initialize 1

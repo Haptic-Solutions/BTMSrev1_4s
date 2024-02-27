@@ -232,7 +232,7 @@ void Init(void){
     //We've done Init.
     STINGbits.init_done = 1;
     //We aren't in low power mode
-    STINGbits.lw_pwr = 0;
+    STINGbits.lw_pwr_init_done = 0;
     //Configure the inputs, outputs, and device.
     configure_IO();
 
@@ -320,7 +320,7 @@ void sys_debug(void){
 
 //Go in to low power mode when not in use.
 void low_power_mode(void){
-    io_off();
+    Batt_IO_OFF();
     ADCON1bits.ADON = 0;    // turn ADC off
     T2CONbits.TON = 0;      // Stop Timer 2
     T3CONbits.TON = 0;      // Stop Timer 3
@@ -339,14 +339,14 @@ void low_power_mode(void){
     //Need to reinit on restart
     STINGbits.init_done = 0;
     //Tell everyone we are in low power mode.
-    STINGbits.lw_pwr = 1;
+    STINGbits.lw_pwr_init_done = 1;
 }
 
 /* Turn everything off so we don't waste any more power.
  * Only plugging in the charge will restart the CPU, or yaknow, just restart the CPU... */
 void low_battery_shutdown(void){
-    CONDbits.cmd_power = 0;
-    CONDbits.soft_power = 0;
+    CONDbits.Power_Out_EN = 0;
+    CONDbits.Run_Level = Shutdown;
     PTCONbits.PTEN = 0;     // Turn off PWM
     T1CONbits.TON = 0;      // Stop Timer 1
     // Clear all interrupts flags

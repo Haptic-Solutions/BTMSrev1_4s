@@ -88,9 +88,9 @@ int main(void){
     {
         //Deep sleep check.
         if(STINGbits.deep_sleep){
-            io_off();               //Turn off all IO before sleeping.
+            Batt_IO_OFF();               //Turn off all IO before sleeping.
             //CPUact = 0;      //Turn CPU ACT light off.
-            power_off();        //Cuts main power to self.
+            Deep_Sleep();        //Cuts main power to self.
             /* If the keep alive pin isn't used or if the power control hardware
              * is faulty then this does nothing and the micro will
              * sleep on the next instruction. Even in Sleep it still draws

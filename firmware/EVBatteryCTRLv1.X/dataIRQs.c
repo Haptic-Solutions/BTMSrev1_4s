@@ -37,14 +37,14 @@ SOFTWARE. */
 //For low priority CPU intensive processes and checks.
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
     //CPUact = on;
-    /* Power off TIMER stuff. Do this to save power.
+    /* Deep Sleep TIMER stuff. Do this to save power.
      * This is so that this system doesn't drain your 1000wh battery over the
      * course of a couple weeks while being unplugged from a charger.
      * The dsPIC30F3011 is a power hog even in Idle and Sleep modes.
      * For future people, KEEP USING IRQs FOR STUFF!!! Don't make the CPU wait
-     * for anything! The dsPIC30F3011 is an impatient hog and will consume all
+     * for anything! The dsPIC30F3011 is a power drain and will consume all
      * your electrons and burn your lunch and house down from the heat that it generates! */
-    if(CONDbits.main_power){
+    if(CONDbits.Run_Level > Heartbeat){
         if(STINGbits.OverCRNT_Fault){
             //If there has been a hardware over-current event then we need to power off sooner to reset the OC latches.
             PowerOffTimer=0;
@@ -55,6 +55,7 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
             PowerOffTimerSec = 59;                   //60 seconds.
         }
     }
+    //Run_Level is at Heartbeat or below. Start counting down.
     else{
         //When main_power is off count down in minutes.
         if(PowerOffTimerSec <= 0){

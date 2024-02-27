@@ -71,7 +71,7 @@ void pageOut(int pageNum, int serial_port){
 }
 
 void displayOut(int serial_port){
-    if(sets.PxVenable[serial_port] && !portBSY[serial_port] && CONDbits.main_power){
+    if(sets.PxVenable[serial_port] && !portBSY[serial_port] && CONDbits.Run_Level == All_Sys_Go){
         if(PxVtimer[serial_port] == 0){
             pageOut(PxPage[serial_port], serial_port);
             PxVtimer[serial_port] = sets.pageDelay[serial_port][PxPage[serial_port]] - 1;
@@ -220,12 +220,12 @@ void Command_Interp(int serial_port){
             break;
             case 'P':
                 if(Lecho[serial_port])load_string("P On\n\r", serial_port);
-                CONDbits.cmd_power = on;
+                CONDbits.Power_Out_EN = on;
             break;
             case 'p':
                 if(Lecho[serial_port])load_string("P Off\n\r", serial_port);
                 v_test = clear;
-                CONDbits.cmd_power = clear;
+                CONDbits.Power_Out_EN = clear;
             break;
             case 'O':
                 if(Lecho[serial_port])load_string("HUD On\n\r", serial_port);
@@ -301,19 +301,17 @@ void LED_ChrgLVL(float LEVEL){
     else LED_Out(0x00);
 }
 
-
+//Gas gauge and ballance circuit output control.
 void LED_Mult(char attributes){
     if(attributes >= on){
         //Run multiplexed routine.
-        if((mult_timer >= 3 && attributes == on) || attributes == Debug){
+        //Debug mode LEDs
+        if(attributes == Debug)LED_Out(0x06);
+        else if(mult_timer >= 3 && attributes == on){
             //Display LEDs
             mult_timer = 0;
-            //Debug mode LEDs
-            if(attributes == Debug){
-                LED_Out(0x06);
-            }
-            //Error blink LEDs
-            else if(STINGbits.errLight){
+            //Error blink LED
+            if(STINGbits.errLight){
                 if(Blinkbits.T1sec)LED_Out(0x02);
                 else LED_Out(0x00);
             }

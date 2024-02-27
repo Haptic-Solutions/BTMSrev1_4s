@@ -56,7 +56,7 @@ void temperatureCalc(void){
 
 void outputReg(void){
     ////Check for key power or command power signal, but not soft power signal.
-    if((CONDbits.cmd_power)){
+    if((CONDbits.Power_Out_EN)){
         //Run heater if needed, but don't run this sub a second time if we are getting charge power while key is on.
         //If we are getting charge power then we need to use it to warm the battery to a higher temp if needed.
         //So check charge input first.

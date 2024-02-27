@@ -36,7 +36,6 @@ void calcAnalog(void){
         BavgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
         BavgCurnt *= 1.65;      //Convert to +-1.65 'volts'. It's still a 0 - 3.3 volt signal on the analog input. The zero point is at 1.65v
         dsky.battery_current = (BavgCurnt * 12.5) + Bcurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
-        currentCheck();     //Check for over current condition.
         BavgCurnt = 0;       //Clear average.
         
         //Charger current.
@@ -45,9 +44,9 @@ void calcAnalog(void){
         CavgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
         CavgCurnt *= 1.65;      //Convert to +-1.65 'volts'. It's still a 0 - 3.3 volt signal on the analog input. The zero point is at 1.65v
         dsky.Cin_current = (CavgCurnt * 12.5) + Ccurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
-        currentCheck();     //Check for over current condition.
         CavgCurnt = 0;       //Clear average.
 
+        currentCheck();     //Check for over current condition.
         //Battery voltage.
         //avgVolt /= x;      //Sample average.
         //avgVolt /= 65535;  //Convert to unsigned fractional
@@ -109,19 +108,21 @@ void calcAnalog(void){
         dsky.my_temp = avgSTemp / 0.0156;    //Convert to Degrees C
         avgSTemp = 0;       //Clear average.
 }
-void sysReady(void){
+//Gets ran by analog IRQ in sysIRQs.c
+//Runs on every 8th IRQ.
+void IsSysReady(void){
         if(STINGbits.adc_sample_burn && !STINGbits.deep_sleep && !STINGbits.fault_shutdown){
             //do heater calibration
             if(vars.heat_cal_stage != disabled)heater_calibration();
             //Do power regulation and heater control.
-            if((vars.heat_cal_stage > calibrating || !vars.heat_cal_stage) && CONDbits.main_power && first_cal == fCalReady){
+            if((vars.heat_cal_stage > calibrating || !vars.heat_cal_stage) && CONDbits.Run_Level == All_Sys_Go && first_cal == fCalReady){
                 outputReg();    //Output regulation routine
                 chargeReg();    //Charge input regulation routine
                 //Check for fault shutdown.
                 //If there was a fault, shut everything down as fast as possible.
                 //This seems redundant, but it isn't.
                 //Shuts down a detected fault just after the regulation routine.
-                if(STINGbits.fault_shutdown)io_off();
+                if(STINGbits.fault_shutdown)Batt_IO_OFF();
                 else {
                     //Set the PWM output to what the variables are during normal operation.
                     Heat_CTRL = heat_power;               //set heater control
@@ -129,13 +130,14 @@ void sysReady(void){
                     CH_Boost = ch_boost_power;         //set charge boost control
                 }
             }
-            else if (!CONDbits.main_power)io_off();
+            else if (!CONDbits.Run_Level <= Heartbeat)Batt_IO_OFF();
         }
-        else io_off();
+        else Batt_IO_OFF();
 }
 
 //System power off for power saving.
-void power_off(void){
+void Deep_Sleep(void){
+    LED_Mult(off);      //Make sure LEDs get turned off.
     for(int i=0;i<4;i++)vars.voltage_percentage_old[i] = voltage_percentage[i];    //Save a copy of voltage percentage before we shut down.
 
     // Enough time should have passed by now that the open circuit voltage should be stabilized enough to get an accurate reading.
@@ -176,15 +178,15 @@ void current_cal(void){
         Bcurnt_cal_stage = 5;        //Current Cal Complete
         //Do a heater cal after we have done current cal unless it is disabled.
         if(vars.heat_cal_stage != disabled) vars.heat_cal_stage = initialize;
-        CONDbits.soft_power = off;
+        CONDbits.Run_Level = Heartbeat;
         //Done with current cal.
     }
     //Initialize current cal.
     if(Bcurnt_cal_stage == 1){
         Bcurrent_compensate = 0;
-        io_off();    //Turn off all inputs and outputs.
+        Batt_IO_OFF();    //Turn off all inputs and outputs.
         Bcurnt_cal_stage = 4;
-        CONDbits.soft_power = on;         //Turn soft power on to run 0.125s IRQ.
+        CONDbits.Run_Level = Cal_Mode;         //Set runlevel to cal mode on to run 0.125s IRQ.
     }
 }
 

@@ -137,7 +137,7 @@ void chargeDetect(void){
         }
 
         //Reset battery usage session when charger is plugged in and power is turned off.
-        if(!__PwrKey && !CONDbits.cmd_power){
+        if(!__PwrKey && !CONDbits.Power_Out_EN){
             vars.battery_usage = 0;
         }
         CONDbits.charger_detected = 1;  //Set this variable to 1 so that we only run this routine once per charger plugin.
@@ -152,7 +152,7 @@ void initialCal(void){
     //Calibrate the current sense and calculate remaining capacity on first power up based on voltage percentage and rated capacity of battery.
     if(first_cal == 0 && Bcurnt_cal_stage == 0){
         Bcurnt_cal_stage = 1;
-        CONDbits.soft_power = 1;
+        CONDbits.Run_Level = Cal_Mode;
         first_cal = 1;
     }
     else if(Bcurnt_cal_stage == 5 && first_cal < fCalTimer)first_cal++; //delay, wait about 1 second for other services to complete.
@@ -180,8 +180,8 @@ void initialCal(void){
             vars.battery_capacity = sets.amp_hour_rating; //Just use the amp hour rating on first start.
             vars.battery_remaining = sets.amp_hour_rating * (voltage_percentage[lowestCell] / 100);   //Rough estimation of how much power is left.
         }
-        first_cal = fCalReady;      //Signal that we are done with power up.
-        CONDbits.soft_power = 0;
+        first_cal = fCalReady;      //Signal that we are done with power up sequence.
+        CONDbits.Run_Level = Heartbeat;
     }
 }
 
@@ -206,10 +206,11 @@ void first_check(void){
     reset_chk = 0xAA55;         //Warm start.
 }
 //Main Power Check.
+//Gets run once per second from Heartbeat IRQ.
 void main_power_check(void){
-    /* Check for charger, key, or software power up. */
-    if((STINGbits.charge_GO || __PwrKey || CONDbits.soft_power || CONDbits.cmd_power)){
-        //Reset Overcurrent shutdown timers.
+    /* Check for charger, or software power up. */
+    if((STINGbits.charge_GO || CONDbits.Power_Out_EN) && CONDbits.Run_Level != Cal_Mode){
+        //Reset Overcurrent shutdown timer and various fault shutdowns.
         if(shutdown_timer){
             STINGbits.fault_shutdown = 0;
             STINGbits.osc_fail_event = 0;
@@ -217,28 +218,26 @@ void main_power_check(void){
         }
         soft_OVC_Timer = SOC_Cycles;
         //Check for fault shutdown. Turn off non-critical systems if it is a 1.
-        if(!STINGbits.fault_shutdown){
-            CONDbits.main_power = 1;     //Main power is ON.
+        if(STINGbits.fault_shutdown){
+            CONDbits.Run_Level = On_W_Err;
+            //Deinit if we haven't already.
+            if (!STINGbits.lw_pwr_init_done){
+                low_power_mode();   //Go into idle mode with heart beat running.
+            }
+        }
+        else{
+            CONDbits.Run_Level = All_Sys_Go;     //Main power is ON.
             //Reinit if we haven't already.
             if (!STINGbits.init_done){
                 Init();
             }
         }
-        else{
-            io_off();
-            CONDbits.main_power = 0;
-            //Deinit if we haven't already.
-            if (!STINGbits.lw_pwr){
-                low_power_mode();   //Go into idle mode with heart beat running.
-            }
-        }
     }
     else{
-        io_off();
         LED_Mult(Ballance);     //Run LED system as ballance only.
-        CONDbits.main_power = 0;     //Main power is OFF.
+        CONDbits.Run_Level = Heartbeat;     //System is idling in Heartbeat mode.
         //Deinit if we haven't already.
-        if (!STINGbits.lw_pwr){
+        if (!STINGbits.lw_pwr_init_done){
             low_power_mode();   //Go into idle mode with heart beat running.
         }
     }
@@ -362,11 +361,19 @@ void reset_check(void){
 void fault_log(int f_code){
     //Turn on fault light.
     STINGbits.errLight = 1;
-    if (vars.fault_count < 10){
+    //Check for redundant faults.
+    char F_redun = 0;
+    for(int i=0;i<vars.fault_count;i++){
+        if(f_code==vars.fault_codes[i]){
+            F_redun = 1;
+        }
+    }
+    //Only log a fault if it's not redundant and the log isn't full.
+    if (vars.fault_count < 10 && !F_redun){
         vars.fault_codes[vars.fault_count] = f_code;
         vars.fault_count++;
     }
-    else{
+    else if(!F_redun){
         vars.fault_count = 11;       //Fault log full.
     }
     CONDbits.failSave = 1;
@@ -379,12 +386,12 @@ void heatStuffOff(void){
     heat_rly_timer = 3;     //Reset heat relay timer
     heat_set = off;
     if(vars.heat_cal_stage != disabled)vars.heat_cal_stage = error;
-    CONDbits.soft_power = off; //Go back to normal operation.
+    CONDbits.Run_Level = Heartbeat; //Go back to normal operation.
     PowerOutEnable = off;     //Heat Relay Off
 }
 //Check and calibrate heater to the wattage chosen by the user.
 void heater_calibration(void){
-    if (vars.heat_cal_stage == calibrating && CONDbits.main_power){
+    if (vars.heat_cal_stage == calibrating && CONDbits.Run_Level == Cal_Mode){
         float watts = (dsky.pack_voltage * dsky.battery_current) * -1;
         if (watts < sets.max_heat){
         PowerOutEnable = on;     //Heat Relay On
@@ -411,7 +418,7 @@ void heater_calibration(void){
         else{
             vars.heat_cal_stage = ready; // Heater calibration completed.
             Heat_CTRL = off;        //Heater PWM output off.
-            CONDbits.soft_power = off; //Go back to normal operation.
+            CONDbits.Run_Level = Heartbeat; //Go back to normal operation.
             PowerOutEnable = off;     //Heat Relay Off
             heat_rly_timer = 3;     //Reset heat relay timer
         }
@@ -419,8 +426,8 @@ void heater_calibration(void){
     if (vars.heat_cal_stage == initialize){
         Heat_CTRL = off;    //Heater PWM output off.
         Init();         //Re-init.
-        io_off();    //Turn off all inputs and outputs.
-        CONDbits.soft_power = 1; //Force device to run in soft power mode.
+        Batt_IO_OFF();    //Turn off all inputs and outputs.
+        CONDbits.Run_Level = Cal_Mode; //Force device to run in Cal_Mode
         heat_set = off;
         heat_power = off;
         vars.heat_cal_stage = calibrating; //If heat_cal_stage is 2 then a calibration is in progress.
@@ -461,9 +468,11 @@ void explody_preventy_check(void){
     }
 }
 
-
+//Gets ran from analog calc in file 'subs.c'
+//Ran every 8th analog input IRQ
 void currentCheck(void){
-        //Battery over current check.
+    //Battery over current check.
+    float dischr_current = 0;
     if(dsky.battery_current < 0){
         dischr_current = dsky.battery_current * -1;
     }
@@ -478,6 +487,7 @@ void currentCheck(void){
         }
         oc_shutdown_timer++;
     }
+    else if(oc_shutdown_timer > 0) oc_shutdown_timer--;
     //Battery charge over current check.
     if(dsky.battery_current > sets.chrg_C_rating * sets.amp_hour_rating){
         ALL_shutdown();
@@ -488,15 +498,13 @@ void currentCheck(void){
 
 //Turns off all outputs and logs a general shutdown event.
 void ALL_shutdown(void){
-    io_off();               //Shutdown all IO except Serial Comms.
-    STINGbits.fault_shutdown = 1;       //Tells other stuff that we had a general shutdown.
-    CONDbits.cmd_power = 0;
-    CONDbits.soft_power = 0;
+    Batt_IO_OFF();               //Shutdown except Serial Comms.
+    STINGbits.fault_shutdown = 1; //Tells other stuff that we had a fault so they know not to run.
     fault_log(0x0B);            //Log a general Shutdown Event.
 }
 
-//Turns off all outputs.
-void io_off(void){
+//Turns off all battery related inputs and outputs.
+void Batt_IO_OFF(void){
     CH_Boost = off;           //set charge boost control off.
     CHctrl = off;             //set charge control off.
     Heat_CTRL = off;          //set heater control off.

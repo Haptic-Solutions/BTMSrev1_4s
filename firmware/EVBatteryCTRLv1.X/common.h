@@ -24,9 +24,9 @@ SOFTWARE. */
 extern void current_cal(void);
 extern void volt_percent(void);
 extern void reset_check(void);
-extern void power_off(void);
+extern void Deep_Sleep(void);
 extern float absFloat(float);
-extern void sysReady(void);
+extern void IsSysReady(void);
 extern void calcAnalog(void);
 
 /* NOTE: Try to keep memory usage below about 75% for the dsPIC30F3011 as the stack can use as much as 15% */
@@ -168,7 +168,6 @@ float   vltg_dvid = 0;              //Value for calculating the ratio of the inp
 float voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
 float Bcurrent_compensate;     //Battery Current compensation.
 float Ccurrent_compensate;      //Charger Current compensation.
-float dischr_current = 0;
 float CavgVolt = 0;     //averaged voltage from charger
 float BavgVolt[4];     //averaged voltage from battery
 float BavgCurnt = 0;    //averaged current input for battery
@@ -210,10 +209,8 @@ unsigned int     heat_power = 0;   //heater power
 //Conditions.
 unsigned int COND = 0;
 typedef struct tagCONDBITS {
-  unsigned soft_power:1;
-  unsigned main_power:1;
-  unsigned pwr_detect:1;
-  unsigned cmd_power:1;
+  unsigned Run_Level:3;
+  unsigned Power_Out_EN:1;
   unsigned charger_detected:1; //Used for when the charger is plugged in.
   unsigned diagmode:1;
   unsigned got_open_voltage:1;
@@ -225,7 +222,7 @@ volatile CONDBITS CONDbits;
 
 unsigned int STING = 0;
 typedef struct tagSTINGBITS {
-  unsigned lw_pwr:1;
+  unsigned lw_pwr_init_done:1;
   unsigned deep_sleep:1;
   unsigned zero_current:1;
   unsigned adc_sample_burn:1; //Burn it. Don't touch this var it will burn you if you do.

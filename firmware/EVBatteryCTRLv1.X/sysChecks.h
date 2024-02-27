@@ -29,7 +29,7 @@ extern void currentCheck(void);
 extern void heater_calibration(void);
 extern void fault_log(int);
 extern void ALL_shutdown(void);
-extern void io_off(void);
+extern void Batt_IO_OFF(void);
 extern void reset_check(void);
 extern void hud_vars(int);
 extern void main_power_check(void);
