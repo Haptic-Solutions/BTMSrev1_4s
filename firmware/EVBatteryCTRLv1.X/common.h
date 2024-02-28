@@ -30,6 +30,8 @@ extern void IsSysReady(void);
 extern void calcAnalog(void);
 
 /* NOTE: Try to keep memory usage below about 75% for the dsPIC30F3011 as the stack can use as much as 15% */
+//Copy of stack pointer.
+unsigned int SP_COPY = 0;
 /*****************************/
 /* Init vars and stuff. */
 /* Temperatures are in C */

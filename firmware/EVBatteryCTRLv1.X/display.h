@@ -32,7 +32,6 @@ unsigned int bufsize[2];
 char CMD_buff[2][6];              //Command Buffer
 char cmdRDY[2] = {0,0};
 char cmdOVFL[2] = {0,0};
-char Lecho[2] = {1,1};              //Local echo is on by default
 char Terr[2] = {0,0};
 
 unsigned int tempPoint[2];

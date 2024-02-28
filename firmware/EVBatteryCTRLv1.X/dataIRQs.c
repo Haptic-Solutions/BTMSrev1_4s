@@ -66,19 +66,19 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
         else PowerOffTimerSec--;
     }
     //Check settings ram in background. (lowest priority IRQ))
-    if(check_ramSets()){
+    if(check_ramSets() && CONDbits.Run_Level > Crit_Err){
         //If failed, shutdown and attempt to recover.
         get_settings();
         //Make no more than 5 attempts to recover before going into debug mode.
-        if(ram_err_count >= 5) death_loop(); //Settings memory is corrupted and cannot be trusted.
+        if(ram_err_count >= 5) CONDbits.Run_Level=Crit_Err; //Settings memory is corrupted and cannot be trusted.
         else ram_err_count++;
     }
     //Runtime program memory check. Checks every half hour.
-    if(check_timer == 0x0708){
-        if(check_prog()) death_loop();   //Program memory is corrupted and cannot be trusted.
+    if(check_timer == 0x0708 && CONDbits.Run_Level > Crit_Err){
+        if(check_prog()) CONDbits.Run_Level=Crit_Err;  //Program memory is corrupted and cannot be trusted.
         check_timer = clear;
     }
-    else check_timer++;
+    else if(CONDbits.Run_Level > Crit_Err) check_timer++;
     //End IRQ
     IFS1bits.T4IF = clear;
 }
@@ -89,7 +89,7 @@ void __attribute__((interrupt, no_auto_psv)) _T5Interrupt (void){
     //CPUact = on;
     //Do display stuff.
     //displayOut(PORT1);
-    displayOut(PORT2);
+    //displayOut(PORT2);
     //End IRQ
     IFS1bits.T5IF = clear;
 }

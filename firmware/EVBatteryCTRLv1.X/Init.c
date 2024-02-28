@@ -80,7 +80,7 @@ void configure_IO(void){
     dsky.battery_temp = 0;           //Battery Temperature
     dsky.my_temp = 0;                //Controller board Temperature
     dsky.pack_voltage = 0;        //Battery voltage
-    for(int i=0;1<4;i++)voltage_percentage[i] = 0;     //Battery Voltage Percentage.
+    for(int i=0;i<Cell_Count;i++)voltage_percentage[i] = 0;     //Battery Voltage Percentage.
     dsky.battery_current = 0;        //Battery charge/discharge current
 
     /**************************/
@@ -200,12 +200,12 @@ void configure_IO(void){
 /* Configure and Enable analog inputs */
 /*****************************/
     analog_smpl_time = 1 / (((IPS * 1000000) / 0x1E) / 45);
-    ADCON1 = 0x02E4;
-    ADCON2 = 0x0410;
-    ADCON3 = 0x0F0F;
-    ADCHS = 0x0000;
-    ADPCFG = 0xFF70;
-    ADCSSL = 0x008F;
+    //ADCON1 = 0x02E4;
+    //ADCON2 = 0x0410;
+    //ADCON3 = 0x0F0F;
+    //ADCHS = 0x0000;
+    //ADPCFG = 0xFF70;
+    //ADCSSL = 0x008F;
 
     //Configure IRQ Priorities
     IPC2bits.ADIP = 7;      //Analog inputs and regulation routines, Most Important.
@@ -227,7 +227,7 @@ void Init(void){
  * initialization values setup.
 *******************************/
     //Configure stack overflow catch address.
-    SPLIM = ramFree; //This should be updated according to how much ram is being used by all variables.
+    SPLIM = ramFree;
     //Calculate our voltage divider values.
     vltg_dvid = sets.R2_resistance / (sets.R1_resistance + sets.R2_resistance);
     //We've done Init.
@@ -236,7 +236,6 @@ void Init(void){
     STINGbits.lw_pwr_init_done = 0;
     //Configure the inputs, outputs, and device.
     configure_IO();
-
 /*****************************/
 /* Configure IRQs. */
 /*****************************/
@@ -283,6 +282,8 @@ void Init(void){
     U1STAbits.UTXEN = 1;    //enable UART1 TX
     U2MODEbits.UARTEN = 1;  //enable UART2
     U2STAbits.UTXEN = 1;    //enable UART2 TX
+//Set initial runlevel to heartbeat
+    CONDbits.Run_Level = Heartbeat;
 /* End Of Initial Config stuff. */
 }
 void sys_debug(void){
@@ -303,14 +304,14 @@ void sys_debug(void){
     IEC1bits.T4IE = 1;	// Enable interrupts for timer 4
     DISICNT = 0;
 /*****************************/
-/* Disable our devices except T4. */
+/* Disable our devices except T4 and serial ports. */
 /*****************************/
     ADCON1bits.ADON = 0;    // Disable ADC
     PTCONbits.PTEN = 0;     // Disable PWM
     T2CONbits.TON = 0;      // Disable Timer 2
     T1CONbits.TON = 0;      // Disable Timer 1
     T3CONbits.TON = 0;      // Disable Timer 3
-    T4CONbits.TON = 1;      // Enable Timer 4
+    T4CONbits.TON = 0;      // Disable Timer 4
     T5CONbits.TON = 0;      // Disable Timer 5
     U1MODEbits.UARTEN = 1;  //enable UART1
     U1STAbits.UTXEN = 1;    //enable UART1 TX

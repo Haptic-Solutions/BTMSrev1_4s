@@ -21,9 +21,6 @@ SOFTWARE. */
 #ifndef DEFINES_H
 #define	DEFINES_H
 //##############################################################################
-//#include <p30f3011.h>
-//#include <libpic30.h>
-//#include <xc.h>
 // Tm = 32767 * (1 / (((clkSpeedmhz * PLL) / 4) / tiksPerIRQ))
 //#define IPS 29.48;   //million instructions per second.
 #define IPS 14.74   //million instructions per second.
@@ -67,12 +64,12 @@ SOFTWARE. */
 #define ANALOG_LAT LATB
 #define ANALOG_PORT PORTB
 
-#define GENERAL1_DIR 0x7FFF
+#define GENERAL1_DIR 0x1FFF
 #define GENERAL1_TRIS TRISC
 #define GENERAL1_LAT LATC
 #define GENERAL1_PORT PORTC
 
-#define GENERAL2_DIR 0xFFBE
+#define GENERAL2_DIR 0xFF8E
 #define GENERAL2_TRIS TRISF
 #define GENERAL2_LAT LATF
 #define GENERAL2_PORT PORTF
@@ -90,10 +87,10 @@ SOFTWARE. */
 //Memory Defines
 /* This assumes the compiler puts the stack at the end of memory space just after
  * the user variables and the stack pointer counts up */
-#define ramSize 0x03FF
-#define ramAddressStart 0x0800
-#define stackFaultDefault ramSize + ramAddressStart
-#define ramFree (ramSize + ramAddressStart) - 15 //Minus 15 bytes of ram. If the stack intrudes on this then it should throw an error code before a complete system crash.
+#define ramSize 0x03FF //Size of memory.
+#define ramAddressStart 0x0800  //Where the dsPIC30F3011's ram address starts.
+#define stackFaultDefault ramSize + ramAddressStart - 1
+#define ramFree (ramSize + ramAddressStart) - 30 //Minus 30 bytes of ram. If the stack intrudes on this then it should throw an error code before a complete system crash and undefined behavior.
 
 //General
 #define yes 1

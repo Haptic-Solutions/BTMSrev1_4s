@@ -58,30 +58,42 @@ void __attribute__((interrupt, no_auto_psv)) _OscillatorFail (void){
 }
 void __attribute__((interrupt, no_auto_psv)) _AddressError (void){
     //CPUact = 1;
+    SPLIM = stackFaultDefault; //Increase the catch to max size so we can run a few more calls before stopping.
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
-    //send_string(0x03, "Address Error Event.");
     fault_log(0x0E);
-    save_vars();
-    INTCON1bits.ADDRERR = 0;
+    //save_vars();
+    CONDbits.Run_Level = Crit_Err;
+    IFS0 = 0;
+    IFS1 = 0;
+    IFS2 = 0;
+    INTCON1bits.ADDRERR = 0; //Clear this flag before going to death loop so this IRQ's priority can't stop the UART IRQs
 }
 void __attribute__((interrupt, no_auto_psv)) _StackError (void){
     //CPUact = 1;
-    SPLIM = stackFaultDefault;
+    SPLIM = stackFaultDefault; //Increase the catch to max size so we can run a few more calls before stopping.
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
-    //send_string(0x03, "Stack Error Event.");
     fault_log(0x0F);
-    save_vars();
-    INTCON1bits.STKERR = 0;
+    //save_vars();
+    CONDbits.Run_Level = Crit_Err;
+    IFS0 = 0;
+    IFS1 = 0;
+    IFS2 = 0;
+    INTCON1bits.STKERR = 0; //Clear this flag before going to death loop so this IRQ's priority can't stop the UART IRQs
+    CONDbits.Run_Level = Crit_Err;
 }
 void __attribute__((interrupt, no_auto_psv)) _MathError (void){
     //CPUact = 1;
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
-    //send_string(0x03, "Math Error Event.");
     fault_log(0x10);
-    save_vars();
+    //save_vars();
+    CONDbits.Run_Level = Crit_Err;
+    IFS0 = 0;
+    IFS1 = 0;
+    IFS2 = 0;
+    death_loop();
     INTCON1bits.MATHERR = 0;
 }
 void __attribute__((interrupt, no_auto_psv)) _ReservedTrap7 (void){
@@ -89,7 +101,12 @@ void __attribute__((interrupt, no_auto_psv)) _ReservedTrap7 (void){
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
     fault_log(0x11);
-    save_vars();
+    //save_vars();
+    CONDbits.Run_Level = Crit_Err;
+    IFS0 = 0;
+    IFS1 = 0;
+    IFS2 = 0;
+    death_loop();
     //INTCON1bits.DMACERR = 0;
 }
 /****************/

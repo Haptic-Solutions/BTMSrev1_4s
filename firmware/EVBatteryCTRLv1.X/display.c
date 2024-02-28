@@ -96,37 +96,48 @@ void portBusyIdle(int serial_port){
 /* Read fault codes to serial port.
  * This takes up about 2% of program space.*/
 void fault_read(int serial_port){
-    send_string("Reading Faults.\n\r", serial_port);
-    flt_index[serial_port] = 0;
+    load_string("\n\rReading Faults.\n\r", serial_port);
+    dispatch_Serial(serial_port);
     portBusyIdle(serial_port);  //Check to see if port is ready.
     if(vars.fault_count > 10){
-        send_string("Fault Log Full.\n\r", serial_port);
+        load_string("Fault Log Full.\n\r", serial_port);
+        dispatch_Serial(serial_port);
     }
     if(vars.fault_count == 0){
-        send_string("No fault codes.\n\r", serial_port);
+        load_string("No fault codes.\n\r", serial_port);
+        dispatch_Serial(serial_port);
     }
     else{
-        while(flt_index[serial_port] < vars.fault_count){
+        for(flt_index[serial_port]=0;flt_index[serial_port]<vars.fault_count;flt_index[serial_port]++){
             portBusyIdle(serial_port);  //Check to see if port is ready.
             load_string("Code: ", serial_port);
             load_hex(vars.fault_codes[flt_index[serial_port]],serial_port);
             load_string(" -> ", serial_port);
             int ecode = vars.fault_codes[flt_index[serial_port]];
-            if(!ecode || ecode < numOfCodes)load_string(errArray[ecode-1], serial_port);
+            if(!ecode || ecode < sizeof(errArray))load_string(errArray[ecode-1], serial_port);
             else load_string(codeDefault, serial_port);
-            send_string("\n\r", serial_port);
-            flt_index[serial_port]++;
+            load_string("\n\r", serial_port);
+            dispatch_Serial(serial_port);
         }
     }
-}
-void get_mem(int serial_port){
-    int data = 0;
-    int addr = 0x00FF & CMD_buff[serial_port][1];   //Get raw 8 bit address data.
-    if(addr < cfg_space) data = sets.settingsArray[addr];
-    else if(addr < cfg_space + vr_space) data = vars.variablesArray[addr - cfg_space];
-    else if(addr < cfg_space + vr_space + dsky_space) data = dsky.dskyarray[addr - (cfg_space + vr_space)];
-    else data = 0xFFFF;
-    load_hex(data, serial_port);
+    portBusyIdle(serial_port);
+    load_string("\n\r", serial_port);
+    dispatch_Serial(serial_port);
+    portBusyIdle(serial_port);
+    load_string("Flags:: |Batt OV| |Batt HV| |Batt UV| |Batt OT| |Sys OT| \n\r", serial_port);
+    dispatch_Serial(serial_port);
+    portBusyIdle(serial_port);
+    load_string("         ", serial_port);
+    dispatch_Serial(serial_port);
+    portBusyIdle(serial_port);
+    unsigned int flagMask = 0x10;
+    for(int i=0;i<5;i++){
+        if(unresettableFlags&flagMask)load_string("SET       ", serial_port);
+        else load_string("Clear     ", serial_port);
+        flagMask>>1; //Shift the bit right by one.
+    }
+    load_string("\n\r", serial_port);
+    dispatch_Serial(serial_port);
 }
 
 void Command_Interp(int serial_port){
@@ -136,15 +147,15 @@ void Command_Interp(int serial_port){
         if(serial_port)CMD_buff[serial_port][CMD_Point[serial_port]] = U2RXREG;
         else CMD_buff[serial_port][CMD_Point[serial_port]] = U1RXREG;
         //Data echo
-        if (Lecho[serial_port] && ((CMD_buff[serial_port][CMD_Point[serial_port]] != 0x0D) ||
-        (CMD_buff[serial_port][CMD_Point[serial_port]] != 0x0A))){
+        if ((CMD_buff[serial_port][CMD_Point[serial_port]] != 0x0D) ||
+        (CMD_buff[serial_port][CMD_Point[serial_port]] != 0x0A)){
             if(serial_port)U2TXREG = CMD_buff[serial_port][CMD_Point[serial_port]];
             else U1TXREG = CMD_buff[serial_port][CMD_Point[serial_port]];
         }
         //Check for a RETURN
         char cmdinput = CMD_buff[serial_port][CMD_Point[serial_port]];
         if (cmdinput == 0x0D || cmdinput == 0x0A){
-            if (Lecho[serial_port])load_string("\n\r", serial_port);
+            load_string("\n\r", serial_port);
             bufsize[serial_port] = CMD_Point[serial_port];
             CMD_Point[serial_port] = clear;
             cmdRDY[serial_port] = set; //Tell our command handler to process.
@@ -155,18 +166,22 @@ void Command_Interp(int serial_port){
     //Command Handler.
     if (cmdRDY[serial_port]){
         //Send command receive "@"
-        if(Lecho[serial_port])load_string("@", serial_port);
+        load_string("@", serial_port);
         //Check for faults.
         if(vars.fault_count){
             //Send fault alert "!"
-            if(Lecho[serial_port])load_string("!", serial_port);
+            load_string(" Check Faults!", serial_port);
+        }
+        if(CONDbits.Run_Level == Crit_Err){
+            //Send fault alert "!"
+            load_string(" ->Critical Error!<-", serial_port);
         }
         switch(CMD_buff[serial_port][tempPoint[serial_port]]){
             case '\r':
             break;
             case '\n':
             break;
-            case '#':
+            case '#':   //Reset the CPU
                 CMD_Point[serial_port] = clear;
                 cmdRDY[serial_port] = clear;
                 asm("reset");
@@ -180,7 +195,7 @@ void Command_Interp(int serial_port){
                 load_hex(flash_chksum, serial_port);
                 load_string("\n\r", serial_port);
             break;
-            case '&':
+            case '%':
                 //Generate EEPROM checksum and compare it to the old one.
                 load_string("\n\rNVM:\n\rStored:", serial_port);
                 load_hex(eeprom_read(0x01FF), serial_port);
@@ -189,15 +204,22 @@ void Command_Interp(int serial_port){
                 load_hex(rom_chksum, serial_port);
                 load_string("\n\r", serial_port);
             break;
-            case '%':
-                if(Lecho[serial_port])load_string("\n\rSettings and Vars Saved.\n\r", serial_port);
+            case '^':
+                load_string("\n\rSettings and Vars Saved.\n\r", serial_port);
                 save_sets();
                 save_vars();  //Save settings to NV-memory
             break;
             case '~':
-                default_sets(); //Load defaults.
-                eeprom_erase(0x0000);   //Erase address 0x0000 to 0xFFFF
+                default_sets(); //Load default Settings.
+                save_sets();    //Save them to EEPROM.
                 nvm_chksum_update();    //Update EEPROM checksum.
+            break;
+            case '!': //Clear variables and restart.
+                eeprom_erase(cfg_space);
+                nvm_chksum_update();    //Update EEPROM checksum.
+                CMD_Point[serial_port] = clear;
+                cmdRDY[serial_port] = clear;
+                asm("reset");
             break;
             case 'H':
                 vars.heat_cal_stage = initialize;
@@ -206,12 +228,6 @@ void Command_Interp(int serial_port){
                 vars.heat_cal_stage = disabled;
                 save_vars();
             break;
-            case 'E':
-                Lecho[serial_port] = set;
-            break;
-            case 'e':
-                Lecho[serial_port] = clear;
-            break;
             case 'S':
                 STINGbits.deep_sleep = set;
             break;
@@ -219,21 +235,21 @@ void Command_Interp(int serial_port){
                 fault_read(serial_port);          //Read all fault codes.
             break;
             case 'P':
-                if(Lecho[serial_port])load_string("P On\n\r", serial_port);
+                load_string("P On\n\r", serial_port);
                 CONDbits.Power_Out_EN = on;
             break;
             case 'p':
-                if(Lecho[serial_port])load_string("P Off\n\r", serial_port);
+                load_string("P Off\n\r", serial_port);
                 v_test = clear;
-                CONDbits.Power_Out_EN = clear;
+                CONDbits.Power_Out_EN = off;
             break;
             case 'O':
-                if(Lecho[serial_port])load_string("HUD On\n\r", serial_port);
+                load_string("\n\rHUD On\n\r", serial_port);
                 sets.PxVenable[serial_port] = on;
                 ram_chksum_update();        //Generate new checksum.
             break;
             case 'o':
-                if(Lecho[serial_port])load_string("HUD Off\n\r", serial_port);
+                load_string("\n\rHUD Off\n\r", serial_port);
                 sets.PxVenable[serial_port] = off;
                 ram_chksum_update();        //Generate new checksum.
             break;
@@ -244,7 +260,10 @@ void Command_Interp(int serial_port){
                     vars.heat_cal_stage = notrun;
                 STINGbits.osc_fail_event = clear;
                 save_vars();
-                if(Lecho[serial_port])load_string("Faults Cleared.\n\r", serial_port);
+                load_string("\n\rFaults Cleared.\n\r", serial_port);
+            break;
+            case '&':
+                if(CONDbits.Run_Level == Crit_Err)CONDbits.Run_Level = Heartbeat; //Attempt to bring back from critical error.
             break;
             case 'Z':
                 STINGbits.p_charge = no;
@@ -259,11 +278,8 @@ void Command_Interp(int serial_port){
             case '*':   //Print firmware version.
                 load_string(version, serial_port);
             break;
-            case '!':
-                get_mem(serial_port); //Gets settings/vars memory address specified and sends back the result in raw.
-            break;
             default:
-                if(Lecho[serial_port])load_string("Unknown Command.\n\r", serial_port);
+                load_string("Unknown Command.\n\r", serial_port);
             break;
         }
         CMD_Point[serial_port] = clear;

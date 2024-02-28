@@ -24,7 +24,9 @@ SOFTWARE. */
  * Don't bother trying to include the source and header files into the project,
  * it doesn't work. Either I'm doing it wrong or it's broken, but what I have here WORKS SO DON'T TOUCH IT.
  */
-
+//#include <p30f3011.h>
+//#include <libpic30.h>
+//#include <xc.h>
 #include "defines.h"
 #include "chipconfig.h"
 #include "IRQs.h"
@@ -52,6 +54,8 @@ SOFTWARE. */
 /***********************************************************
 ***********************************************************/
 int main(void){
+    //Get copy of initial stack pointer.
+    SP_COPY = WREG15;
     /* General 3 IO. */
     GENERAL3_TRIS = GENERAL3_DIR;
     GENERAL3_LAT = 0;
@@ -73,10 +77,10 @@ int main(void){
     get_settings();
     //Do an initial reset and warm start check.
     first_check();
-    //Disable Charge Detect IRQ on power up.
-    //CONDbits.EnableChIRQ = 0;
     //Initialize Systems.
     Init();
+    send_string("Initialized. \n\r", PORT1);
+    send_string("Initialized. \n\r", PORT2);
 
 /*****************************/
     // Main Loop.
@@ -86,6 +90,7 @@ int main(void){
      */
     for (;;)        //loop forever. or not, idc, we have IRQs for stuff.
     {
+        if(CONDbits.Run_Level == Crit_Err)death_loop();
         //Deep sleep check.
         if(STINGbits.deep_sleep){
             Batt_IO_OFF();               //Turn off all IO before sleeping.
@@ -99,12 +104,14 @@ int main(void){
              * It's what I had on hand when I first started developing this.
              * Oh well, we have ways of getting around it so it works for now.
              */
-            //Idle();
-            Sleep();
+            //Heat_CTRL = 50;
+            Idle();
+            //Sleep();
             STINGbits.deep_sleep = 0;
         }
         else{
             //CPUact = 0;      //Turn CPU ACT light off.
+            //Heat_CTRL = 50;
             Idle();                 //Idle Loop, saves power.
         }
     }

@@ -31,11 +31,11 @@ extern int read_vars(void);
 extern void get_variables(void);
 void get_settings(void);
 
-int upperMem = 0;
-int printSets = 0;
-int eRead = 0;
-char offset = 0;
-int address = 0;
+volatile int upperMem = 0;
+volatile int printSets = 0;
+volatile int eRead = 0;
+volatile char offset = 0;
+volatile int address = 0;
 
 #endif	/* DATAIO_H */
 

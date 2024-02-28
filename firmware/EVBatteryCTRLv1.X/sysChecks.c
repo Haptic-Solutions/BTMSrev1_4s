@@ -164,7 +164,7 @@ void initialCal(void){
             //Calculate how much power was used while the power was off. This is not exact, but should be close enough.
             //Use lowest cell.
             float previousCell = 100;
-            for(int i=0;i<4;i++){
+            for(int i=0;i<Cell_Count;i++){
                 if(voltage_percentage[i]<previousCell){
                     lowestCell = i;
                     previousCell=voltage_percentage[i];
@@ -187,6 +187,7 @@ void initialCal(void){
 
 //System debug safemode
 void death_loop(void){
+    WREG15 = SP_COPY;   //Try to make the stack pointer a safe value so we can run the terminal IRQs safely.
     ALL_shutdown();     //Turn everything off.
     sys_debug();    //Disable everything that is not needed. Only Serial Ports and Timer 1 Active.
     LED_Mult(Debug);  //Turn debug lights solid on to show fatal error.
@@ -368,15 +369,15 @@ void fault_log(int f_code){
             F_redun = 1;
         }
     }
-    //Only log a fault if it's not redundant and the log isn't full.
-    if (vars.fault_count < 10 && !F_redun){
+    //Only log a fault if it's not redundant and the log isn't full and it's a valid fault.
+    if (vars.fault_count < 10 && !F_redun && f_code <= sizeof(errArray)){
         vars.fault_codes[vars.fault_count] = f_code;
         vars.fault_count++;
     }
-    else if(!F_redun){
+    else if(!F_redun && f_code <= sizeof(errArray)){
         vars.fault_count = 11;       //Fault log full.
     }
-    CONDbits.failSave = 1;
+    //CONDbits.failSave = 1;
 }
 
 //Heater failed to initialize.
@@ -464,7 +465,7 @@ void explody_preventy_check(void){
     if(CONDbits.failSave)save_vars();
     if(D_Flag_Check()){
         fault_log(0x09);    //Log a compromised flag error.
-        death_loop();
+        CONDbits.Run_Level = Crit_Err;
     }
 }
 

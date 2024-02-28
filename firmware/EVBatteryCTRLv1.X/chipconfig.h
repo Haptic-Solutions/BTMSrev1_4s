@@ -35,13 +35,13 @@ SOFTWARE. */
 #pragma config FPWRT = PWRT_64          // POR Timer Value (64ms)
 #pragma config BODENV = BORV20          // Brown Out Voltage (Reserved)
 #pragma config BOREN = PBOR_ON          // PBOR Enable
-#pragma config LPOL = PWMxL_ACT_HI      // Low-side PWM Output Polarity (Active Low)
+#pragma config LPOL = PWMxL_ACT_LO      // Low-side PWM Output Polarity (Active Low)
 #pragma config HPOL = PWMxH_ACT_HI      // High-side PWM Output Polarity (Active High)
 #pragma config PWMPIN = RST_IOPIN       // PWM Output Pin Reset (Control with PORT/TRIS regs)
 #pragma config MCLRE = MCLR_EN          // Master Clear Enable
 
 // FGS
-#pragma config GWRP = GWRP_OFF          // General Code Segment Write Protect (Disabled)
+#pragma config GWRP = GWRP_OFF          // General Code Segment Write Protect (Enabled)
 #pragma config GCP = CODE_PROT_OFF      // General Segment Code Protection (Disabled)
 
 // FICD

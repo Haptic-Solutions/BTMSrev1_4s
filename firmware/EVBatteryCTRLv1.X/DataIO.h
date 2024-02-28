@@ -25,7 +25,7 @@ SOFTWARE. */
 #define PORT2 1
 #define simple 1
 #define full 0
-#define bfsize 50
+#define bfsize 60
 
 extern unsigned int BaudCalc(float, float);
 extern void load_float(float, int);

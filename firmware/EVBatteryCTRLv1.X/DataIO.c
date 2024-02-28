@@ -108,6 +108,7 @@ void load_string(const char *string_point, int serial_port){
         Buffer[serial_port][Buff_index[serial_port]] = string_point[StempIndex[serial_port]];
         if (Buff_index[serial_port] < bfsize-1)
             Buff_index[serial_port]++;
+        else break;
         StempIndex[serial_port]++;
     }
     writingbuff[serial_port] = no;

@@ -82,7 +82,7 @@ void save_vars(void){
     }
     //Write this in memory so we know we have written data at least once before.
     eeprom_write(cfg_space,0x7654);
-    eeprom_write(cfg_space+vr_space,unresettableFlags); //Write the un-resettable flags to end of vars.
+    eeprom_write(cfg_space+vr_space, unresettableFlags); //Write the un-resettable flags to end of vars.
     nvm_chksum_update();
     CONDbits.failSave = 0;
 }

@@ -86,7 +86,6 @@ const char * const errArray[] = {code01,code02,code03,code04,code05,code06,code0
                          ,code19,code1A,code1B,code1C,code1D,code1E,code1F,code20,code21,code22,code23,code24
                          ,code25,code26,code27,code28,code29,code2A,code2B,code2C,code2D,code2E,code2F,code30
                          ,code31,code32,code33,code34,code35,code36,code37,code38,code39,code3A,codeDefault};
-#define numOfCodes 0x3A
 
 #endif	/* ERRORCODES_H */
 

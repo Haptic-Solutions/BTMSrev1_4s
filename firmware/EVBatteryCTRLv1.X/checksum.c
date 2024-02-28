@@ -45,6 +45,7 @@ void nvm_chksum_update(void){
 /******************************************/
 /* Checksum comparison and error logging. */
 //Check settings checksum stored in ram against an older version of itself.
+//Try to recover from NVM if it fails, but don't try that here.
 int check_ramSets(void){
     ramSets_checksum();
     if(ramSets_chksum != ramSets_chksum_old){
@@ -60,6 +61,7 @@ int check_nvmSets(void){
     if(ramSets_chksum != nvSets_chksum){
         fault_log(0x2C);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
+        CONDbits.Run_Level=Crit_Err;
         return 1;
     }
     return 0;
@@ -73,6 +75,7 @@ int check_prog(void){
         fault_log(0x29);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
         CONDbits.chkInProgress = 0;
+        CONDbits.Run_Level=Crit_Err;
         return 1;
     }
     CONDbits.chkInProgress = 0;
@@ -85,6 +88,7 @@ int check_nvmem(void){
     if(eeprom_read(0x01FF) != rom_chksum){
         fault_log(0x2A);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
+        CONDbits.Run_Level=Crit_Err;
         return 1;
     }
     return 0;

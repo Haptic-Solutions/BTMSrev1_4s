@@ -163,14 +163,14 @@ void volt_percent(void){
     if (absFloat(dsky.battery_current) < 0.08 && !CONDbits.charger_detected && STINGbits.adc_sample_burn){
         dsky.open_voltage = dsky.pack_voltage;
         float batteryVoltDiff = sets.battery_rated_voltage - sets.dischrg_voltage;
-        for(int i=0;i<4;i++){
+        for(int i=0;i<Cell_Count;i++){
             float BX = ((dsky.Cell_Voltage[i] - sets.dischrg_voltage) / batteryVoltDiff);
             voltage_percentage[i] = 100 * ((2*simpleCube(BX-0.5))+(0.5*(BX-0.5))+0.5); //Battery SOC curve approximation.
         }
         CONDbits.got_open_voltage = yes;
     }
     else if(dsky.pack_voltage <= (sets.dischrg_voltage + 0.01)){
-        for(int i=0;i<4;i++)voltage_percentage[i] = 0;
+        for(int i=0;i<Cell_Count;i++)voltage_percentage[i] = 0;
         dsky.open_voltage = (sets.dischrg_voltage*4) + 0.01;
         CONDbits.got_open_voltage = yes;
     }
