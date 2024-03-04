@@ -118,6 +118,7 @@ void load_string(const char *string_point, int serial_port){
 void send_string(const char *string_point, int serial_port){
     load_string(string_point, serial_port);
     dispatch_Serial(serial_port);
+    portBusyIdle(serial_port);  //Check to see if port is ready.
 }
 
 //Copy float data to buffer.
@@ -163,9 +164,9 @@ void load_float(float f_data, int serial_port){
     port_check(serial_port);        //Check serial port to see if it's busy before writing to buffer.
     writingbuff[serial_port] = 1;   //Tell other processes we are busy with the buffer.
     while (FtempIndex[serial_port] < 9){
-        //If 0, do not copy unless it's 00.000 or a '-' && config_space is 1
+        //If 0, do not copy unless it's 00.000 or a '-' or greater than 999 && config_space is 1
         while(float_out[serial_port][FtempIndex[serial_port]] == '0' &&
-        !config_space[serial_port] && FtempIndex[serial_port] < 3){
+        !config_space[serial_port] && FtempIndex[serial_port] < 3 && f_data < 1000){
             FtempIndex[serial_port]++;
         }
         //Copy data. Check for dynamic spacing for sign char.

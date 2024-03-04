@@ -37,11 +37,14 @@ unsigned int SP_COPY = 0;
 /* Temperatures are in C */
 /* int's are 16 bit */
 typedef int int16_t;    //Make sure our int's are actually only 16 bit rather than assuming.
-/*********;********************/
+typedef unsigned int uint16_t;    //Make sure our int's are actually only 16 bit rather than assuming.
+/*****************************/
 #pragma pack(1)
 struct Settings{
     //Analog input constants
     int     settingsArray[1];           //This space used for unique ID to determine if settings has been written to at least once.
+    float   settingsFloat[1];           //Wasted space but oh well. It's hacky, but seems to work reliably enough for now.
+    /*****************************/
     float   R1_resistance;              //R1 resistance in Kohms
     float   R2_resistance;              //R2 resistance in Kohms
     float   S1_vlt_adjst;               //Cell 1 voltage input compensation in volts.
@@ -50,7 +53,7 @@ struct Settings{
     float   S4_vlt_adjst;               //Cell 4 voltage input compensation in volts.
     /*****************************/
     //Battery Ratings and setpoints
-    int   partial_charge;             //Percentage of voltage to charge the battery up to. Set to 0 to disable.
+    float   partial_charge;             //Percentage of voltage to charge the battery up to. Set to 0 to disable.
     float   max_battery_voltage;        //Max battery voltage before shutdown.
     float   battery_rated_voltage;      //Target max charge voltage
     float   dischrg_voltage;            //Minimum battery voltage
@@ -61,7 +64,9 @@ struct Settings{
     float   amp_hour_rating;            //Battery amp hour rating.
     float   over_current_shutdown;      //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
     float   absolute_max_current;       //Max regulating current.
-    unsigned int cycles_to_80;          //Number of charge cycles to 80% capacity.
+    /******************************/
+    int   settingsINT[1];
+    int   cycles_to_80;               //Number of charge cycles to 80% capacity.
     //Charge temps.
     int   chrg_min_temp;              //Battery minimum charge temperature. Stop Charging at this temp.
     int   chrg_reduce_low_temp;       //Reduce charge current when lower than this temp.
@@ -88,14 +93,14 @@ struct Settings{
     char    custom_data4[6];
     char    page[2][4][6];      //Display page holder. (port)(Page#)(Variable to Display: A '0' at the start = Skip Page)
     char    pageDelay[2][4];    //Page delay. (Page#Delay in 1/8 seconds) 0 = full speed.
-    int     testBYTE;
 }sets;
 
 struct Variables{
     int     variablesArray[1];          //This space used for unique ID to determine if vars has been written to at least once.
+    float   variablesFloat[1];          //More wasted space.
 // Calculated Battery Ratings
     float   battery_capacity;           //Calculated total battery capacity in ah
-    float   absolute_battery_usage;     //Max total power used from battery.
+    float   absolute_battery_usage;     //Max total power used from battery since last power cycle.
     float   voltage_percentage_old[4];     //Voltage percentage from the last time we where on.
     float   battery_usage;              //Calculated Ah usage in/out of battery
     float   battery_remaining;          //Calculated remaining capacity in battery.

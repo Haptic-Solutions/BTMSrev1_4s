@@ -96,16 +96,12 @@ void portBusyIdle(int serial_port){
 /* Read fault codes to serial port.
  * This takes up about 2% of program space.*/
 void fault_read(int serial_port){
-    load_string("\n\rReading Faults.\n\r", serial_port);
-    dispatch_Serial(serial_port);
-    portBusyIdle(serial_port);  //Check to see if port is ready.
+    send_string("\n\rReading Faults.\n\r", serial_port);
     if(vars.fault_count > 10){
-        load_string("Fault Log Full.\n\r", serial_port);
-        dispatch_Serial(serial_port);
+        send_string("Fault Log Full.\n\r", serial_port);
     }
     if(vars.fault_count == 0){
-        load_string("No fault codes.\n\r", serial_port);
-        dispatch_Serial(serial_port);
+        send_string("No fault codes.\n\r", serial_port);
     }
     else{
         for(flt_index[serial_port]=0;flt_index[serial_port]<vars.fault_count;flt_index[serial_port]++){
@@ -116,28 +112,63 @@ void fault_read(int serial_port){
             int ecode = vars.fault_codes[flt_index[serial_port]];
             if(!ecode || ecode < sizeof(errArray))load_string(errArray[ecode-1], serial_port);
             else load_string(codeDefault, serial_port);
-            load_string("\n\r", serial_port);
-            dispatch_Serial(serial_port);
+            send_string("\n\r", serial_port);
         }
     }
     portBusyIdle(serial_port);
-    load_string("\n\r", serial_port);
-    dispatch_Serial(serial_port);
-    portBusyIdle(serial_port);
-    load_string("Flags:: |Batt OV| |Batt HV| |Batt UV| |Batt OT| |Sys OT| \n\r", serial_port);
-    dispatch_Serial(serial_port);
-    portBusyIdle(serial_port);
-    load_string("         ", serial_port);
-    dispatch_Serial(serial_port);
-    portBusyIdle(serial_port);
+    send_string("\n\r", serial_port);
+    send_string("Flags:: |Batt OV| |Batt HV| |Batt UV| |Batt OT| |Sys OT| \n\r", serial_port);
+    send_string("         ", serial_port);
     unsigned int flagMask = 0x10;
     for(int i=0;i<5;i++){
         if(unresettableFlags&flagMask)load_string("SET       ", serial_port);
         else load_string("Clear     ", serial_port);
         flagMask>>1; //Shift the bit right by one.
     }
-    load_string("\n\r", serial_port);
-    dispatch_Serial(serial_port);
+    send_string("\n\r", serial_port);
+}
+
+void send_Int_Array(int* data, int start, int end, int serial_port){
+    send_string("  ",serial_port);
+    for(int i=start;i<=end;i++){
+        load_float(data[i], serial_port);
+        load_string("  ",serial_port);
+    }
+    send_string("\n\r",serial_port);
+}
+
+void send_Float_Array(float* data, int start, int end, int serial_port){
+    send_string("  ",serial_port);
+    for(int i=start;i<=end;i++){
+        load_float(data[i], serial_port);
+        load_string("  ",serial_port);
+    }
+    send_string("\n\r",serial_port);
+}
+
+void all_info(int serial_port){
+    send_string("\n\r", serial_port);
+    /* Settings FLOAT variables. */
+    send_string("Printing System Settings.\n\r", serial_port);
+    send_string("1: |R1|      |R2|     |S1C|    |S2C|     |S3C|    |S4C|\n\r", serial_port);
+    send_Float_Array(sets.settingsFloat, 1, 6, serial_port);
+    send_string("\n\r", serial_port);
+    send_string("2: |PC|      |MBV|    |BRV|    |DV|      |LVS|    |DCR|\n\r", serial_port);
+    send_Float_Array(sets.settingsFloat, 7, 12, serial_port);
+    send_string("\n\r", serial_port);
+    send_string("3: |LC|      |CCR|    |AHR|    |OCS|    |AMC|\n\r", serial_port);
+    send_Float_Array(sets.settingsFloat, 13, 17, serial_port);
+    send_string("\n\r", serial_port);
+    /*Settings INT variables. */
+    send_string("4: |CT80|      |CmT|    |CRL|    |CMXT|    |CRH|    |CTT|\n\r", serial_port);
+    send_Int_Array(sets.settingsINT, 1, 6, serial_port);
+    send_string("\n\r", serial_port);
+    send_string("5: |DmT|    |DRL|    |DMXT|    |DRH|    |DTT|\n\r", serial_port);
+    send_Int_Array(sets.settingsINT, 7, 11, serial_port);
+    send_string("\n\r", serial_port);
+    send_string("6: |BST|    |CST|    |MHT|    |POA|\n\r", serial_port);
+    send_Int_Array(sets.settingsINT, 12, 15, serial_port);
+    send_string("\n\r", serial_port);
 }
 
 void Command_Interp(int serial_port){
@@ -277,6 +308,9 @@ void Command_Interp(int serial_port){
             break;
             case '*':   //Print firmware version.
                 load_string(version, serial_port);
+            break;
+            case 'i':   //Print info.
+                all_info(serial_port);
             break;
             default:
                 load_string("Unknown Command.\n\r", serial_port);

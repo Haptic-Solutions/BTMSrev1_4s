@@ -45,6 +45,7 @@ void default_sets(void){
     sets.amp_hour_rating = 2.6;         //Battery amp hour rating.
     sets.over_current_shutdown = 8;        //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
     sets.absolute_max_current = 8.5;      //Max regulating current.
+    /**************************************/
     sets.cycles_to_80 = 2000;           //Number of charge cycles to 80% capacity.
     //Charge temps.
     sets.chrg_min_temp = 10;          //Battery minimum charge temperature. Stop Charging at this temp.
@@ -67,7 +68,6 @@ void default_sets(void){
     //page[2][5][6];              //Display page holder. (PORT)(Page#)(Variable to Display: A '0' at the start = Skip Page)
     sets.PxVenable[PORT1] = off;         //Port 1 display out is disabled by default.
     sets.PxVenable[PORT2] = off;         //Port 2 display out is disabled by default.
-    sets.testBYTE = 0x3335;
     vars.testBYTE = 0x46;
     ram_chksum_update();        //Generate new checksum.
 }
