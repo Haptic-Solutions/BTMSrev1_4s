@@ -50,6 +50,7 @@ int check_ramSets(void){
     ramSets_checksum();
     if(ramSets_chksum != ramSets_chksum_old){
         fault_log(0x2B);    //Log an error if it doesn't match.
+        Run_Level = Crit_Err;
         return 1;
     }
     return 0;
@@ -61,24 +62,20 @@ int check_nvmSets(void){
     if(ramSets_chksum != nvSets_chksum){
         fault_log(0x2C);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
-        CONDbits.Run_Level=Crit_Err;
+        Run_Level=Crit_Err;
         return 1;
     }
     return 0;
 }
 //Checks program memory checksum.
 int check_prog(void){
-    if(CONDbits.chkInProgress) return 0;
-    CONDbits.chkInProgress = 1;
     flash_checksum();
     if(sets.flash_chksum_old != flash_chksum){
         fault_log(0x29);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
-        CONDbits.chkInProgress = 0;
-        CONDbits.Run_Level=Crit_Err;
+        Run_Level=Crit_Err;
         return 1;
     }
-    CONDbits.chkInProgress = 0;
     return 0;
 
 }
@@ -88,7 +85,7 @@ int check_nvmem(void){
     if(eeprom_read(0x01FF) != rom_chksum){
         fault_log(0x2A);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
-        CONDbits.Run_Level=Crit_Err;
+        Run_Level=Crit_Err;
         return 1;
     }
     return 0;
@@ -110,7 +107,7 @@ void flash_checksum(void){
     //Read chip config memory space.
     for(yaddr=0xF8;yaddr<0xFF;yaddr++)
         for(xaddr=0;xaddr<0x7FFF;xaddr++){flash_chksum += ((0x00FF & memread(yaddr,xaddr*2)) + ((0xFF00 & memread(yaddr,xaddr*2)) / 256));}
-    flash_chksum += (210 * 2); //No matter what I do, the checksum is always a difference of 420 from what MPLAB says it should be.
+    flash_chksum += (423); //No matter what I do, the checksum is always a difference of 423 from what MPLAB says it should be.
 }
 //Generates checksum of EEPROM memory.
 void eeprom_checksum(void){

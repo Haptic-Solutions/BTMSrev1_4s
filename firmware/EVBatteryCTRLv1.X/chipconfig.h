@@ -33,7 +33,7 @@ SOFTWARE. */
 
 // FBORPOR
 #pragma config FPWRT = PWRT_64          // POR Timer Value (64ms)
-#pragma config BODENV = BORV20          // Brown Out Voltage (Reserved)
+#pragma config BODENV = BORV27          // Brown Out Voltage (2.7V)
 #pragma config BOREN = PBOR_ON          // PBOR Enable
 #pragma config LPOL = PWMxL_ACT_LO      // Low-side PWM Output Polarity (Active Low)
 #pragma config HPOL = PWMxH_ACT_HI      // High-side PWM Output Polarity (Active High)
@@ -41,6 +41,10 @@ SOFTWARE. */
 #pragma config MCLRE = MCLR_EN          // Master Clear Enable
 
 // FGS
+//WARNING!!! These settings can only be reset if voltage rail is > 4.5V
+//You can easily brick (temporarily) the device and will require disconnect
+//of any non-5v compliant devices (EG: FTDI chip) on the voltage rail if
+//you intend to erase these later.
 #pragma config GWRP = GWRP_OFF          // General Code Segment Write Protect (Enabled)
 #pragma config GCP = CODE_PROT_OFF      // General Segment Code Protection (Disabled)
 

@@ -24,13 +24,15 @@ SOFTWARE. */
 #include "eeprom.h"
 #include "checksum.h"
 #include "common.h"
-
+//Only to be used at start of system
 void get_variables(void){
     if(eeprom_read(cfg_space) == 0x7654) {
         read_vars();
+        CONDbits.NewSys = 0;
     }
+    else CONDbits.NewSys = 1;
 }
-
+//Only to be used at start of system
 void get_settings(void){
     if(eeprom_read(0x0000) == 0x4567){
         int x = 0;
@@ -63,15 +65,20 @@ void save_sets(void){
 //Read settings from EEPROM
 //Returns 1 on success.
 int read_sets(void){
-    if(check_nvmem())return 0;          //First check to make sure EEPROM checksum hasn't changed since last write.
+    //First check to make sure EEPROM checksum hasn't changed since last write.
+    if(check_nvmem()){
+        return 0;
+    }
     int x;
     for(x=0;x<cfg_space;x++){
         sets.settingsArray[x] = eeprom_read(x);
     }
-    //Now generate and compare checksums of settings ram and settings EEPROM to ensure a correct copy of data.
-    if(check_nvmSets())return 0;
     //Update the settings ram checksum.
     ram_chksum_update();
+    //Now generate and compare checksums of settings ram and settings EEPROM to ensure a correct copy of data.
+    if(check_nvmSets()){
+        return 0;
+    }
     return 1;
 }
 //Save vars to EEPROM
@@ -82,7 +89,7 @@ void save_vars(void){
     }
     //Write this in memory so we know we have written data at least once before.
     eeprom_write(cfg_space,0x7654);
-    eeprom_write(cfg_space+vr_space, unresettableFlags); //Write the un-resettable flags to end of vars.
+    eeprom_write(cfg_space+vr_space, Flags); //Write the un-resettable flags to end of vars.
     nvm_chksum_update();
     CONDbits.failSave = 0;
 }
@@ -94,7 +101,7 @@ int read_vars(void){
     for(x=0;x<vr_space;x++){
         vars.variablesArray[x] = eeprom_read(x+cfg_space);
     }
-    unresettableFlags = eeprom_read(vr_space+cfg_space);
+    Flags = eeprom_read(vr_space+cfg_space);
     return 1;
 }
 
@@ -108,26 +115,24 @@ int eeprom_erase(int addrs){
     }
     else{
         __asm__ volatile ("DISI #0x3FFF");   //Disable all non-critical IRQs.
-        IPC2bits.ADIP = 0;  //Disable analog IRQs.
         __asm__ ("PUSH w1");
         adrfinal = addrs * 2;
         adrfinal += 0xFC00;
         //Erase location.
         NVMADRU = 0x7F;
         NVMADR = adrfinal;
-        __asm__ ("MOV #0x4044,w1");
-        __asm__ ("MOV w1,NVMCON");
-        __asm__ ("MOV #0x55,w1");
-        __asm__ ("MOV w1,NVMKEY");
-        __asm__ ("MOV #0xAA,w1");
-        __asm__ ("MOV w1,NVMKEY");
-        __asm__ ("BSET NVMCON,#0x0F");
-        __asm__ ("NOP");
-        __asm__ ("NOP");
-        __asm__ ("POP w1");
+        __asm__ volatile ("MOV #0x4044,w1");
+        __asm__ volatile ("MOV w1,NVMCON");
+        __asm__ volatile ("MOV #0x55,w1");
+        __asm__ volatile ("MOV w1,NVMKEY");
+        __asm__ volatile ("MOV #0xAA,w1");
+        __asm__ volatile ("MOV w1,NVMKEY");
+        __asm__ volatile ("BSET NVMCON,#0x0F");
+        __asm__ volatile ("NOP");
+        __asm__ volatile ("NOP");
+        __asm__ volatile ("POP w1");
         while(NVMCONbits.WR) //Wait here until write is finished.
         DISICNT = 0;    //ReEnable all non-critical IRQs.
-        IPC2bits.ADIP = 7;  //ReEnable analog IRQs.
         return 0;
     }
 }
@@ -138,11 +143,10 @@ int eeprom_write(int addrs, int data){
         return 1;       //error writing, address out of range.
     }
     else{
-        __asm__ volatile ("DISI #0x3FFF");   //Disable all non-critical IRQs.
-        IPC2bits.ADIP = 0;  //Disable analog IRQs.
-        __asm__ ("PUSH w0");
-        __asm__ ("PUSH w1");
-        __asm__ ("PUSH w2");
+        __asm__ volatile ("DISI #0x3FFF");   //Disable all IRQs.
+        __asm__ volatile ("PUSH w0");
+        __asm__ volatile ("PUSH w1");
+        __asm__ volatile ("PUSH w2");
         addrs *=  2;
         addrs += 0xFC00;
         //Write to location.
@@ -152,22 +156,21 @@ int eeprom_write(int addrs, int data){
         WREG2 = data;    //DATA
         WREG0 = addrs;   //ADDRESS LOWER
         //ESPECIALLY DON'T TOUCH THE ORDER THAT THE WREGs GET WRITTEN TO.
-        __asm__ ("TBLWTL w2,[w0]");
-        __asm__ ("MOV #0x4004,w1");
-        __asm__ ("MOV w1,NVMCON");
-        __asm__ ("MOV #0x55,w1");
-        __asm__ ("MOV w1,NVMKEY");
-        __asm__ ("MOV #0xAA,w1");
-        __asm__ ("MOV w1,NVMKEY");
-        __asm__ ("BSET NVMCON,#0x0F");
-        __asm__ ("NOP");
-        __asm__ ("NOP");
-        __asm__ ("POP w2");
-        __asm__ ("POP w1");
-        __asm__ ("POP w0");
+        __asm__ volatile ("TBLWTL w2,[w0]");
+        __asm__ volatile ("MOV #0x4004,w1");
+        __asm__ volatile ("MOV w1,NVMCON");
+        __asm__ volatile ("MOV #0x55,w1");
+        __asm__ volatile ("MOV w1,NVMKEY");
+        __asm__ volatile ("MOV #0xAA,w1");
+        __asm__ volatile ("MOV w1,NVMKEY");
+        __asm__ volatile ("BSET NVMCON,#0x0F");
+        __asm__ volatile ("NOP");
+        __asm__ volatile ("NOP");
+        __asm__ volatile ("POP w2");
+        __asm__ volatile ("POP w1");
+        __asm__ volatile ("POP w0");
         while(NVMCONbits.WR) //Wait here until write is finished.
         DISICNT = 0;        //ReEnable all non-critical IRQs.
-        IPC2bits.ADIP = 7;  //ReEnable analog IRQs.
         return 0;
     }
 }
@@ -175,25 +178,23 @@ int eeprom_write(int addrs, int data){
 int memread(char Moffset, int Maddress){
     offset = Moffset; //Save to memory instead of W register.
     address = Maddress; //This is really bad, but the compiler sometimes reuses WREG's while I'm using them manually (which is bad enough).
-    __asm__ volatile ("DISI #0x3FFF");   //Disable all non-critical IRQs.
-    IPC2bits.ADIP = 0;  //Disable analog IRQs.
-    __asm__ ("PUSH w4");
-    __asm__ ("PUSH w0");
+    __asm__ volatile ("DISI #0x3FFF");   //Disable all IRQs.
+    __asm__ volatile ("PUSH w4");
+    __asm__ volatile ("PUSH w0");
     TBLPAG = offset;    //Offset in memory
     WREG0 = address;    //Address to read from
-    __asm__ ("TBLRDH [w0],w4");
-    __asm__ ("NOP");
-    __asm__ ("NOP");
+    __asm__ volatile ("TBLRDH [w0],w4");
+    __asm__ volatile ("NOP");
+    __asm__ volatile ("NOP");
     upperMem = WREG4;   //Get upper 8 bits from program memory, NOT EEPROM/NVM
     TBLPAG = offset;    //Offset in memory
     WREG0 = address;    //Address to read from
-    __asm__ ("TBLRDL [w0],w4");
-    __asm__ ("NOP");
-    __asm__ ("NOP");
+    __asm__ volatile ("TBLRDL [w0],w4");
+    __asm__ volatile ("NOP");
+    __asm__ volatile ("NOP");
     eRead = WREG4;
-    __asm__ ("POP w0");
-    __asm__ ("POP w4");
-    IPC2bits.ADIP = 7;  //ReEnable analog IRQs.
+    __asm__ volatile ("POP w0");
+    __asm__ volatile ("POP w4");
     DISICNT = 0;        //ReEnable all non-critical IRQs.
     return eRead; //WREG4 will contain data read from NVmem
 }

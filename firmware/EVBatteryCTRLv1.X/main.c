@@ -54,14 +54,12 @@ SOFTWARE. */
 /***********************************************************
 ***********************************************************/
 int main(void){
-    //Get copy of initial stack pointer.
-    SP_COPY = WREG15;
     /* General 3 IO. */
     GENERAL3_TRIS = GENERAL3_DIR;
     GENERAL3_LAT = 0;
     GENERAL3_PORT = 0;
     KeepAlive = 1; //Enable Keep Alive signal. System keeps itself on while main_power is enabled.
-    /* Analog inputs and general IO */
+    /* Analog inputs */
     //Initialize PORTB first.
     ANALOG_TRIS = ANALOG_DIR;          //set portb to analog inputs.
     ANALOG_LAT = 0;
@@ -78,7 +76,9 @@ int main(void){
     //Do an initial reset and warm start check.
     first_check();
     //Initialize Systems.
+    Run_Level = Cal_Mode;
     Init();
+    if(CONDbits.NewSys)vars.battery_capacity = sets.amp_hour_rating; //Set capacity based on AH rating.
     send_string("Initialized. \n\r", PORT1);
     send_string("Initialized. \n\r", PORT2);
 
@@ -90,7 +90,7 @@ int main(void){
      */
     for (;;)        //loop forever. or not, idc, we have IRQs for stuff.
     {
-        if(CONDbits.Run_Level == Crit_Err)death_loop();
+        if(Run_Level == Crit_Err)death_loop();
         //Deep sleep check.
         if(STINGbits.deep_sleep){
             Batt_IO_OFF();               //Turn off all IO before sleeping.

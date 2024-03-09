@@ -46,13 +46,20 @@ SOFTWARE. */
 #define CCsense ADCBUF8 //CCsense
 //IO outputs
 #define KeepAlive LATFbits.LATF0 //Enables power to self and system.
+#define PreCharge LATFbits.LATF6 //Power Output pre-charge
+#define PowerOutEnable LATCbits.LATC15 //Power output enable.
+//LED outputs
 #define Mult_SEL LATEbits.LATE2 //LED and Cell ballance multiplexed select.
 #define Mult_B1 LATEbits.LATE0
 #define Mult_B3 LATDbits.LATD2
 #define Mult_B2 LATDbits.LATD1
 #define Mult_B4 LATDbits.LATD3
-#define PreCharge LATFbits.LATF6 //Power Output pre-charge
-#define PowerOutEnable LATCbits.LATC15 //Power output enable.
+#define LED_dir_1 TRISE
+#define LED_dir_2 TRISD
+#define LED_HiZ_1 PWM_TRIS_DIR | 0x0001
+#define LED_HiZ_2 GENERAL3_DIR | 0x000E
+#define DFLT_1 PWM_TRIS_DIR
+#define DFLT_2 GENERAL3_DIR
 
 #define Heat_CTRL PDC1  //Heater PWM.
 #define CHctrl PDC2     //Charge buck PWM.
@@ -90,7 +97,7 @@ SOFTWARE. */
 #define ramSize 0x03FF //Size of memory.
 #define ramAddressStart 0x0800  //Where the dsPIC30F3011's ram address starts.
 #define stackFaultDefault ramSize + ramAddressStart - 1
-#define ramFree (ramSize + ramAddressStart) - 30 //Minus 30 bytes of ram. If the stack intrudes on this then it should throw an error code before a complete system crash and undefined behavior.
+#define ramFree (ramSize + ramAddressStart) - 15 //Minus 15 bytes of ram. If the stack intrudes on this then it should throw an error code before a complete system crash and undefined behavior.
 
 //General
 #define yes 1
@@ -105,10 +112,14 @@ SOFTWARE. */
 #define NULL 0
 #define input 1
 #define output 0
+
+//Constants
+#define Cell_Count 4    //Number of cells placeholder.
 #define SOC_Cycles 8
 #define AuxFuse 5       //Aux charge port fuse rating placeholder.
 #define PreChargeTime 2 //Output pre-charge timer placeholder.
-#define Cell_Count 4    //Number of cells placeholder.
+#define LED_Brightness 10
+#define V_REF 3.36      //Measured reference voltage placeholder
 
 //Run Levels
 #define Shutdown 0
@@ -134,7 +145,7 @@ SOFTWARE. */
 //Charger modes.
 #define Stop 0
 #define Wait 1
-#define Ready 2
+#define Assignment_Ready 2
 #define USB2 3
 #define USB3_Wimp 4
 #define USB3 5

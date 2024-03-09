@@ -24,21 +24,20 @@ SOFTWARE. */
 #define fCalReady 3
 #define fCalTimer fCalReady - 1
 
-extern void explody_preventy_check(void);
-extern void currentCheck(void);
-extern void heater_calibration(void);
-extern void fault_log(int);
-extern void ALL_shutdown(void);
-extern void Batt_IO_OFF(void);
-extern void reset_check(void);
-extern void hud_vars(int);
-extern void main_power_check(void);
-extern void first_check(void);
-extern void analog_sanity(void);
-extern void death_loop(void);
-extern void initialCal(void);
-extern void chargeDetect(void);
-extern int D_Flag_Check();
+extern inline void explody_preventy_check(void);
+extern inline void currentCheck(void);
+extern inline void heater_calibration(void);
+extern inline void fault_log(int);
+extern inline void ALL_shutdown(void);
+extern inline void Batt_IO_OFF(void);
+extern inline void reset_check(void);
+extern inline void main_power_check(void);
+extern inline void first_check(void);
+extern inline void analog_sanity(void);
+extern inline void death_loop(void);
+extern inline void initialCal(void);
+extern inline void chargeDetect(void);
+extern inline int D_Flag_Check();
 
 /*****************************/
 /* Init vars and stuff. */

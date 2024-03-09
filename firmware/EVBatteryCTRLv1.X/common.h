@@ -21,17 +21,17 @@ SOFTWARE. */
 #ifndef COMMON_H
 #define	COMMON_H
 
-extern void current_cal(void);
-extern void volt_percent(void);
-extern void reset_check(void);
-extern void Deep_Sleep(void);
-extern float absFloat(float);
-extern void IsSysReady(void);
-extern void calcAnalog(void);
+extern inline void current_cal(void);
+extern inline void open_volt_percent(void);
+extern inline void reset_check(void);
+extern inline void Deep_Sleep(void);
+extern inline float absFloat(float);
+extern inline void IsSysReady(void);
+extern inline void calcAnalog(void);
+extern inline void Volt_Cal(int);
+extern void CapacityCalc(void);
 
 /* NOTE: Try to keep memory usage below about 75% for the dsPIC30F3011 as the stack can use as much as 15% */
-//Copy of stack pointer.
-unsigned int SP_COPY = 0;
 /*****************************/
 /* Init vars and stuff. */
 /* Temperatures are in C */
@@ -47,14 +47,12 @@ struct Settings{
     /*****************************/
     float   R1_resistance;              //R1 resistance in Kohms
     float   R2_resistance;              //R2 resistance in Kohms
-    float   S1_vlt_adjst;               //Cell 1 voltage input compensation in volts.
-    float   S2_vlt_adjst;               //Cell 2 voltage input compensation in volts.
-    float   S3_vlt_adjst;               //Cell 3 voltage input compensation in volts.
-    float   S4_vlt_adjst;               //Cell 4 voltage input compensation in volts.
+    float   S_vlt_adjst[4];             //Cell ratio input compensation.
+    float   Ch_vlt_adjst;               //Charge input ratio input compensation.
     /*****************************/
     //Battery Ratings and setpoints
     float   partial_charge;             //Percentage of voltage to charge the battery up to. Set to 0 to disable.
-    float   max_battery_voltage;        //Max battery voltage before shutdown.
+    float   max_battery_voltage;        //Max battery cell voltage before shutdown and flag set.
     float   battery_rated_voltage;      //Target max charge voltage
     float   dischrg_voltage;            //Minimum battery voltage
     float   low_voltage_shutdown;       //Battery Low Total Shutdown Voltage
@@ -170,107 +168,104 @@ struct dskyvars{
 #define nlNum 0x0014
 
 // Calculated battery values. These don't need to be saved on shutdown.
-float   chrge_rate = 0;             //calculated charge rate based off temperature
-float   vltg_dvid = 0;              //Value for calculating the ratio of the input voltage divider.
+volatile float   chrge_rate = 0;             //calculated charge rate based off temperature
+volatile float   vltg_dvid = 0;              //Value for calculating the ratio of the input voltage divider.
 
 /*****************************/
 /* General Vars */
-float voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
-float Bcurrent_compensate;     //Battery Current compensation.
-float Ccurrent_compensate;      //Charger Current compensation.
-float CavgVolt = 0;     //averaged voltage from charger
-float BavgVolt[4];     //averaged voltage from battery
-float BavgCurnt = 0;    //averaged current input for battery
-float CavgCurnt = 0;    //averaged current input from charger
-float avgBTemp = 0;    //averaged battery temperature
-float avgSTemp = 0;    //averaged self temperature
-float bt_crnt_avg_temp = 0;
-float bt_vltg_avg_temp = 0;
-float Max_Charger_Current = 0;
-float Charger_Target_Voltage = 0;
-float analog_smpl_time = 0;
-char soft_OVC_Timer = 0;
-char precharge_timer = 0;
-char charge_mode = 0;
-char avg_cnt = 0;
-char analog_avg_cnt = 0;
-char heat_rly_timer = 3;     //3 is resting, setting to 2 starts the countdown, 0 = relay is ready
-char Bcurnt_cal_stage = 0;
-char Ccurnt_cal_stage = 0;
+volatile float voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
+volatile float Bcurrent_compensate;     //Battery Current compensation.
+volatile float Ccurrent_compensate;      //Charger Current compensation.
+volatile float CavgVolt = 0;     //averaged voltage from charger
+volatile float BavgVolt[4];     //averaged voltage from battery
+volatile float BavgCurnt = 0;    //averaged current input for battery
+volatile float CavgCurnt = 0;    //averaged current input from charger
+volatile float avgBTemp = 0;    //averaged battery temperature
+volatile float avgSTemp = 0;    //averaged self temperature
+volatile float bt_crnt_avg_temp = 0;
+volatile float bt_vltg_avg_temp = 0;
+volatile float Max_Charger_Current = 0;
+volatile float Charger_Target_Voltage = 0;
+volatile float analog_smpl_time = 0;
+volatile float Half_ref = 0;
+volatile float analog_const = 0;
+volatile int   OV_Timer[4];
+volatile char soft_OVC_Timer = 0;
+volatile char precharge_timer = 0;
+volatile char charge_mode = 1;
+volatile char avg_cnt = 0;
+volatile char analog_avg_cnt = 0;
+volatile char Bcurnt_cal_stage = 0;
+volatile char Ccurnt_cal_stage = 0;
 /* 0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error.
  */
-char power_session = 1;
-char PowerOffTimer = 0;
-char PowerOffTimerSec = 59;      //default state.
-char cfg_space = 0;
-char vr_space = 0;
-char dsky_space = 0;
-char v_test = 0;
-char first_cal = 0;
+volatile char power_session = 1;
+volatile char PowerOffTimer = 0;
+volatile char PowerOffTimerSec = 59;      //default state.
+volatile char cfg_space = 0;
+volatile char vr_space = 0;
+volatile char dsky_space = 0;
+volatile char v_test = 0;
+volatile char first_cal = 0;
+volatile char unsigned Run_Level = 0;
 
 /*****************************/
 //Control Output
-unsigned int     charge_power = 0; //charge rate
-unsigned int     ch_boost_power = 0; //charge rate
-unsigned int     heat_power = 0;   //heater power
+volatile unsigned int     charge_power = 0; //charge rate
+volatile unsigned int     ch_boost_power = 0; //charge rate
+volatile unsigned int     heat_power = 0;   //heater power
 /*****************************/
 
 /* Boolean Variables */
 //Conditions.
-unsigned int COND = 0;
+#define COND COND
+volatile unsigned int COND = 0;
 typedef struct tagCONDBITS {
-  unsigned Run_Level:3;
   unsigned Power_Out_EN:1;
   unsigned charger_detected:1; //Used for when the charger is plugged in.
   unsigned diagmode:1;
   unsigned got_open_voltage:1;
   unsigned failSave:1;
-  unsigned chkInProgress:1;
   unsigned fastCharge:1;
+  unsigned V_Cal:1;
+  unsigned NewSys:1;
+  //unsigned MemInUse:1;
 } CONDBITS;
 volatile CONDBITS CONDbits;
 
-unsigned int STING = 0;
+#define STING STING
+volatile unsigned int STING = 0;
 typedef struct tagSTINGBITS {
   unsigned lw_pwr_init_done:1;
   unsigned deep_sleep:1;
   unsigned zero_current:1;
   unsigned adc_sample_burn:1; //Burn it. Don't touch this var it will burn you if you do.
+  unsigned adc_valid_data:1;
   unsigned init_done:1;
   unsigned fault_shutdown:1; //General shutdown event.
   unsigned osc_fail_event:1;
   unsigned p_charge:1;
   unsigned sw_off:1;
   unsigned errLight:1;
-  unsigned charge_GO:1;
+  unsigned CH_Voltage_Present:1;
   unsigned OverCRNT_Fault:1;
 } STINGBITS;
 volatile STINGBITS STINGbits;
 
 
-unsigned int unresettableFlags = 0;
-typedef struct tagunresettableFlagsBITS {
-  unsigned OverVLT_Fault:1;
-  unsigned HighVLT:1;
-  unsigned LowVLT:1;
-  unsigned BattOverheated:1;
-  unsigned SysOverheated:1;
-} unresettableFlagsBITS;
-volatile unresettableFlagsBITS URFLAGbits;
+volatile unsigned int Flags = 0;
+#define syslock 0x01
+#define OverVLT_Fault 0x02
+#define HighVLT 0x04
+#define LowVLT 0x08
+#define BattOverheated 0x10
+#define SysOverheated 0x20
+
 
 //LED stuff used for gas gauge and cell ballance control.
-unsigned char BlinknLights = 0;
-typedef struct tagBlinknLightsBITS {
-  unsigned T1_8sec:1;
-  unsigned T1_4sec:1;
-  unsigned T1_2sec:1;
-  unsigned T1sec:1;
-} BlinknLightsBITS;
-volatile BlinknLightsBITS Blinkbits;
-
-char mult_timer = 0;
-char Ballance_LEDS = 0;
-
+volatile unsigned char BlinknLights = 0;
+volatile char mult_timer = 0;
+volatile char Ballance_LEDS = 0;
 
 #endif	/* SUBS_H */
 

@@ -26,12 +26,10 @@ SOFTWARE. */
 #include "Init.h"
 
 void default_sets(void){
-    sets.R1_resistance = 100;            //R1 resistance in Kohms
-    sets.R2_resistance = 10;             //R2 resistance in Kohms
-    sets.S1_vlt_adjst = 0;            //battery voltage input compensation in volts.
-    sets.S2_vlt_adjst = 0;
-    sets.S3_vlt_adjst = 0;
-    sets.S4_vlt_adjst = 0;
+    sets.R1_resistance = 10;            //R1 resistance in Kohms
+    sets.R2_resistance = 1;             //R2 resistance in Kohms
+    for(int i=0;i<4;i++)sets.S_vlt_adjst[i] = 0;
+    sets.Ch_vlt_adjst = 0;           //charger input voltage ratio compensation.
     /*****************************/
     //Battery Ratings and setpoints
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
@@ -70,6 +68,8 @@ void default_sets(void){
     sets.PxVenable[PORT2] = off;         //Port 2 display out is disabled by default.
     vars.testBYTE = 0x46;
     ram_chksum_update();        //Generate new checksum.
+    vars.heat_cal_stage = disabled;
+    for(int i=0;i<4;i++)OV_Timer[i]=0;
 }
 //Configure IO
 void configure_IO(void){
@@ -107,21 +107,21 @@ void configure_IO(void){
     GENERAL2_PORT = 0;
     /**************************/
     /* PWM outputs and charge detect input. */
-    PWM_TRIS = PWM_TRIS_DIR; //set porte to all inputs except RE4
+    PWM_TRIS = PWM_TRIS_DIR;
     PWM_LAT = 0;
-    PWM_PORT = 0;      //Make sure PORTE is 0
+    PWM_PORT = 0;
 /*****************************/
 /* Configure PWM */
 /*****************************/
     PTCON = 0x0004;     //Set the PWM module and set to free running mode for edge aligned PWM.
     PTMR = 0;
-    PTPER = 49;         //set period. 0% - 99%
+    PTPER = 99;         //set period. 0% - 99%
     SEVTCMP = 0;
-    PWMCON1 = 0x0FF0;           //Set PWM output for single mode.
+    PWMCON1 = 0x0070;           //Set PWM output for single mode.
     PWMCON2 = 0x0000;
     DTCON1 = 0x0000;        //0 Dead time. Not needed.
     FLTACON = 0;
-    OVDCON = 0xAA00;        //Only high-side PWM pins are being used for PWM.
+    OVDCON = 0x2A00;        //Only high-side PWM pins are being used for PWM.
     PDC1 = 0000;            //set output to 0
     PDC2 = 0000;            //set output to 0
     PDC3 = 0000;            //set output to 0
@@ -200,27 +200,28 @@ void configure_IO(void){
 /* Configure and Enable analog inputs */
 /*****************************/
     analog_smpl_time = 1 / (((IPS * 1000000) / 0x1E) / 45);
-    //ADCON1 = 0x02E4;
+    ADCON1 = 0x02E4;
     //ADCON2 = 0x0410;
-    //ADCON3 = 0x0F0F;
-    //ADCHS = 0x0000;
-    //ADPCFG = 0xFF70;
-    //ADCSSL = 0x008F;
+    ADCON2 = 0x0424;
+    ADCON3 = 0x0F0F;
+    ADCHS = 0x0000;
+    ADPCFG = 0xFE00;
+    ADCSSL = 0x01FF;
 
     //Configure IRQ Priorities
     IPC2bits.ADIP = 7;      //Analog inputs and regulation routines, Most Important.
     IPC1bits.T2IP = 6;      //0.125 second IRQ for some math timing, Greater priority.
-    IPC4bits.INT1IP = 5;    //Wheel rotate IRQ, timing is somewhat important.
+    IPC4bits.INT1IP = 5;    //Over current IRQ
+    IPC0bits.INT0IP = 5;    //Over voltage IRQ
     IPC0bits.T1IP = 4;      //Heartbeat IRQ, eh, not terribly important.
     IPC5bits.T5IP = 4;      //0.125 Sec Non-critical. Used for HUD, not important for system functionality.
     IPC2bits.U1TXIP = 3;    //TX 1 IRQ, Text can wait
     IPC6bits.U2TXIP = 3;    //TX 2 IRQ, Text can wait
     IPC2bits.U1RXIP = 2;    //RX 1 IRQ, Text can wait
     IPC6bits.U2RXIP = 2;    //RX 2 IRQ, Text can wait
-//    IPC1bits.T3IP = 2;      //Timer 3 IRQ for wheel rotate timeout. Not critical.
-    IPC0bits.INT0IP = 1;    //Charger detect IRQ, only for waking up the system.
-    IPC5bits.T4IP = 1;      //1 Sec Checksum timer IRQ, CPU intensive and other's need more priority.
-    IPC5bits.INT2IP = 1;    //Not yet used.
+    IPC1bits.T3IP = 2;      //Timer 3 IRQ for wheel rotate timeout. Not critical.
+    IPC5bits.T4IP = 1;      //1 Sec Checksum timer IRQ.
+    IPC5bits.INT2IP = 1;    //Not used.
 }
 void Init(void){
 /*******************************
@@ -230,8 +231,9 @@ void Init(void){
     SPLIM = ramFree;
     //Calculate our voltage divider values.
     vltg_dvid = sets.R2_resistance / (sets.R1_resistance + sets.R2_resistance);
-    //We've done Init.
-    STINGbits.init_done = 1;
+    //Calculate reference values
+    Half_ref = V_REF/2;
+    analog_const = 524280/V_REF;
     //We aren't in low power mode
     STINGbits.lw_pwr_init_done = 0;
     //Configure the inputs, outputs, and device.
@@ -261,8 +263,8 @@ void Init(void){
     IEC1bits.INT1IE = 1;    //Wheel rotate IRQ
     IEC1bits.INT2IE = 0;  //Disable irq for INT2, not used.
     IEC0bits.T2IE = 1;	// Enable interrupts for timer 2
-    //IEC0bits.T3IE = 1;	// Enable interrupts for timer 3
-    IEC1bits.T4IE = 1;	// Enable interrupts for timer 4
+    IEC0bits.T3IE = 0;	// Disable interrupts for timer 3
+    IEC1bits.T4IE = 0;	// Disable interrupts for timer 4
     IEC1bits.T5IE = 1;	// Enable interrupts for timer 5
     IEC0bits.ADIE = 1;  // Enable ADC IRQs.
     INTCON2bits.INT0EP = 0;
@@ -276,14 +278,14 @@ void Init(void){
     T2CONbits.TON = 1;      // Start Timer 2
     T1CONbits.TON = 1;      // Start Timer 1
     //T3CONbits.TON = 1;      // Start Timer 3
-    T4CONbits.TON = 1;      // Start Timer 4
+    //T4CONbits.TON = 1;      // Start Timer 4
     T5CONbits.TON = 1;      // Start Timer 5
     U1MODEbits.UARTEN = 1;  //enable UART1
     U1STAbits.UTXEN = 1;    //enable UART1 TX
     U2MODEbits.UARTEN = 1;  //enable UART2
     U2STAbits.UTXEN = 1;    //enable UART2 TX
-//Set initial runlevel to heartbeat
-    CONDbits.Run_Level = Heartbeat;
+    //We've done Init.
+    STINGbits.init_done = 1;
 /* End Of Initial Config stuff. */
 }
 void sys_debug(void){
@@ -306,7 +308,7 @@ void sys_debug(void){
 /*****************************/
 /* Disable our devices except T4 and serial ports. */
 /*****************************/
-    ADCON1bits.ADON = 0;    // Disable ADC
+    //ADCON1bits.ADON = 0;    // Disable ADC
     PTCONbits.PTEN = 0;     // Disable PWM
     T2CONbits.TON = 0;      // Disable Timer 2
     T1CONbits.TON = 0;      // Disable Timer 1
@@ -323,7 +325,7 @@ void sys_debug(void){
 //Go in to low power mode when not in use.
 void low_power_mode(void){
     Batt_IO_OFF();
-    ADCON1bits.ADON = 0;    // turn ADC off
+    //ADCON1bits.ADON = 0;    // turn ADC off
     T2CONbits.TON = 0;      // Stop Timer 2
     T3CONbits.TON = 0;      // Stop Timer 3
     T4CONbits.TON = 0;      // Stop Timer 4
@@ -336,8 +338,8 @@ void low_power_mode(void){
     IEC1bits.T5IE = 0;	// Disable interrupts for timer 5
     INTCON2bits.INT1EP = 0;
     INTCON2bits.INT2EP = 0;
-    //Set check_timer to just a few seconds before check.
-    check_timer = 0x0700;
+    //Set check_timer to 10 seconds before check on startup.
+    check_timer = 1790;
     //Need to reinit on restart
     STINGbits.init_done = 0;
     //Tell everyone we are in low power mode.
@@ -347,8 +349,7 @@ void low_power_mode(void){
 /* Turn everything off so we don't waste any more power.
  * Only plugging in the charge will restart the CPU, or yaknow, just restart the CPU... */
 void low_battery_shutdown(void){
-    CONDbits.Power_Out_EN = 0;
-    CONDbits.Run_Level = Shutdown;
+    Run_Level = Shutdown;
     PTCONbits.PTEN = 0;     // Turn off PWM
     T1CONbits.TON = 0;      // Stop Timer 1
     // Clear all interrupts flags

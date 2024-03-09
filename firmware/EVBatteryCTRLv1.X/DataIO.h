@@ -29,8 +29,8 @@ SOFTWARE. */
 
 extern unsigned int BaudCalc(float, float);
 extern void load_float(float, int);
-extern void load_string(const char*, int);
-extern void send_string(const char*, int);
+extern void load_string(char*, int);
+extern void send_string(char*, int);
 extern void copy_string(char*, int);
 extern void dispatch_Serial(int);
 extern char four_bit_hex_cnvt(int);

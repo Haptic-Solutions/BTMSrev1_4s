@@ -21,10 +21,10 @@ SOFTWARE. */
 #ifndef REGULATE_H
 #define	REGULATE_H
 
-extern void temperatureCalc(void);
-extern void outputReg(void);
-extern void chargeReg(void);
-extern void heat_control(float);
+extern inline void temperatureCalc(void);
+extern inline void outputReg(void);
+extern inline void chargeReg(void);
+extern inline void heat_control(float);
 
 
 float dischrg_current = 0;

@@ -71,7 +71,7 @@ void pageOut(int pageNum, int serial_port){
 }
 
 void displayOut(int serial_port){
-    if(sets.PxVenable[serial_port] && !portBSY[serial_port] && CONDbits.Run_Level == All_Sys_Go){
+    if(sets.PxVenable[serial_port] && !portBSY[serial_port] && Run_Level == All_Sys_Go){
         if(PxVtimer[serial_port] == 0){
             pageOut(PxPage[serial_port], serial_port);
             PxVtimer[serial_port] = sets.pageDelay[serial_port][PxPage[serial_port]] - 1;
@@ -117,13 +117,14 @@ void fault_read(int serial_port){
     }
     portBusyIdle(serial_port);
     send_string("\n\r", serial_port);
-    send_string("Flags:: |Batt OV| |Batt HV| |Batt UV| |Batt OT| |Sys OT| \n\r", serial_port);
-    send_string("         ", serial_port);
-    unsigned int flagMask = 0x10;
-    for(int i=0;i<5;i++){
-        if(unresettableFlags&flagMask)load_string("SET       ", serial_port);
-        else load_string("Clear     ", serial_port);
-        flagMask>>1; //Shift the bit right by one.
+    send_string("Flags::|Sets LK||Batt OV||Batt HV|", serial_port);
+    send_string("|Batt UV||Batt OT||Sys OT|\n\r", serial_port);
+    send_string("        ", serial_port);
+    unsigned char flagMask = 0x01;
+    for(int i=0;i<6;i++){
+        if(Flags&flagMask)load_string("SET      ", serial_port);
+        else load_string("Clear    ", serial_port);
+        flagMask*=2; //Shift the bit left by one.
     }
     send_string("\n\r", serial_port);
 }
@@ -149,7 +150,7 @@ void send_Float_Array(float* data, int start, int end, int serial_port){
 void all_info(int serial_port){
     send_string("\n\r", serial_port);
     /* Settings FLOAT variables. */
-    send_string("Printing System Settings.\n\r", serial_port);
+    send_string("System Settings::\n\r", serial_port);
     send_string("1: |R1|      |R2|     |S1C|    |S2C|     |S3C|    |S4C|\n\r", serial_port);
     send_Float_Array(sets.settingsFloat, 1, 6, serial_port);
     send_string("\n\r", serial_port);
@@ -168,7 +169,32 @@ void all_info(int serial_port){
     send_string("\n\r", serial_port);
     send_string("6: |BST|    |CST|    |MHT|    |POA|\n\r", serial_port);
     send_Int_Array(sets.settingsINT, 12, 15, serial_port);
+    send_string("\n\r***********\n\r", serial_port);
+    send_string("Display::\n\r", serial_port);
+    send_string("1: |B%|      |PV|     |TV|    |PW|     |AV|\n\r", serial_port);
+    send_Float_Array(dsky.dskyarrayFloat, 1, 5, serial_port);
     send_string("\n\r", serial_port);
+    send_string("2: |CV|      |CA|     |S1|    |S2|     |S3|    |S4|\n\r", serial_port);
+    send_Float_Array(dsky.dskyarrayFloat, 6, 11, serial_port);
+    send_string("\n\r", serial_port);
+    send_string("3: |W|      |CW|     |A|    |CB|\n\r", serial_port);
+    send_Float_Array(dsky.dskyarrayFloat, 12, 15, serial_port);
+    send_string("\n\r", serial_port);
+    send_string("4: |CM|      |AA|     |OCV|    |MC|\n\r", serial_port);
+    send_Float_Array(dsky.dskyarrayFloat, 16, 19, serial_port);
+    send_string("\n\r Ah Rating: ", serial_port);
+    load_float(sets.amp_hour_rating, serial_port);
+    send_string("\n\r Capacity: ", serial_port);
+    load_float(vars.battery_capacity, serial_port);
+    send_string("\n\r Remaining: ", serial_port);
+    load_float(vars.battery_remaining, serial_port);
+    send_string("\n\r Charge Cycles: ", serial_port);
+    load_float(vars.TotalChargeCycles, serial_port);
+    send_string("\n\r", serial_port);
+}
+
+void setsLockedErr(int serial_port){
+    load_string("Unable: Settings Locked.\n\r", serial_port);
 }
 
 void Command_Interp(int serial_port){
@@ -201,11 +227,11 @@ void Command_Interp(int serial_port){
         //Check for faults.
         if(vars.fault_count){
             //Send fault alert "!"
-            load_string(" Check Faults!", serial_port);
+            load_string(" CF!", serial_port);
         }
-        if(CONDbits.Run_Level == Crit_Err){
+        if(Run_Level == Crit_Err){
             //Send fault alert "!"
-            load_string(" ->Critical Error!<-", serial_port);
+            load_string(" ->CrE!<-", serial_port);
         }
         switch(CMD_buff[serial_port][tempPoint[serial_port]]){
             case '\r':
@@ -213,17 +239,20 @@ void Command_Interp(int serial_port){
             case '\n':
             break;
             case '#':   //Reset the CPU
-                CMD_Point[serial_port] = clear;
-                cmdRDY[serial_port] = clear;
-                asm("reset");
+                if(Flags&syslock)setsLockedErr(serial_port);
+                else {
+                    CMD_Point[serial_port] = clear;
+                    cmdRDY[serial_port] = clear;
+                    asm("reset");
+                }
             break;
             case '$':
                 //Generate flash and chip config checksum and compare it to the old one.
                 load_string("\n\rPRG:\n\rStored:", serial_port);
                 load_hex(sets.flash_chksum_old, serial_port);
                 load_string("\n\rCalc:  ", serial_port);
-                check_prog();
-                load_hex(flash_chksum, serial_port);
+                if(check_prog()==2)load_string("Mem Busy", serial_port);
+                else load_hex(flash_chksum, serial_port);
                 load_string("\n\r", serial_port);
             break;
             case '%':
@@ -231,26 +260,35 @@ void Command_Interp(int serial_port){
                 load_string("\n\rNVM:\n\rStored:", serial_port);
                 load_hex(eeprom_read(0x01FF), serial_port);
                 load_string("\n\rCalc:  ", serial_port);
-                check_nvmem();
-                load_hex(rom_chksum, serial_port);
+                if(check_nvmem()==2)load_string("Mem Busy", serial_port);
+                else load_hex(rom_chksum, serial_port);
                 load_string("\n\r", serial_port);
             break;
             case '^':
-                load_string("\n\rSettings and Vars Saved.\n\r", serial_port);
-                save_sets();
-                save_vars();  //Save settings to NV-memory
+                if(Flags&syslock)setsLockedErr(serial_port);
+                else {
+                    load_string("\n\rSets and Vars Saved.\n\r", serial_port);
+                    save_sets();
+                    save_vars();  //Save settings to NV-memory
+                }
             break;
             case '~':
-                default_sets(); //Load default Settings.
-                save_sets();    //Save them to EEPROM.
-                nvm_chksum_update();    //Update EEPROM checksum.
+                if(Flags&syslock)setsLockedErr(serial_port);
+                else {
+                    default_sets(); //Load default Settings.
+                    save_sets();    //Save them to EEPROM.
+                    nvm_chksum_update();    //Update EEPROM checksum.
+                }
             break;
             case '!': //Clear variables and restart.
-                eeprom_erase(cfg_space);
-                nvm_chksum_update();    //Update EEPROM checksum.
-                CMD_Point[serial_port] = clear;
-                cmdRDY[serial_port] = clear;
-                asm("reset");
+                if(Flags&syslock)setsLockedErr(serial_port);
+                else {
+                    eeprom_erase(cfg_space);
+                    nvm_chksum_update();    //Update EEPROM checksum.
+                    CMD_Point[serial_port] = clear;
+                    cmdRDY[serial_port] = clear;
+                    asm("reset");
+                }
             break;
             case 'H':
                 vars.heat_cal_stage = initialize;
@@ -286,15 +324,18 @@ void Command_Interp(int serial_port){
             break;
             case 'C':
                 vars.fault_count = clear;
+                STINGbits.errLight = clear;
                 STINGbits.fault_shutdown = clear;
                 if(vars.heat_cal_stage != disabled)
                     vars.heat_cal_stage = notrun;
                 STINGbits.osc_fail_event = clear;
+                if(!(Flags&syslock))Flags=clear;
                 save_vars();
                 load_string("\n\rFaults Cleared.\n\r", serial_port);
             break;
             case '&':
-                if(CONDbits.Run_Level == Crit_Err)CONDbits.Run_Level = Heartbeat; //Attempt to bring back from critical error.
+                if(Run_Level == Crit_Err && !(Flags&syslock))Run_Level = Heartbeat; //Attempt to bring back from critical error.
+                else if(Flags&syslock)
             break;
             case 'Z':
                 STINGbits.p_charge = no;
@@ -312,6 +353,35 @@ void Command_Interp(int serial_port){
             case 'i':   //Print info.
                 all_info(serial_port);
             break;
+            case 'l':  //Unlock the system and allow variables to be modified.
+                Flags &= 0xFE;
+                CONDbits.Power_Out_EN = off;
+                STINGbits.CH_Voltage_Present = off;
+                save_vars();
+                load_string("Sets UnLKD.\n\r", serial_port);
+            break;
+            case 'L':  //Lock the system and enable system functionality.
+                send_string("Wait...", serial_port);
+                first_cal = 0;  //Initiate calibration routine
+                Flags |= syslock; //Lock the settings so that things can run without disruption.
+                while(first_cal!=3)Idle();  //Wait until calibration is done.
+                save_vars();
+                load_string("Sets LKD.\n\r", serial_port);
+            break;
+            case 'Q':
+                if(!(Flags&syslock))Volt_Cal(serial_port);
+                else if(Flags&syslock)setsLockedErr(serial_port);
+            break;
+            case 'm':
+                if(CONDbits.Power_Out_EN)load_string("Power Out On.\n\r", serial_port);
+                if(CONDbits.charger_detected)load_string("Charge Go.\n\r", serial_port);
+                load_string("RL ", serial_port);
+                load_float(Run_Level, serial_port);
+                load_string("\n\rCH ", serial_port);
+                load_float(charge_mode, serial_port);
+                load_string("\n\r", serial_port);
+
+            break;
             default:
                 load_string("Unknown Command.\n\r", serial_port);
             break;
@@ -324,28 +394,37 @@ void Command_Interp(int serial_port){
 }
 
 void BAL_Out(char LEDS){
+    LED_dir_1 = LED_HiZ_1;
+    LED_dir_2 = LED_HiZ_2;
     Mult_SEL = 0;
-    Mult_B1 = LEDS & 0x01;
-    Mult_B2 = LEDS & 0x02;
-    Mult_B3 = LEDS & 0x04;
-    Mult_B4 = LEDS & 0x08;
+    Mult_B1 = LEDS&0x01;
+    Mult_B2 = LEDS&0x02;
+    Mult_B3 = LEDS&0x04;
+    Mult_B4 = LEDS&0x08;
+    LED_dir_1 = DFLT_1;
+    LED_dir_2 = DFLT_2;
 }
 
 void LED_Out(char LEDS){
+    LED_dir_1 = LED_HiZ_1;
+    LED_dir_2 = LED_HiZ_2;
     Mult_SEL = 1;
-    Mult_B1 = (LEDS^0x0F) & 0x01;
-    Mult_B2 = (LEDS^0x0F) & 0x02;
-    Mult_B3 = (LEDS^0x0F) & 0x04;
-    Mult_B4 = (LEDS^0x0F) & 0x08;
+    Mult_B1 = !(LEDS&0x01);
+    Mult_B2 = !(LEDS&0x02);
+    Mult_B3 = !(LEDS&0x04);
+    Mult_B4 = !(LEDS&0x08);
+    LED_dir_1 = DFLT_1;
+    LED_dir_2 = DFLT_2;
 }
+
 
 void LED_ChrgLVL(float LEVEL){
     if(LEVEL > 95)LED_Out(0x0F);
     else if(LEVEL > 75)LED_Out(0x07);
     else if(LEVEL > 50)LED_Out(0x03);
     else if(LEVEL >= 25)LED_Out(0x01);
-    else if(LEVEL < 25 && !STINGbits.charge_GO){
-        if(Blinkbits.T1_2sec)LED_Out(0x01);      //Low battery indication.
+    else if(LEVEL < 25 && !STINGbits.CH_Voltage_Present){
+        if(BlinknLights&0x04)LED_Out(0x01);      //Low battery indication.
         else LED_Out(0x00);
     }
     else LED_Out(0x00);
@@ -357,18 +436,18 @@ void LED_Mult(char attributes){
         //Run multiplexed routine.
         //Debug mode LEDs
         if(attributes == Debug)LED_Out(0x06);
-        else if(mult_timer >= 3 && attributes == on){
+        else if(mult_timer >= LED_Brightness && attributes == on){
             //Display LEDs
             mult_timer = 0;
             //Error blink LED
             if(STINGbits.errLight){
-                if(Blinkbits.T1sec)LED_Out(0x02);
+                if(BlinknLights&0x10)LED_Out(0x02); //Slow blink.
                 else LED_Out(0x00);
             }
             //Charging level indication.
-            else if(STINGbits.charge_GO){
-                if(Blinkbits.T1_8sec && (charge_mode == USB3_Fast || CONDbits.fastCharge))LED_ChrgLVL(dsky.chrg_percent+25); //Fast charging indication.
-                else if(Blinkbits.T1_4sec && charge_mode != USB3_Fast && !CONDbits.fastCharge)LED_ChrgLVL(dsky.chrg_percent+25);  //Normal charging indication.
+            else if(CONDbits.charger_detected){
+                if(BlinknLights&0x01 && (charge_mode == USB3_Fast || CONDbits.fastCharge))LED_ChrgLVL(dsky.chrg_percent+25); //Fast charging indication.
+                else if(BlinknLights&0x02 && charge_mode != USB3_Fast && !CONDbits.fastCharge)LED_ChrgLVL(dsky.chrg_percent+25);  //Normal charging indication.
                 else LED_ChrgLVL(dsky.chrg_percent);
             }
             //Power level indication.
@@ -376,7 +455,7 @@ void LED_Mult(char attributes){
         }
         else{
             //Balance LEDs
-            if(mult_timer<3)mult_timer++;
+            if(mult_timer<LED_Brightness)mult_timer++;
             BAL_Out(Ballance_LEDS);
         }
     }

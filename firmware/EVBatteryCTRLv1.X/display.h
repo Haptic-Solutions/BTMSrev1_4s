@@ -25,7 +25,6 @@ extern void Command_Interp(int);
 extern void fault_read(int);
 extern void displayOut(int);
 extern void LED_Mult(char);
-extern void Chng_LED_Mode(char);
 
 unsigned int CMD_Point[2];  //Command Pointer
 unsigned int bufsize[2];

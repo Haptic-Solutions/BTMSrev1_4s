@@ -100,7 +100,7 @@ void dispatch_Serial(int serial_port){
 }
 
 //Send a string of text to a buffer that can then be dispatched to a serial port.
-void load_string(const char *string_point, int serial_port){
+void load_string(char *string_point, int serial_port){
     port_check(serial_port);
     writingbuff[serial_port] = yes;
     StempIndex[serial_port] = clear;
@@ -115,7 +115,7 @@ void load_string(const char *string_point, int serial_port){
 }
 
 //Send text to buffer and auto dispatch the serial port.
-void send_string(const char *string_point, int serial_port){
+void send_string(char *string_point, int serial_port){
     load_string(string_point, serial_port);
     dispatch_Serial(serial_port);
     portBusyIdle(serial_port);  //Check to see if port is ready.
@@ -143,6 +143,11 @@ void load_float(float f_data, int serial_port){
     if (f_data > 9999.999){
         f_data = 9999.999;      //truncate it if it's too big of a number.
         float_out[serial_port][0] = '?';    //Put a ? in first char if truncated.
+        extSpc = 1;
+    }
+    else if (f_data < 0000.001){
+        f_data = 0000.001;      //truncate it if it's too big of a number.
+        float_out[serial_port][0] = '<';    //Put a ? in first char if truncated.
         extSpc = 1;
     }
 

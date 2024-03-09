@@ -25,11 +25,11 @@ SOFTWARE. */
 #include "common.h"
 #include "eeprom.h"
 
-void chargeDetect(void){
-    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage > calibrating && !D_Flag_Check()){
+inline void chargeDetect(void){
+    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage != calibrating && !D_Flag_Check() && charge_mode != Stop && first_cal == fCalReady){
         //Check for various charging standards.
-        if(charge_mode == Ready){
-            if(dsky.Cin_voltage<5.2){
+        if(charge_mode == Assignment_Ready){
+            if(dsky.Cin_voltage<6){
                 if(V_Bus_Stat){
                     //Mom! Can we get USB 3.1 charging?
                     //No sweetie, we have USB 3.1 charging at home.
@@ -84,12 +84,15 @@ void chargeDetect(void){
                 fault_log(0x38);
                 ALL_shutdown();
             }
-            STINGbits.charge_GO=1;
         }
-        if(CHwaitTimer < 2)CHwaitTimer++;
-        else charge_mode = Ready;
+        else if(CHwaitTimer < 2 && charge_mode == Wait)CHwaitTimer++;
+        else if(charge_mode == Wait)charge_mode = Assignment_Ready;
+        //Check if settings are locked and we can go-ahead with the charging process
+        STINGbits.CH_Voltage_Present = set;     //Charger is detected
     }
-    if(dsky.Cin_voltage<3 && charge_mode != Wait){
+    //Wait for voltage to stabilize, or reset from a stop condition.
+    else if(dsky.Cin_voltage<3){
+        STINGbits.CH_Voltage_Present = clear;
         charge_mode = Wait;
         CHwaitTimer=0;
     }
@@ -99,8 +102,8 @@ void chargeDetect(void){
     //    charge_mode = Solar;
     //}
 
-    //Check to see if charger has been plugged in, if this routine has been run already, and that initial calibration is done.
-    if(!CONDbits.charger_detected && STINGbits.charge_GO && first_cal == fCalReady){
+    //Check to see if charger has been plugged in, or if this routine has been run already.
+    if(!CONDbits.charger_detected && STINGbits.CH_Voltage_Present && charge_mode > Assignment_Ready && (Flags&syslock)){
         //reset peak power when we plug in a charger.
         dsky.peak_power = 0;
         //Check for partial charge status to see if we need to do a full charge to ballance the cells.
@@ -137,57 +140,41 @@ void chargeDetect(void){
         }
 
         //Reset battery usage session when charger is plugged in and power is turned off.
-        if(!__PwrKey && !CONDbits.Power_Out_EN){
+        if(!CONDbits.Power_Out_EN){
             vars.battery_usage = 0;
         }
         CONDbits.charger_detected = 1;  //Set this variable to 1 so that we only run this routine once per charger plugin.
     }
-    else if(!BV_Fault) {
+    else if(!STINGbits.CH_Voltage_Present){
         CONDbits.charger_detected = 0;  //If charger has been unplugged, clear this.
     }
 }
 
 //Initiate current calibration, heater calibration, and try to get battery capacity from NVmem upon cold and dead startup.
-void initialCal(void){
+//Gets run by heartbeat IRQ
+inline void initialCal(void){
     //Calibrate the current sense and calculate remaining capacity on first power up based on voltage percentage and rated capacity of battery.
-    if(first_cal == 0 && Bcurnt_cal_stage == 0){
-        Bcurnt_cal_stage = 1;
-        CONDbits.Run_Level = Cal_Mode;
+    if(first_cal == 0 && (Flags&syslock)){
+        Run_Level = Cal_Mode;
+        Bcurnt_cal_stage = 1;   //Initiate current calibration routine.
         first_cal = 1;
     }
-    else if(Bcurnt_cal_stage == 5 && first_cal < fCalTimer)first_cal++; //delay, wait about 1 second for other services to complete.
-
+    //Wait until current calibration is complete
+    else if(Bcurnt_cal_stage == 3 && first_cal < fCalTimer)first_cal++; //delay, wait about 1 second for other services to complete.
+    //Once current calibration is done, check battery current and get open ciruit voltage for inital soc
     else if (first_cal == 2 && CONDbits.got_open_voltage){
-        //Check to see if we have valid data in EEPROM that we can start with.
-        int lowestCell = 4;
-        if (eeprom_read((cfg_space) + 1) == 0x7654 && vars.battery_capacity > 1){
-            //Calculate how much power was used while the power was off. This is not exact, but should be close enough.
-            //Use lowest cell.
-            float previousCell = 100;
-            for(int i=0;i<Cell_Count;i++){
-                if(voltage_percentage[i]<previousCell){
-                    lowestCell = i;
-                    previousCell=voltage_percentage[i];
-                }
-            }
-            int power_diff = (vars.battery_capacity * ((vars.voltage_percentage_old[lowestCell] - voltage_percentage[lowestCell]) / 100));
-            vars.battery_remaining -= power_diff;        //Subtract the power difference
-            vars.absolute_battery_usage -= power_diff;
-            vars.battery_usage -= power_diff;
-        }
-        //Get a first startup value for amp hours and battery remaining.
-        else{
-            vars.battery_capacity = sets.amp_hour_rating; //Just use the amp hour rating on first start.
-            vars.battery_remaining = sets.amp_hour_rating * (voltage_percentage[lowestCell] / 100);   //Rough estimation of how much power is left.
-        }
-        first_cal = fCalReady;      //Signal that we are done with power up sequence.
-        CONDbits.Run_Level = Heartbeat;
+
+        if (eeprom_read((cfg_space) + 1) != 0x7654)
+        CapacityCalc(); //Calculate approximate battery soc based on open circuit voltage.
+        first_cal = 3;      //Signal that we are done with power up sequence.
+        //When current cal is done, set runlevel to heartbeat unless the heater is working.
+        //Otherwise let the heater routine change the runlevel when it's done.
+        if(vars.heat_cal_stage == disabled) Run_Level = Heartbeat;
     }
 }
 
 //System debug safemode
-void death_loop(void){
-    WREG15 = SP_COPY;   //Try to make the stack pointer a safe value so we can run the terminal IRQs safely.
+inline void death_loop(void){
     ALL_shutdown();     //Turn everything off.
     sys_debug();    //Disable everything that is not needed. Only Serial Ports and Timer 1 Active.
     LED_Mult(Debug);  //Turn debug lights solid on to show fatal error.
@@ -198,45 +185,45 @@ void death_loop(void){
 }
 
 //Warm start and reset check.
-void first_check(void){
-    static int reset_chk;              //Do not initialize this var. Needs to stay the same on a reset.
+inline void first_check(void){
+    volatile static int reset_chk;              //Do not initialize this var. Needs to stay the same on a reset.
     //Do not check why we reset on initial power up. No reason to. We don't want a reset error on first power up.
-    if(reset_chk == 0xAA55){
+    //if(reset_chk == 0xAA55){
         reset_check();              //Check for reset events from a warm restart.
-    }
+    //}
     reset_chk = 0xAA55;         //Warm start.
 }
 //Main Power Check.
 //Gets run once per second from Heartbeat IRQ.
-void main_power_check(void){
+inline void main_power_check(void){
     /* Check for charger, or software power up. */
-    if((STINGbits.charge_GO || CONDbits.Power_Out_EN) && CONDbits.Run_Level != Cal_Mode){
+    if((STINGbits.CH_Voltage_Present || CONDbits.Power_Out_EN) && (Run_Level != Cal_Mode)){
         //Reset Overcurrent shutdown timer and various fault shutdowns.
         if(shutdown_timer){
-            STINGbits.fault_shutdown = 0;
+            STINGbits.errLight = clear;     //Even though we may still have errors logged, the user is trying again and needs to know their battery charge level.
+            STINGbits.fault_shutdown = 0;   //Reset the software fuse.
             STINGbits.osc_fail_event = 0;
             shutdown_timer = 0;
         }
         soft_OVC_Timer = SOC_Cycles;
         //Check for fault shutdown. Turn off non-critical systems if it is a 1.
         if(STINGbits.fault_shutdown){
-            CONDbits.Run_Level = On_W_Err;
+            Run_Level = On_W_Err;
             //Deinit if we haven't already.
             if (!STINGbits.lw_pwr_init_done){
                 low_power_mode();   //Go into idle mode with heart beat running.
             }
         }
         else{
-            CONDbits.Run_Level = All_Sys_Go;     //Main power is ON.
+            Run_Level = All_Sys_Go;     //Main power is ON.
             //Reinit if we haven't already.
             if (!STINGbits.init_done){
                 Init();
             }
         }
     }
-    else{
-        LED_Mult(Ballance);     //Run LED system as ballance only.
-        CONDbits.Run_Level = Heartbeat;     //System is idling in Heartbeat mode.
+    else if(Run_Level != Cal_Mode && Run_Level > Heartbeat){
+        Run_Level = Heartbeat;     //System is idling in Heartbeat mode.
         //Deinit if we haven't already.
         if (!STINGbits.lw_pwr_init_done){
             low_power_mode();   //Go into idle mode with heart beat running.
@@ -244,7 +231,7 @@ void main_power_check(void){
     }
 }
 
-void analog_sanity(void){
+inline void analog_sanity(void){
     //Charger input Voltage
     if(ChargeVoltage > 0xFFFD){
         fault_log(0x1D);
@@ -325,11 +312,10 @@ void analog_sanity(void){
     if(Mtemp < 0x0002){
         fault_log(0x26);
     }
-    if(CONDbits.failSave)save_vars();
 }
 
 //Check reset conditions and log them.
-void reset_check(void){
+inline void reset_check(void){
     if(RCONbits.BOR){
         RCONbits.BOR = 0;
         fault_log(0x13);        //Brown Out Event.
@@ -352,14 +338,12 @@ void reset_check(void){
     }
     if(RCONbits.SWR){
         RCONbits.SWR = 0;
-        fault_log(0x18);        //Reset Instruction Event.
+        fault_log(0x19);        //Reset Instruction Event.
     }
-    fault_log(0x19);        //General Reset Check. Did we start from cold? If not then log that we had a reset.
-    if(CONDbits.failSave)save_vars();
 }
 
 //Used to log fault codes. Simple eh? Just call it with the code you want to log.
-void fault_log(int f_code){
+inline void fault_log(int f_code){
     //Turn on fault light.
     STINGbits.errLight = 1;
     //Check for redundant faults.
@@ -381,97 +365,103 @@ void fault_log(int f_code){
 }
 
 //Heater failed to initialize.
-void heatStuffOff(void){
+void heatStuffOff(int RLtemp){
     Heat_CTRL = off;
     heat_power = off;
-    heat_rly_timer = 3;     //Reset heat relay timer
     heat_set = off;
     if(vars.heat_cal_stage != disabled)vars.heat_cal_stage = error;
-    CONDbits.Run_Level = Heartbeat; //Go back to normal operation.
+    Run_Level = RLtemp; //Go back to whatever runlevel was running before.
     PowerOutEnable = off;     //Heat Relay Off
 }
 //Check and calibrate heater to the wattage chosen by the user.
-void heater_calibration(void){
-    if (vars.heat_cal_stage == calibrating && CONDbits.Run_Level == Cal_Mode){
+inline void heater_calibration(void){
+    int RLtemp = 0;
+    if (vars.heat_cal_stage == calibrating && Run_Level == Cal_Mode){
         float watts = (dsky.pack_voltage * dsky.battery_current) * -1;
         if (watts < sets.max_heat){
-        PowerOutEnable = on;     //Heat Relay On
-            if(heat_rly_timer == 0){
-                heat_set++;
-                Heat_CTRL = heat_set;
-                if (heat_set > 95){
-                    fault_log(0x01);      //Log fault, heater is too small for the watts you want.
-                    heatStuffOff();
-                }
-                if (heat_set > 50 && watts < 2){
-                    fault_log(0x02);      //Log fault, no heater detected.
-                    heatStuffOff();
-                }
-                if (heat_set < 5 && watts > 10){
-                    fault_log(0x03);      //Log fault, short circuit on heater.
-                    heatStuffOff();
-                }
-                if(CONDbits.failSave)save_vars();
+            heat_set++;
+            Heat_CTRL = heat_set;
+            if (heat_set > 95){
+                fault_log(0x01);      //Log fault, heater is too small for the watts you want.
+                heatStuffOff(RLtemp);
             }
-            if(heat_rly_timer == 3)
-                heat_rly_timer = 2; //wait two 0.125ms cycles before allowing heat regulation to start.
+            if (heat_set > 50 && watts < 2){
+                fault_log(0x02);      //Log fault, no heater detected.
+                heatStuffOff(RLtemp);
+            }
+            if (heat_set < 5 && watts > 10){
+                fault_log(0x03);      //Log fault, short circuit on heater.
+                heatStuffOff(RLtemp);
+            }
         }
         else{
             vars.heat_cal_stage = ready; // Heater calibration completed.
             Heat_CTRL = off;        //Heater PWM output off.
-            CONDbits.Run_Level = Heartbeat; //Go back to normal operation.
+            Run_Level = RLtemp; //Go back to whatever runlevel was running before.
             PowerOutEnable = off;     //Heat Relay Off
-            heat_rly_timer = 3;     //Reset heat relay timer
         }
     }
     if (vars.heat_cal_stage == initialize){
+        //If we are already in cal_mode, then it's a first start and we need to go back to heartbeat when we are done.
+        //Otherwise, go back to whatever runlevel mode we were already in when we are finished.
+        if(Run_Level == Cal_Mode)RLtemp = Heartbeat; //Since this is the last thing that gets done during initial startup, go to RL heartbeat.
+        else RLtemp = Run_Level;
+        Run_Level = Cal_Mode;
         Heat_CTRL = off;    //Heater PWM output off.
         Init();         //Re-init.
         Batt_IO_OFF();    //Turn off all inputs and outputs.
-        CONDbits.Run_Level = Cal_Mode; //Force device to run in Cal_Mode
         heat_set = off;
         heat_power = off;
         vars.heat_cal_stage = calibrating; //If heat_cal_stage is 2 then a calibration is in progress.
-        heat_rly_timer = 3;     //Reset heat relay timer
     }
 }
 
 //Check battery status for faults and dangerous conditions.
-void explody_preventy_check(void){
+inline void explody_preventy_check(void){
+    //Check hardware fault pins.
+    if(BV_Fault)_INT0Interrupt();
+    if(C_Fault)_INT1Interrupt();
     //Battery over voltage check
-    if(dsky.pack_voltage >= sets.max_battery_voltage){
-        fault_log(0x07);    //Log a high battery voltage shutdown event.
-        URFLAGbits.HighVLT = 1;
-        ALL_shutdown();
+    for(int i=0;i<Cell_Count;i++){
+        if(dsky.Cell_Voltage[i] > sets.max_battery_voltage){
+            if(OV_Timer[i]<10)OV_Timer[i]++;
+            else {
+                fault_log(0x07);    //Log a high battery voltage shutdown event.
+                Flags |= HighVLT;
+                ALL_shutdown();
+            }
+        }
+        else if(OV_Timer[i]>0)OV_Timer[i]--;
     }
     //Battery under voltage check.
-    if(dsky.pack_voltage < sets.low_voltage_shutdown && !STINGbits.charge_GO){
-        fault_log(0x04);    //Log a low battery shutdown event.
-        URFLAGbits.LowVLT = 1;
-        low_battery_shutdown();
+    for(int i=0;i<Cell_Count;i++){
+        if(dsky.Cell_Voltage[i] < sets.low_voltage_shutdown && !STINGbits.CH_Voltage_Present){
+            fault_log(0x3B);    //Log a low battery shutdown event.
+            Flags |= LowVLT;
+            low_battery_shutdown();
+        }
     }
     //Battery temp shutdown check
     if(dsky.battery_temp > sets.battery_shutdown_temp){
         fault_log(0x08);    //Log a battery over temp shutdown event.
-        URFLAGbits.BattOverheated = 1;
+        Flags |= BattOverheated;
         ALL_shutdown();
     }
     //My temp shutdown check
     if(dsky.my_temp > sets.ctrlr_shutdown_temp){
         fault_log(0x0A);    //Log a My Temp over temp shutdown event.
-        URFLAGbits.SysOverheated = 1;
+        Flags |= SysOverheated;
         ALL_shutdown();
     }
-    if(CONDbits.failSave)save_vars();
     if(D_Flag_Check()){
         fault_log(0x09);    //Log a compromised flag error.
-        CONDbits.Run_Level = Crit_Err;
+        Run_Level = Crit_Err;
     }
 }
 
 //Gets ran from analog calc in file 'subs.c'
 //Ran every 8th analog input IRQ
-void currentCheck(void){
+inline void currentCheck(void){
     //Battery over current check.
     float dischr_current = 0;
     if(dsky.battery_current < 0){
@@ -482,30 +472,29 @@ void currentCheck(void){
     }
     if(dischr_current > sets.over_current_shutdown){
         if(oc_shutdown_timer > 5){
+            fault_log(0x05);    //Log a discharge over current shutdown event.
             ALL_shutdown();
             oc_shutdown_timer = 0;
-            fault_log(0x05);    //Log a discharge over current shutdown event.
         }
         oc_shutdown_timer++;
     }
     else if(oc_shutdown_timer > 0) oc_shutdown_timer--;
     //Battery charge over current check.
     if(dsky.battery_current > sets.chrg_C_rating * sets.amp_hour_rating){
-        ALL_shutdown();
         fault_log(0x06);    //Log a charge over current shutdown event.
+        ALL_shutdown();
     }
-    if(CONDbits.failSave)save_vars();
 }
 
 //Turns off all outputs and logs a general shutdown event.
-void ALL_shutdown(void){
+inline void ALL_shutdown(void){
     Batt_IO_OFF();               //Shutdown except Serial Comms.
     STINGbits.fault_shutdown = 1; //Tells other stuff that we had a fault so they know not to run.
     fault_log(0x0B);            //Log a general Shutdown Event.
 }
 
 //Turns off all battery related inputs and outputs.
-void Batt_IO_OFF(void){
+inline void Batt_IO_OFF(void){
     CH_Boost = off;           //set charge boost control off.
     CHctrl = off;             //set charge control off.
     Heat_CTRL = off;          //set heater control off.
@@ -515,12 +504,8 @@ void Batt_IO_OFF(void){
 }
 
 //Check un-resettable flags.
-int D_Flag_Check(){
-  if(URFLAGbits.OverVLT_Fault) return yes;
-  //if(STINGbits.OverCRNT_Fault) return yes;
-  if(URFLAGbits.LowVLT) return yes;
-  if(URFLAGbits.BattOverheated) return yes;
-  if(URFLAGbits.SysOverheated) return yes;
+inline int D_Flag_Check(){
+  if(Flags & 0xFE) return yes; //Don't test first bit.
   return no;
 }
 

@@ -44,7 +44,7 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
      * For future people, KEEP USING IRQs FOR STUFF!!! Don't make the CPU wait
      * for anything! The dsPIC30F3011 is a power drain and will consume all
      * your electrons and burn your lunch and house down from the heat that it generates! */
-    if(CONDbits.Run_Level > Heartbeat){
+    if(Run_Level > Heartbeat){
         if(STINGbits.OverCRNT_Fault){
             //If there has been a hardware over-current event then we need to power off sooner to reset the OC latches.
             PowerOffTimer=0;
@@ -65,20 +65,25 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
         }
         else PowerOffTimerSec--;
     }
-    //Check settings ram in background. (lowest priority IRQ))
-    if(check_ramSets() && CONDbits.Run_Level > Crit_Err){
-        //If failed, shutdown and attempt to recover.
-        get_settings();
-        //Make no more than 5 attempts to recover before going into debug mode.
-        if(ram_err_count >= 5) CONDbits.Run_Level=Crit_Err; //Settings memory is corrupted and cannot be trusted.
-        else ram_err_count++;
-    }
-    //Runtime program memory check. Checks every half hour.
-    if(check_timer == 0x0708 && CONDbits.Run_Level > Crit_Err){
-        if(check_prog()) CONDbits.Run_Level=Crit_Err;  //Program memory is corrupted and cannot be trusted.
+    //Runtime program memory check. Checks every half hour except on startup it will run after 10 seconds.
+    //This seems to cause a stack error sometimes? Maybe too much as getting nested causing the stack to grow too large.
+    if(check_timer == 1800 && Run_Level > Crit_Err){
+        if(check_prog() == 1) Run_Level=Crit_Err;  //Program memory is corrupted and cannot be trusted.
         check_timer = clear;
     }
-    else if(CONDbits.Run_Level > Crit_Err) check_timer++;
+    else if(Run_Level > Crit_Err) check_timer++;
+    //Check settings ram in background. (lowest priority IRQ))
+    //Don't check if in Calibration mode because some setting might be changing on the fly.
+    //Don't check right after a PGM memory check as it takes too much time and could crash the system.
+    if(Run_Level != Cal_Mode && Run_Level > Crit_Err && check_timer){
+        if(check_ramSets()){
+            //If failed, shutdown and attempt to recover.
+            get_settings();
+            //Make no more than 5 attempts to recover before going into debug mode.
+            if(ram_err_count >= 5) Run_Level=Crit_Err; //Settings memory is corrupted and cannot be trusted.
+            else ram_err_count++;
+        }
+    }
     //End IRQ
     IFS1bits.T4IF = clear;
 }
