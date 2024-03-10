@@ -113,9 +113,9 @@ void configure_IO(void){
 /*****************************/
 /* Configure PWM */
 /*****************************/
-    PTCON = 0x0004;     //Set the PWM module and set to free running mode for edge aligned PWM.
+    PTCON = 0x0000;     //Set the PWM module and set to free running mode for edge aligned PWM.
     PTMR = 0;
-    PTPER = 99;         //set period. 0% - 99%
+    PTPER = 98;         //set period. 0% - 99%
     SEVTCMP = 0;
     PWMCON1 = 0x0070;           //Set PWM output for single mode.
     PWMCON2 = 0x0000;

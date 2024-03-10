@@ -26,7 +26,7 @@ SOFTWARE. */
 #include "eeprom.h"
 
 inline void chargeDetect(void){
-    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage != calibrating && !D_Flag_Check() && charge_mode != Stop && first_cal == fCalReady){
+    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage != calibrating && !D_Flag_Check() && charge_mode > Stop && first_cal == fCalReady){
         //Check for various charging standards.
         if(charge_mode == Assignment_Ready){
             if(dsky.Cin_voltage<6){
@@ -90,11 +90,20 @@ inline void chargeDetect(void){
         //Check if settings are locked and we can go-ahead with the charging process
         STINGbits.CH_Voltage_Present = set;     //Charger is detected
     }
-    //Wait for voltage to stabilize, or reset from a stop condition.
-    else if(dsky.Cin_voltage<3){
-        STINGbits.CH_Voltage_Present = clear;
-        charge_mode = Wait;
-        CHwaitTimer=0;
+    //Wait for voltage to stabilize, or reset from a stop condition unless the charging system as cycled too many times.
+    else if(dsky.Cin_voltage<2.5){
+        if((charge_mode == CHError || Run_Level == Heartbeat) && ch_cycle>0)ch_cycle--; //Cool down the timer when power is disconnected.
+        else if(ch_cycle > cycleLimit){
+            charge_mode = CHError;
+            fault_log(0x3C);
+        }
+        else if(charge_mode == Stop){
+            ch_cycle++;
+            STINGbits.CH_Voltage_Present = clear;
+            charge_mode = Wait;
+            CHwaitTimer=0;
+        }
+        else if (charge_mode == CHError && ch_cycle == 0)charge_mode = Wait;
     }
     
     //Check to see if we got set to USB2 mode during sunrise while plugged into solar.
@@ -144,6 +153,7 @@ inline void chargeDetect(void){
             vars.battery_usage = 0;
         }
         CONDbits.charger_detected = 1;  //Set this variable to 1 so that we only run this routine once per charger plugin.
+        power_session = UnknownStart; //Reset ;capacity meter routine if a charge is plugged in.
     }
     else if(!STINGbits.CH_Voltage_Present){
         CONDbits.charger_detected = 0;  //If charger has been unplugged, clear this.
@@ -501,6 +511,7 @@ inline void Batt_IO_OFF(void){
     PreCharge = off;          //Turn off pre-charge circuit.
     PowerOutEnable = off;     //Output off.
     heat_power = off;         //set heater routine control off.
+    power_session = UnknownStart; //If a discharge evaluation is disrupted then reset the meter routine.
 }
 
 //Check un-resettable flags.

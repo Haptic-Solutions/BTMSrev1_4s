@@ -20,6 +20,7 @@ SOFTWARE. */
 
 #ifndef COMMON_H
 #define	COMMON_H
+#include "defines.h"
 
 extern inline void current_cal(void);
 extern inline void open_volt_percent(void);
@@ -192,7 +193,7 @@ volatile float analog_const = 0;
 volatile int   OV_Timer[4];
 volatile char soft_OVC_Timer = 0;
 volatile char precharge_timer = 0;
-volatile char charge_mode = 1;
+volatile char charge_mode = Wait;
 volatile char avg_cnt = 0;
 volatile char analog_avg_cnt = 0;
 volatile char Bcurnt_cal_stage = 0;
@@ -207,7 +208,8 @@ volatile char vr_space = 0;
 volatile char dsky_space = 0;
 volatile char v_test = 0;
 volatile char first_cal = 0;
-volatile char unsigned Run_Level = 0;
+volatile char Run_Level = 0;
+volatile char ch_cycle = 0;
 
 /*****************************/
 //Control Output
@@ -228,7 +230,6 @@ typedef struct tagCONDBITS {
   unsigned failSave:1;
   unsigned fastCharge:1;
   unsigned V_Cal:1;
-  unsigned NewSys:1;
   //unsigned MemInUse:1;
 } CONDBITS;
 volatile CONDBITS CONDbits;

@@ -108,14 +108,16 @@ inline void chargeReg(void){
         if(charge_power > 0 && (
         dsky.battery_current > chrg_current ||
         Cell_HV_Check() ||
-        dsky.Cin_current > Max_Charger_Current)){
+        dsky.Cin_current > Max_Charger_Current ||
+        dsky.Cin_voltage < Charger_Target_Voltage-0.05)){
             if(ch_boost_power > 0)ch_boost_power--;
             else charge_power--;
         }
-        else if(ch_boost_power < 100 && (
+        else if(ch_boost_power < 150 && (
         dsky.battery_current < chrg_current &&
         !Cell_HV_Check() &&
-        dsky.Cin_current < Max_Charger_Current)){
+        dsky.Cin_current < Max_Charger_Current ||
+        dsky.Cin_voltage > Charger_Target_Voltage + 0.05)){
             if(charge_power < 190)charge_power++;
             else ch_boost_power++;
         }

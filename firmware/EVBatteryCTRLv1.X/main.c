@@ -69,16 +69,16 @@ int main(void){
     cfg_space = sizeof(sets) / 2;
     vr_space = sizeof(vars) / 2;
     dsky_space = sizeof(dsky) / 2;
-    //Get variable data if it exists.
-    get_variables();
     //Get either default or custom settings.
     get_settings();
+    vars.battery_capacity = sets.amp_hour_rating; //Set capacity based on AH rating.
+    //Get variable data if it exists.
+    get_variables();
     //Do an initial reset and warm start check.
     first_check();
     //Initialize Systems.
     Run_Level = Cal_Mode;
     Init();
-    if(CONDbits.NewSys)vars.battery_capacity = sets.amp_hour_rating; //Set capacity based on AH rating.
     send_string("Initialized. \n\r", PORT1);
     send_string("Initialized. \n\r", PORT2);
 

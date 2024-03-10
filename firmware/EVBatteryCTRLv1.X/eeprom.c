@@ -28,9 +28,7 @@ SOFTWARE. */
 void get_variables(void){
     if(eeprom_read(cfg_space) == 0x7654) {
         read_vars();
-        CONDbits.NewSys = 0;
     }
-    else CONDbits.NewSys = 1;
 }
 //Only to be used at start of system
 void get_settings(void){

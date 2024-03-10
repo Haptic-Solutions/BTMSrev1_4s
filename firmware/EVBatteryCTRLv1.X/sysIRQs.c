@@ -180,19 +180,14 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
             if(voltage_percentage[i]<LOW_VP)LOW_VP=voltage_percentage[i];
         }
         //Estimate how much capacity the battery can hold.
+        //Check if full charge.
         if(LOW_VP > 99 && power_session != FullStart){
-            //battery_capacity = absolute_battery_usage;
             vars.battery_remaining = vars.battery_capacity;
             power_session = FullStart;
             vars.battery_usage = 0;  //reset battery usage session.
         }
-        //Check 50% charge.
-        else if(LOW_VP < 51 && LOW_VP > 49 && (power_session == FullStart || power_session == EmptyStart)){
-            vars.battery_capacity = vars.absolute_battery_usage;  //Calculate the max capacity of the battery after a half discharge.
-            vars.battery_capacity *= 2;
-            power_session = HalfStart;
-        }
-        else if(LOW_VP < 1 && power_session != EmptyStart){
+        //Check if 0% charge.
+        else if(LOW_VP < 1 && power_session == FullStart){
             vars.battery_capacity = vars.absolute_battery_usage;  //Calculate the max capacity of the battery after a full discharge.
             vars.battery_remaining = 0;  // Set ah remaining to 0 when less than 2% voltage.
             power_session = EmptyStart;

@@ -130,9 +130,9 @@ SOFTWARE. */
 #define All_Sys_Go 5
 
 //Charge Session Levels
-#define EmptyStart 0
-#define HalfStart 2
-#define FullStart 4
+#define UnknownStart 0
+#define EmptyStart 1
+#define FullStart 2
 
 //Heater calibration states.
 #define notrun 0
@@ -143,15 +143,17 @@ SOFTWARE. */
 #define disabled 5
 
 //Charger modes.
-#define Stop 0
-#define Wait 1
-#define Assignment_Ready 2
-#define USB2 3
-#define USB3_Wimp 4
-#define USB3 5
-#define USB3_Fast 6
-#define Solar 7
-
+#define CHError 0
+#define Stop 1
+#define Wait 2
+#define Assignment_Ready 3
+#define USB2 4
+#define USB3_Wimp 5
+#define USB3 6
+#define USB3_Fast 7
+#define Solar 8
+//Charger limits
+#define cycleLimit 3
 
 //##############################################################################
 #endif
