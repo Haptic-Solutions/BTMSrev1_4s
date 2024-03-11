@@ -50,7 +50,6 @@ int check_ramSets(void){
     ramSets_checksum();
     if(ramSets_chksum != ramSets_chksum_old){
         fault_log(0x2B);    //Log an error if it doesn't match.
-        Run_Level = Crit_Err;
         return 1;
     }
     return 0;
@@ -62,7 +61,6 @@ int check_nvmSets(void){
     if(ramSets_chksum != nvSets_chksum){
         fault_log(0x2C);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
-        Run_Level=Crit_Err;
         return 1;
     }
     return 0;
@@ -73,7 +71,6 @@ int check_prog(void){
     if(sets.flash_chksum_old != flash_chksum){
         fault_log(0x29);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
-        Run_Level=Crit_Err;
         return 1;
     }
     return 0;
@@ -85,7 +82,6 @@ int check_nvmem(void){
     if(eeprom_read(0x01FF) != rom_chksum){
         fault_log(0x2A);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
-        Run_Level=Crit_Err;
         return 1;
     }
     return 0;

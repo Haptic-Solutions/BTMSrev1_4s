@@ -52,7 +52,7 @@ void get_settings(void){
 }
 //Save settings to EEPROM
 void save_sets(void){
-    int x;
+    int x = 0;
     for(x=0;x<cfg_space;x++){
         eeprom_write(x, sets.settingsArray[x]);
     }
@@ -81,7 +81,7 @@ int read_sets(void){
 }
 //Save vars to EEPROM
 void save_vars(void){
-    int x;
+    int x = 0;
     for(x=0;x<vr_space;x++){
         eeprom_write(x+cfg_space, vars.variablesArray[x]);
     }
@@ -95,7 +95,7 @@ void save_vars(void){
 //Returns 1 on success
 int read_vars(void){
     if(check_nvmem())return 0;
-    int x;
+    int x = 0;
     for(x=0;x<vr_space;x++){
         vars.variablesArray[x] = eeprom_read(x+cfg_space);
     }

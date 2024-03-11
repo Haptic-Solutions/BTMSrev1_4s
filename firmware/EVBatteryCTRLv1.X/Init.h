@@ -25,7 +25,7 @@ extern void Init(void);
 extern void low_battery_shutdown(void);
 extern void low_power_mode(void);
 extern void default_sets(void);
-extern void sys_debug(void);
+extern void init_sys_debug(void);
 
 #endif	/* INIT_H */
 

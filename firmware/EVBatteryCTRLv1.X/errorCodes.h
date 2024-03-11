@@ -29,19 +29,19 @@ const char code05[] = "Batt OC";
 const char code06[] = "Chrg OC";
 const char code07[] = "Batt OV";
 const char code08[] = "Batt OT";
-const char code09[] = "URF Set";
+const char code09[] = "B-Flag(s) Set";
 const char code0A[] = "Self OT";
 const char code0B[] = "Sys Shutdown";
-const char code0C[] = "PWM Err";
-const char code0D[] = "Osc Fail";
-const char code0E[] = "Addr Err";
-const char code0F[] = "STK Err";
-const char code10[] = "MTH Err";
-const char code11[] = "Res 7";
-const char code12[] = "PLL UL";
+const char code0C[] = "PWM excep";
+const char code0D[] = "Osc excep";
+const char code0E[] = "Addr excep";
+const char code0F[] = "STK excep";
+const char code10[] = "MTH excep";
+const char code11[] = "Res7 excep";
+const char code12[] = "blank";
 const char code13[] = "BrnOut";
 const char code14[] = "WDT rst";
-const char code15[] = "TRAP rst";
+const char code15[] = "un-handled exception rst";
 const char code16[] = "Opcode rst";
 const char code17[] = "MCLR rst";
 const char code18[] = "Illegal Inst";
@@ -77,10 +77,11 @@ const char code35[] = "VL S3";
 const char code36[] = "VH S4";
 const char code37[] = "VL S4";
 const char code38[] = "Chrg in OV";
-const char code39[] = "EX OC: Please Reset";
-const char code3A[] = "EX OV: Batt Fuse Tripped";
+const char code39[] = "EXT OC: Please Reset";
+const char code3A[] = "EXT OV: Batt Fuse Tripped";
 const char code3B[] = "Batt UV";
 const char code3C[] = "CH cyc-limit";
+const char code3D[] = "Sys Safe Mode";
 const char codeDefault[] = "Unknown";
 
 const char * const errArray[] = {code01,code02,code03,code04,code05,code06,code07,code08,code09,code0A,code0B,code0C
@@ -88,7 +89,7 @@ const char * const errArray[] = {code01,code02,code03,code04,code05,code06,code0
                          ,code19,code1A,code1B,code1C,code1D,code1E,code1F,code20,code21,code22,code23,code24
                          ,code25,code26,code27,code28,code29,code2A,code2B,code2C,code2D,code2E,code2F,code30
                          ,code31,code32,code33,code34,code35,code36,code37,code38,code39,code3A,code3B,code3C
-                         ,codeDefault};
+                         ,code3D,codeDefault};
 
 #endif	/* ERRORCODES_H */
 

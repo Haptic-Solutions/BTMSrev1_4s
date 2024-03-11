@@ -39,13 +39,12 @@ extern void BuffNull(int);
 void load_hex(int, int);
 
 //Serial port stuff
-#define Clength 4   //Command Buff Length - 1
 float tx_float[2] = {0,0};
-unsigned int Buff_index[2];
-unsigned int StempIndex[2];
-unsigned int FtempIndex[2];
-char nibble[2][4];
-char float_out[2][7];
+unsigned int Buff_index[2] = {0,0};
+unsigned int StempIndex[2] = {0,0};
+unsigned int FtempIndex[2] = {0,0};
+char nibble[2][4] = {0,0,0,0,0,0,0};
+char float_out[2][7] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 char Buffer[2][bfsize];
 char config_space[2] = {0,0};
 char tx_temp[2] = {0,0};

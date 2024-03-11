@@ -27,7 +27,7 @@ SOFTWARE. */
 extern inline void explody_preventy_check(void);
 extern inline void currentCheck(void);
 extern inline void heater_calibration(void);
-extern inline void fault_log(int);
+extern void fault_log(int);
 extern inline void ALL_shutdown(void);
 extern inline void Batt_IO_OFF(void);
 extern inline void reset_check(void);
@@ -38,12 +38,13 @@ extern inline void death_loop(void);
 extern inline void initialCal(void);
 extern inline void chargeDetect(void);
 extern inline int D_Flag_Check();
+extern void Exception_Check(void);
 
 /*****************************/
 /* Init vars and stuff. */
 /* Temperatures are in C */
 /******************************/
-int heat_set;               //Calculated heater output for wattage chosen by user.
+int heat_set = 0;               //Calculated heater output for wattage chosen by user.
 int oc_shutdown_timer = 0;
 int shutdown_timer = 0;
 char CHwaitTimer = 0;

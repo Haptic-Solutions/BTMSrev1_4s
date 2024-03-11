@@ -29,8 +29,8 @@ extern inline void heat_control(float);
 
 float dischrg_current = 0;
 float chrg_current = 0;
-float percentOut;
-float chrg_remaining;
+float percentOut = 0;
+float chrg_remaining = 0;
 
 #endif	/* SUBS_H */
 

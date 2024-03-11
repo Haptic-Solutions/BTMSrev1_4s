@@ -25,21 +25,21 @@ extern void Command_Interp(int);
 extern void fault_read(int);
 extern void displayOut(int);
 extern void LED_Mult(char);
-
-unsigned int CMD_Point[2];  //Command Pointer
-unsigned int bufsize[2];
-char CMD_buff[2][6];              //Command Buffer
+#define Clength 4   //Command Buff Length
+unsigned int CMD_Point[2] = {0,0};  //Command Pointer
+unsigned int bufsize[2] = {0,0};
+char CMD_buff[2][Clength];              //Command Buffer
 char cmdRDY[2] = {0,0};
 char cmdOVFL[2] = {0,0};
 char Terr[2] = {0,0};
 
-unsigned int tempPoint[2];
-unsigned int flt_index[2];
-unsigned int PxPage[2];
-unsigned int pageVar[2];
-unsigned int varNum[2];
-unsigned int dodispatch[2];
-char PxVtimer[2];
+unsigned int tempPoint[2] = {0,0};
+unsigned int flt_index[2] = {0,0};
+unsigned int PxPage[2] = {0,0};
+unsigned int pageVar[2] = {0,0};
+unsigned int varNum[2] = {0,0};
+unsigned int dodispatch[2] = {0,0};
+char PxVtimer[2] = {0,0};
 
 #endif	/* DATAIO_H */
 

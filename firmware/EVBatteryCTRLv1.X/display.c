@@ -28,8 +28,15 @@ SOFTWARE. */
 #include "eeprom.h"
 #include "checksum.h"
 
+void C_Point_CHK(int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    if(CMD_Point[serial_port] < 0)CMD_Point[serial_port]=0;
+    if(CMD_Point[serial_port] >= Clength)CMD_Point[serial_port]=0;
+}
+
 //Loads one of the serial buffers with user defined data and then dispatches it.
 void pageOut(int pageNum, int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     dodispatch[serial_port] = no;
     for(pageVar[serial_port]=0;pageVar[serial_port]<6;pageVar[serial_port]++){
         varNum[serial_port] = sets.page[serial_port][pageNum][pageVar[serial_port]];
@@ -74,6 +81,7 @@ void pageOut(int pageNum, int serial_port){
 }
 
 void displayOut(int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     if(sets.PxVenable[serial_port] && !portBSY[serial_port] && Run_Level == All_Sys_Go){
         if(PxVtimer[serial_port] == 0){
             pageOut(PxPage[serial_port], serial_port);
@@ -89,6 +97,7 @@ void displayOut(int serial_port){
 //Check if serial port is busy.
 //If used, ensure that it is used by an IRQ priority that is lower than TX IRQs.
 void portBusyIdle(int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     while(portBSY[serial_port]){
         //CPUact = 0;      //Turn CPU ACT light off.
         Idle();                 //Idle Loop, saves power.
@@ -99,6 +108,7 @@ void portBusyIdle(int serial_port){
 /* Read fault codes to serial port.
  * This takes up about 2% of program space.*/
 void fault_read(int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     send_string("\n\rReading Faults.\n\r", serial_port);
     if(vars.fault_count > 10){
         send_string("Fault Log Full.\n\r", serial_port);
@@ -133,6 +143,7 @@ void fault_read(int serial_port){
 }
 
 void send_Int_Array(int* data, int start, int end, int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     send_string("  ",serial_port);
     for(int i=start;i<=end;i++){
         load_float(data[i], serial_port);
@@ -142,6 +153,7 @@ void send_Int_Array(int* data, int start, int end, int serial_port){
 }
 
 void send_Float_Array(float* data, int start, int end, int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     send_string("  ",serial_port);
     for(int i=start;i<=end;i++){
         load_float(data[i], serial_port);
@@ -151,6 +163,7 @@ void send_Float_Array(float* data, int start, int end, int serial_port){
 }
 
 void all_info(int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     send_string("\n\r", serial_port);
     /* Settings FLOAT variables. */
     send_string("System Settings::\n\r", serial_port);
@@ -197,12 +210,15 @@ void all_info(int serial_port){
 }
 
 void setsLockedErr(int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     load_string("Unable: Settings Locked.\n\r", serial_port);
 }
 
 void Command_Interp(int serial_port){
+    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
     //Get data. Get allll the data.
     while (((serial_port == PORT1 && U1STAbits.URXDA) || (serial_port == PORT2 && U2STAbits.URXDA)) && !cmdRDY[serial_port]){
+        C_Point_CHK(serial_port);
         //Data input
         if(serial_port)CMD_buff[serial_port][CMD_Point[serial_port]] = U2RXREG;
         else CMD_buff[serial_port][CMD_Point[serial_port]] = U1RXREG;

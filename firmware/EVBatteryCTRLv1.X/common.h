@@ -39,6 +39,8 @@ extern void CapacityCalc(void);
 /* int's are 16 bit */
 typedef int int16_t;    //Make sure our int's are actually only 16 bit rather than assuming.
 typedef unsigned int uint16_t;    //Make sure our int's are actually only 16 bit rather than assuming.
+/* boot check */
+int reset_chk __attribute__((persistent));//Do not initialize this var. Needs to stay the same on a reset.
 /*****************************/
 #pragma pack(1)
 struct Settings{
@@ -106,8 +108,8 @@ struct Variables{
     float   chargeCycleLevel;           //% of a charge cycle completed. Rolls over to 0 once it reaches capacity of battery (for 100%) and increments 'TotalChargeCycles' by 1.
     unsigned int     TotalChargeCycles;  //Total number of charge cycles this battery has been through.
     // Fault Codes.
-    unsigned int     fault_codes[10];
-    unsigned int     fault_count;
+    unsigned int     fault_codes[10] __attribute__((persistent));
+    unsigned int     fault_count __attribute__((persistent));
     // Other stuff.
     unsigned int     partial_chrg_cnt;           //How many times have we plugged in the charger since the last full charge?
     char     heat_cal_stage;             //0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error. 5 is disable heater.
@@ -170,7 +172,7 @@ struct dskyvars{
 
 // Calculated battery values. These don't need to be saved on shutdown.
 volatile float   chrge_rate = 0;             //calculated charge rate based off temperature
-volatile float   vltg_dvid = 0;              //Value for calculating the ratio of the input voltage divider.
+volatile float   resistor_divide_const = 0;              //Value for calculating the ratio of the input voltage divider.
 
 /*****************************/
 /* General Vars */
@@ -242,7 +244,7 @@ typedef struct tagSTINGBITS {
   unsigned lw_pwr_init_done:1;
   unsigned deep_sleep:1;
   unsigned zero_current:1;
-  unsigned adc_sample_burn:1; //Burn it. Don't touch this var it will burn you if you do.
+  unsigned adc_sample_burn:1; //Burn it. Don't touch this var it will burn you.
   unsigned adc_valid_data:1;
   unsigned init_done:1;
   unsigned fault_shutdown:1; //General shutdown event.
@@ -254,6 +256,20 @@ typedef struct tagSTINGBITS {
   unsigned OverCRNT_Fault:1;
 } STINGBITS;
 volatile STINGBITS STINGbits;
+
+
+#define Tfaults Tfaults
+volatile unsigned int Tfaults __attribute__((persistent));
+typedef struct tagTfaultsBITS {
+  unsigned OSC:1;
+  unsigned STACK:1;
+  unsigned ADDRESS:1;
+  unsigned MATH:1;
+  unsigned FLTA:1;
+  unsigned RESRVD:1;
+  unsigned CHK_BSY:1;
+} TFAULTSBITS;
+volatile TFAULTSBITS Tfaultsbits;
 
 
 volatile unsigned int Flags = 0;

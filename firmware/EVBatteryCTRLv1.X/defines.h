@@ -10,7 +10,7 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+THE SOFTWARE IS PROVIDED "AS IS", WITHO70054eUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -20,10 +20,11 @@ SOFTWARE. */
 
 #ifndef DEFINES_H
 #define	DEFINES_H
-//##############################################################################
+//########################################################################70054e######
 // Tm = 32767 * (1 / (((clkSpeedmhz * PLL) / 4) / tiksPerIRQ))
 //#define IPS 29.48;   //million instructions per second.
 #define IPS 14.74   //million instructions per second.
+//#define IPS 7.37   //million instructions per second.
 #define BAUD1 9600  //Default BAUD rate for PORT 1
 #define BAUD2 9600  //Default BAUD rate for PORT 2
 #define calc_125 0.00003472 //Value for calculating the total current in and out of battery every second.
@@ -96,8 +97,8 @@ SOFTWARE. */
  * the user variables and the stack pointer counts up */
 #define ramSize 0x03FF //Size of memory.
 #define ramAddressStart 0x0800  //Where the dsPIC30F3011's ram address starts.
-#define stackFaultDefault ramSize + ramAddressStart - 1
-#define ramFree (ramSize + ramAddressStart) - 15 //Minus 15 bytes of ram. If the stack intrudes on this then it should throw an error code before a complete system crash and undefined behavior.
+#define stackFaultMax ramSize + ramAddressStart - 1
+#define ramFree (ramSize + ramAddressStart) - 2 //Minus 15 bytes of ram. If the stack intrudes on this then it should throw an error code before a complete system crash and undefined behavior.
 
 //General
 #define yes 1

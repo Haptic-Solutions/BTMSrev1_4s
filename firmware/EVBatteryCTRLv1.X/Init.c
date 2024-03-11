@@ -28,8 +28,6 @@ SOFTWARE. */
 void default_sets(void){
     sets.R1_resistance = 10;            //R1 resistance in Kohms
     sets.R2_resistance = 1;             //R2 resistance in Kohms
-    for(int i=0;i<4;i++)sets.S_vlt_adjst[i] = 0;
-    sets.Ch_vlt_adjst = 0;           //charger input voltage ratio compensation.
     /*****************************/
     //Battery Ratings and setpoints
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
@@ -67,7 +65,6 @@ void default_sets(void){
     sets.PxVenable[PORT1] = off;         //Port 1 display out is disabled by default.
     sets.PxVenable[PORT2] = off;         //Port 2 display out is disabled by default.
     vars.testBYTE = 0x46;
-    ram_chksum_update();        //Generate new checksum.
     vars.heat_cal_stage = disabled;
     for(int i=0;i<4;i++)OV_Timer[i]=0;
         //page[2][5][6];              //Display page holder. (PORT)(Page#)(Variable to Display: A '0' at the start = Skip Page)
@@ -86,6 +83,7 @@ void default_sets(void){
     sets.pageDelay[PORT1][3] = 0;
     sets.PxVenable[PORT1] = off;         //Port 1 display out is disabled by default.
     sets.PxVenable[PORT2] = off;         //Port 2 display out is enabled by default.
+    ram_chksum_update();        //Generate new checksum.
 }
 //Configure IO
 void configure_IO(void){
@@ -245,15 +243,13 @@ void Init(void){
 *******************************/
     //Configure stack overflow catch address.
     SPLIM = ramFree;
-    //Calculate our voltage divider values.
-    vltg_dvid = sets.R2_resistance / (sets.R1_resistance + sets.R2_resistance);
+    //Calculate our voltage divider value(s).
+    resistor_divide_const = sets.R2_resistance / (sets.R1_resistance + sets.R2_resistance);
     //Calculate reference values
     Half_ref = V_REF/2;
     analog_const = 524280/V_REF;
     //We aren't in low power mode
     STINGbits.lw_pwr_init_done = 0;
-    //Configure the inputs, outputs, and device.
-    configure_IO();
 /*****************************/
 /* Configure IRQs. */
 /*****************************/
@@ -304,7 +300,7 @@ void Init(void){
     STINGbits.init_done = 1;
 /* End Of Initial Config stuff. */
 }
-void sys_debug(void){
+void init_sys_debug(void){
     configure_IO();
     __asm__ volatile ("DISI #0x3FFF");  //First disable IRQs via instruction.
     // Clear all interrupts flags

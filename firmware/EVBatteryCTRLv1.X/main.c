@@ -54,6 +54,11 @@ SOFTWARE. */
 /***********************************************************
 ***********************************************************/
 int main(void){
+    __asm__ volatile ("DISI #0x3FFF");  //First disable IRQs via instruction.
+    // Clear all interrupts flags
+    IFS0 = 0;
+    IFS1 = 0;
+    IFS2 = 0;
     /* General 3 IO. */
     GENERAL3_TRIS = GENERAL3_DIR;
     GENERAL3_LAT = 0;
@@ -64,6 +69,8 @@ int main(void){
     ANALOG_TRIS = ANALOG_DIR;          //set portb to analog inputs.
     ANALOG_LAT = 0;
     ANALOG_PORT = 0; //clear portb
+    configure_IO();
+    Batt_IO_OFF();
     //CPUact = 1;             //Turn on CPU ACT light.
     //Calculate space required for eeprom storage.
     cfg_space = sizeof(sets) / 2;
@@ -79,8 +86,8 @@ int main(void){
     //Initialize Systems.
     Run_Level = Cal_Mode;
     Init();
-    send_string("Initialized. \n\r", PORT1);
-    send_string("Initialized. \n\r", PORT2);
+    send_string("Init. \n\r", PORT1);
+    send_string("Init. \n\r", PORT2);
 
 /*****************************/
     // Main Loop.
@@ -90,6 +97,8 @@ int main(void){
      */
     for (;;)        //loop forever. or not, idc, we have IRQs for stuff.
     {
+        //Check trap flag bits.
+        Exception_Check();
         if(Run_Level == Crit_Err)death_loop();
         //Deep sleep check.
         if(STINGbits.deep_sleep){

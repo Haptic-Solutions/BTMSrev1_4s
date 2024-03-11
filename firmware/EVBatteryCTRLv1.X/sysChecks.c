@@ -186,23 +186,16 @@ inline void initialCal(void){
 //System debug safemode
 inline void death_loop(void){
     ALL_shutdown();     //Turn everything off.
-    sys_debug();    //Disable everything that is not needed. Only Serial Ports and Timer 1 Active.
+    init_sys_debug();    //Disable everything that is not needed. Only Serial Ports and Timer 1 Active.
     LED_Mult(Debug);  //Turn debug lights solid on to show fatal error.
+    fault_log(0x3D);
     for(;;){
         //CPUact = 0;      //Turn CPU ACT light off.
+        Exception_Check();
         Idle();
     }
 }
 
-//Warm start and reset check.
-inline void first_check(void){
-    volatile static int reset_chk;              //Do not initialize this var. Needs to stay the same on a reset.
-    //Do not check why we reset on initial power up. No reason to. We don't want a reset error on first power up.
-    //if(reset_chk == 0xAA55){
-        reset_check();              //Check for reset events from a warm restart.
-    //}
-    reset_chk = 0xAA55;         //Warm start.
-}
 //Main Power Check.
 //Gets run once per second from Heartbeat IRQ.
 inline void main_power_check(void){
@@ -308,54 +301,71 @@ inline void analog_sanity(void){
     //Battery temperature.
     if(Btemp > 0xFFFD){
         fault_log(0x21);
+        ALL_shutdown();
         vars.heat_cal_stage = disabled;     //Disable Heater if we can't get battery temperature.
     }
     if(Btemp < 0x0002){
         fault_log(0x22);
+        ALL_shutdown();
         vars.heat_cal_stage = disabled;     //Disable Heater if we can't get battery temperature.
     }
-    //We can live with these temps in error so don't bother disabling or shutting anything down here. Just log the error.
     //Snowman's temperature.
     if(Mtemp > 0xFFFD){
         fault_log(0x25);
+        ALL_shutdown();
     }
     if(Mtemp < 0x0002){
         fault_log(0x26);
+        ALL_shutdown();
     }
 }
-
+//Reset flag reset
+void rst_flag_rst(void){
+    RCONbits.BOR = 0;
+    RCONbits.WDTO = 0;
+    RCONbits.TRAPR = 0;
+    RCONbits.IOPUWR = 0;
+    RCONbits.EXTR = 0;
+    RCONbits.SWR = 0;
+}
+//Warm start and reset check.
+inline void first_check(void){
+    //Do not check why we reset on initial power up. No reason to. We don't want a reset error on first power up.
+    if(reset_chk == 0xAA55){
+        reset_check();              //Check for reset events from a warm restart.
+    }
+    reset_chk = 0xAA55;         //Set to Warm start.
+    Tfaults=0;
+    rst_flag_rst();
+}
 //Check reset conditions and log them.
 inline void reset_check(void){
-    if(RCONbits.BOR){
-        RCONbits.BOR = 0;
-        fault_log(0x13);        //Brown Out Event.
-    }
-    if(RCONbits.WDTO){
-        RCONbits.WDTO = 0;
-        fault_log(0x14);        //WDT Reset Event.
-    }
-    if(RCONbits.TRAPR){
-        RCONbits.TRAPR = 0;
-        fault_log(0x15);        //TRAP Conflict Event. Multiple TRAPs at the same time.
-    }
-    if(RCONbits.IOPUWR){
-        RCONbits.IOPUWR = 0;
-        fault_log(0x16);        //Illegal opcode or uninitialized W register access Event.
-    }
-    if(RCONbits.EXTR){
-        RCONbits.EXTR = 0;
-        fault_log(0x17);        //External Reset Event.
-    }
-    if(RCONbits.SWR){
-        RCONbits.SWR = 0;
-        fault_log(0x19);        //Reset Instruction Event.
-    }
+    if(RCONbits.BOR)fault_log(0x13);        //Brown Out Event.
+    if(RCONbits.WDTO)fault_log(0x14);        //WDT Reset Event.
+    if(RCONbits.TRAPR)fault_log(0x15);        //TRAP Conflict Event. Multiple TRAPs at the same time.
+    if(RCONbits.IOPUWR)fault_log(0x16);        //Illegal opcode or uninitialized W register access Event.
+    if(RCONbits.EXTR)fault_log(0x17);        //External Reset Event.
+    if(RCONbits.SWR)fault_log(0x19);        //Reset Instruction Event.
+    rst_flag_rst();
 }
 
+void Exception_Check(void){
+    if(Tfaultsbits.OSC)fault_log(0x0D);
+    if(Tfaultsbits.STACK)fault_log(0x0F);
+    if(Tfaultsbits.ADDRESS)fault_log(0x0E);
+    if(Tfaultsbits.MATH)fault_log(0x10);
+    if(Tfaultsbits.FLTA)fault_log(0x0C);        //PWM fault. External.
+    if(Tfaultsbits.RESRVD)fault_log(0x11);
+    if(Tfaults)Run_Level = Crit_Err;
+    Tfaults=0;
+}
 //Used to log fault codes. Simple eh? Just call it with the code you want to log.
-inline void fault_log(int f_code){
+void fault_log(int f_code){
     //Turn on fault light.
     STINGbits.errLight = 1;
+    //Check fault pointer to make sure it is sane.
+    if(vars.fault_count<0)vars.fault_count = 0;
+    if(vars.fault_count>=10)vars.fault_count = 0;
     //Check for redundant faults.
     char F_redun = 0;
     for(int i=0;i<vars.fault_count;i++){
@@ -516,7 +526,7 @@ inline void Batt_IO_OFF(void){
 
 //Check un-resettable flags.
 inline int D_Flag_Check(){
-  if(Flags & 0xFE) return yes; //Don't test first bit.
+  if(Flags&0xFE) return yes; //Don't test first bit.
   return no;
 }
 

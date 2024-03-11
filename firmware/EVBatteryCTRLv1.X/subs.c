@@ -46,27 +46,28 @@ inline void calcAnalog(void){
         dsky.Cin_current = (CavgCurnt * 12.5) + Ccurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
         CavgCurnt = 0;       //Clear average.
 
-        currentCheck();     //Check for over current condition.
+        if((Flags&syslock))currentCheck();     //Check for over current condition.
         //Battery voltage.
         //avgVolt /= 8;      //Sample average.
         //avgVolt /= 65535;  //Convert to unsigned fractional
         //avgVolt *= 3.3;      //Converted to 0 - 3.3V voltage.
+        //analog_cost = (8*65535)/3.3
         //Do it all at once to save time.
         float S_V[4];
         for(int i=0;i<4;i++){
             BavgVolt[i] /= analog_const;
-            if(Run_Level == Cal_Mode) S_V[i] = BavgVolt[i] / vltg_dvid;
-            else S_V[i] = (BavgVolt[i] / (vltg_dvid + sets.S_vlt_adjst[i]));    //Use resistor divider values to covert to actual voltage.
+            if(CONDbits.V_Cal) S_V[i] = BavgVolt[i] / resistor_divide_const;
+            else S_V[i] = (BavgVolt[i] / resistor_divide_const) + sets.S_vlt_adjst[i];    //Use resistor divider values to covert to actual voltage.
         }
         
         if(CONDbits.V_Cal){
             for(int i=0;i<4;i++)dsky.Cell_Voltage[i] = S_V[i];
         }
         else {
-            dsky.Cell_Voltage[0] = S_V[0];
-            dsky.Cell_Voltage[1] = S_V[1] - S_V[0];
-            dsky.Cell_Voltage[2] = S_V[2] - S_V[1];
-            dsky.Cell_Voltage[3] = S_V[3] - S_V[2] ;
+            dsky.Cell_Voltage[0] = 0.05 + S_V[0]; //Safer to have the voltages read a little high than a little low.
+            dsky.Cell_Voltage[1] = 0.05 + (S_V[1] - S_V[0]);
+            dsky.Cell_Voltage[2] = 0.05 + (S_V[2] - S_V[1]);
+            dsky.Cell_Voltage[3] = 0.05 + (S_V[3] - S_V[2]);
         }
         
         for(int i=0;i<4;i++){
@@ -85,8 +86,8 @@ inline void calcAnalog(void){
         
         //Charger Voltage
         CavgVolt /= analog_const;
-        if(CONDbits.V_Cal)dsky.Cin_voltage = CavgVolt / vltg_dvid;    //Use resistor divider values to covert to actual voltage.
-        else dsky.Cin_voltage = (CavgVolt / (vltg_dvid + sets.Ch_vlt_adjst));
+        if(CONDbits.V_Cal)dsky.Cin_voltage = CavgVolt / resistor_divide_const;    //Use resistor divider values to covert to actual voltage.
+        else dsky.Cin_voltage = (CavgVolt / resistor_divide_const) + sets.Ch_vlt_adjst;
         CavgVolt = 0;       //Clear average.
 
         //Battery temperature.
@@ -129,11 +130,10 @@ inline void Volt_Cal(int serial_port){
     char anyCal=0;
     for(int i=0;i<4;i++){
         //float Fi = i;
-        //float testV = 2*(Fi+1);  //Calculate a test value. 2V, 4V, 6V, or 8V for S1, S2, S3, and S4 respectively.
+        //float testV = 2*(Fi+1);  //Calculate a test value. 2V for S1, S2, S3, and S4.
         //Calibrate the voltage only if it's within +-1V. We may be doing one at a time.
-        if((dsky.Cell_Voltage[i]>(1)) && (dsky.Cell_Voltage[i]<(3))){
-            float testPV = 2*vltg_dvid;     //Calculate what the pin voltage should be in a perfect world.
-            sets.S_vlt_adjst[i] = vltg_dvid-(testPV/dsky.Cell_Voltage[i]);
+        if((dsky.Cell_Voltage[i]>1) && (dsky.Cell_Voltage[i]<3)){
+            sets.S_vlt_adjst[i] = 2-dsky.Cell_Voltage[i];
             if(i==0)load_string("S1: ", serial_port);
             if(i==1)load_string("S2: ", serial_port);
             if(i==2)load_string("S3: ", serial_port);
@@ -143,12 +143,10 @@ inline void Volt_Cal(int serial_port){
     }
     //Now do charger input voltage
     if((dsky.Cin_voltage>4.0) && (dsky.Cin_voltage<6.0)){
-            float testPV = 5*vltg_dvid;     //Calculate what the pin voltage should be in a perfect world.
-            sets.Ch_vlt_adjst = vltg_dvid-(testPV/dsky.Cin_voltage);
+            sets.Ch_vlt_adjst = 5-dsky.Cin_voltage;
             load_string("CH: ", serial_port);
             anyCal = 1;
     }
-    ram_chksum_update();
     save_sets();
     if(Run_Level != Crit_Err)Run_Level = RL_Temp; //Return back to whatever run level we were in before.
     CONDbits.V_Cal = 0;

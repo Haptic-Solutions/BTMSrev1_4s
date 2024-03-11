@@ -29,82 +29,38 @@ SOFTWARE. */
 /*****************/
 /* IRQs go here. */
 /*****************/
-
-/* CPU TRAPS, log erros here and shut down if needed.*/
-void __attribute__((interrupt, no_auto_psv)) _FLTAInterrupt (void){
-    //CPUact = 1;
-    Batt_IO_OFF();
-    STINGbits.fault_shutdown = 1;
-    fault_log(0x0C);        //PWM fault. External.
-    save_vars();
-    IFS2bits.FLTAIF = 0;
-}
-void __attribute__((interrupt, no_auto_psv)) _OscillatorFail (void){
-    //Check the PLL lock bit as fast as possible before anything else because it doesn't stay set for long.
-    if(OSCCONbits.LOCK == 0){
-        if(!STINGbits.osc_fail_event){
-            fault_log(0x12);
-        }
-    }
-    //CPUact = 1;
-    Batt_IO_OFF();
-    STINGbits.fault_shutdown = 1;
-    if(STINGbits.osc_fail_event){
-        fault_log(0x0D);
-    }
-    STINGbits.osc_fail_event = 1;         //Only log it once per reset.
-    save_vars();
+//Level 14 hard
+void __attribute__((interrupt)) _OscillatorFail (void){
+    Tfaultsbits.OSC = 1;
     INTCON1bits.OSCFAIL = 0;
+    asm("reset");
 }
-void __attribute__((interrupt, no_auto_psv)) _AddressError (void){
-    //CPUact = 1;
-    SPLIM = stackFaultDefault; //Increase the catch to max size so we can run a few more calls before stopping.
-    Batt_IO_OFF();
-    Run_Level = Crit_Err;
-    STINGbits.fault_shutdown = 1;
-    fault_log(0x0E);
-    IFS0 = 0;
-    IFS1 = 0;
-    IFS2 = 0;
-    INTCON1bits.ADDRERR = 0; //Clear this flag before going to death loop so this IRQ's priority can't stop the UART IRQs
+//Level 13 hard
+void __attribute__((interrupt)) _StackError (void){
+    Tfaultsbits.STACK = 1;
+    INTCON1bits.STKERR = 0;
+    asm("reset");
 }
-void __attribute__((interrupt, no_auto_psv)) _StackError (void){
-    //CPUact = 1;
-    SPLIM = stackFaultDefault; //Increase the catch to max size so we can run a few more calls before stopping.
-    Batt_IO_OFF();
-    Run_Level = Crit_Err;
-    STINGbits.fault_shutdown = 1;
-    fault_log(0x0F);
-    IFS0 = 0;
-    IFS1 = 0;
-    IFS2 = 0;
-    INTCON1bits.STKERR = 0; //Clear this flag before going to death loop so this IRQ's priority can't stop the UART IRQs
+//Level 12 hard
+void __attribute__((interrupt)) _AddressError (void){
+    Tfaultsbits.ADDRESS = 1;
+    INTCON1bits.ADDRERR = 0;
+    asm("reset");
 }
-void __attribute__((interrupt, no_auto_psv)) _MathError (void){
-    //CPUact = 1;
-    Batt_IO_OFF();
-    STINGbits.fault_shutdown = 1;
-    fault_log(0x10);
-    save_vars();
-    Run_Level = Crit_Err;
-    IFS0 = 0;
-    IFS1 = 0;
-    IFS2 = 0;
-    death_loop();
+//Level 11 soft
+void __attribute__((interrupt)) _MathError (void){
+    Tfaultsbits.MATH = 1;
     INTCON1bits.MATHERR = 0;
+    asm("reset");
 }
-void __attribute__((interrupt, no_auto_psv)) _ReservedTrap7 (void){
-    //CPUact = 1;
-    Batt_IO_OFF();
-    STINGbits.fault_shutdown = 1;
-    fault_log(0x11);
-    save_vars();
-    Run_Level = Crit_Err;
-    IFS0 = 0;
-    IFS1 = 0;
-    IFS2 = 0;
-    death_loop();
-    //INTCON1bits.DMACERR = 0;
+void __attribute__((interrupt)) _FLTAInterrupt (void){
+    Tfaultsbits.FLTA = 1;
+    IFS2bits.FLTAIF = 0;
+    asm("reset");
+}
+void __attribute__((interrupt)) _ReservedTrap7 (void){
+    Tfaultsbits.RESRVD = 1;
+    asm("reset");
 }
 /****************/
 /* END IRQs     */

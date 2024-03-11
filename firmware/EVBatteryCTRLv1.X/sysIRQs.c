@@ -108,8 +108,8 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
     }
     //Run the LED routine
     if(Run_Level > Cal_Mode && (Flags&syslock))LED_Mult(on);
-    else if(!(Flags&syslock))LED_Mult(Ltest);
-    else if(Run_Level != Crit_Err || Run_Level != Cal_Mode) LED_Mult(Ballance);
+    else if(!(Flags&syslock) && !CONDbits.V_Cal)LED_Mult(Ltest);
+    else if(Run_Level != Crit_Err && Run_Level != Cal_Mode) LED_Mult(Ballance);
     else LED_Mult(off);
     //End IRQ
     IFS0bits.ADIF = 0;
