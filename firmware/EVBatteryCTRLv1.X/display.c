@@ -56,12 +56,15 @@ void pageOut(int pageNum, int serial_port){
             }
             dodispatch[serial_port] = yes; //if we have at least one variable to display then dispatch.
         }
-        else if(varNum[serial_port] <= varLimit){
-            if(varNum[serial_port] != nlNum)load_float(dsky.dskyarrayFloat[varNum[serial_port]], serial_port);   //Load the number.
+        else if(varNum[serial_port] == nlNum){
+            load_string("\n\r", serial_port);
+            dodispatch[serial_port] = yes; //if we have at least one variable to display then dispatch.
+        }
+        else if(varNum[serial_port] < varLimit){
+            if(varNum[serial_port] != nlNum)load_float(0.01+dsky.dskyarrayFloat[varNum[serial_port]], serial_port);   //Load the number.
             Buff_index[serial_port] -= 2;  //Subtract 2 from buffer index.
-            if(varNum[serial_port] == 1 || varNum[serial_port] == wattsNum)Buff_index[serial_port] -= 2; //If Speed or Watts variable then remove decimal and last '0'
             load_string(Vlookup[varNum[serial_port]], serial_port);        //Load the number's text.
-            if(varNum[serial_port] != 0x10)load_string(" ", serial_port);  //Load a space afterwards.
+            load_string(" ", serial_port);  //Load a space after everything.
             dodispatch[serial_port] = yes; //if we have at least one variable to display then dispatch.
         }
     }
@@ -419,7 +422,7 @@ void LED_Out(char LEDS){
 
 
 void LED_ChrgLVL(float LEVEL){
-    if(LEVEL > 95)LED_Out(0x0F);
+    if((LEVEL > 90 && !CONDbits.charger_detected) || (LEVEL > 100 && CONDbits.charger_detected))LED_Out(0x0F);
     else if(LEVEL > 75)LED_Out(0x07);
     else if(LEVEL > 50)LED_Out(0x03);
     else if(LEVEL >= 25)LED_Out(0x01);

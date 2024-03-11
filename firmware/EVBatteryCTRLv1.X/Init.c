@@ -70,6 +70,22 @@ void default_sets(void){
     ram_chksum_update();        //Generate new checksum.
     vars.heat_cal_stage = disabled;
     for(int i=0;i<4;i++)OV_Timer[i]=0;
+        //page[2][5][6];              //Display page holder. (PORT)(Page#)(Variable to Display: A '0' at the start = Skip Page)
+    //Port 1 display defaults
+    sets.page[PORT1][0][0] = 0x01;  //Battery %
+    sets.page[PORT1][0][1] = 0x08;  //S1
+    sets.page[PORT1][0][2] = 0x09;  //S2
+    sets.page[PORT1][0][3] = 0x0A; //S3
+    sets.page[PORT1][0][4] = 0x0B;  //S4
+    sets.page[PORT1][0][5] = 0x0C;  //Watts
+    sets.page[PORT1][1][0] = 0x14;  //New Line
+    sets.page[PORT1][1][1] = 0x00;  //NULL terminator
+    sets.pageDelay[PORT1][0] = 0;
+    sets.pageDelay[PORT1][1] = 4;   //0.5 seconds.
+    sets.pageDelay[PORT1][2] = 0;
+    sets.pageDelay[PORT1][3] = 0;
+    sets.PxVenable[PORT1] = off;         //Port 1 display out is disabled by default.
+    sets.PxVenable[PORT2] = off;         //Port 2 display out is enabled by default.
 }
 //Configure IO
 void configure_IO(void){

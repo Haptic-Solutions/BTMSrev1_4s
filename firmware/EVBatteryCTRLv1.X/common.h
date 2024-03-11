@@ -122,10 +122,10 @@ const char V04[] = "PW";
 const char V05[] = "AV";
 const char V06[] = "CV";
 const char V07[] = "CA";
-const char V08[] = "S1";
-const char V09[] = "S2";
-const char V0A[] = "S3";
-const char V0B[] = "S4";
+const char V08[] = ":S1";
+const char V09[] = ":S2";
+const char V0A[] = ":S3";
+const char V0B[] = ":S4";
 const char V0C[] = "W";
 const char V0D[] = "CW";
 const char V0E[] = "A";
@@ -153,7 +153,7 @@ struct dskyvars{
     float   pack_vltg_average;      //05: 7char 00.0AV Battery average voltage
     float   Cin_voltage;            //06: 7char 00.0CV Charger input voltage
     float   Cin_current;            //07: 7char 00.0CA Charger input current
-    float   Cell_Voltage[4];     //08-0B: 7char 00.0S1 Cell voltage S1-S4
+    float   Cell_Voltage[4];     //08-0B: 8char 00.0S1 Cell voltage S1-S4
     float   watts;                  //0C: 7char -0000W watts in or out of battery.
     float   Cwatts;                 //0D: 8char -0000CW watts in from charger.
     float   battery_current;        //0E: 7char -00.0A Battery charge/discharge current
@@ -164,8 +164,8 @@ struct dskyvars{
     float   max_current;            //13: 8char -00.0MC Max allowable battery current.
 }dsky;
 #define varLimit 0x0015
-#define signStart 0x000B
-#define wattsNum 0x000B
+#define signStart 0x000C
+#define wattsNum 0x000C
 #define nlNum 0x0014
 
 // Calculated battery values. These don't need to be saved on shutdown.

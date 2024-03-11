@@ -93,8 +93,8 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
 void __attribute__((interrupt, no_auto_psv)) _T5Interrupt (void){
     //CPUact = on;
     //Do display stuff.
-    //displayOut(PORT1);
-    //displayOut(PORT2);
+    displayOut(PORT1);
+    displayOut(PORT2);
     //End IRQ
     IFS1bits.T5IF = clear;
 }
