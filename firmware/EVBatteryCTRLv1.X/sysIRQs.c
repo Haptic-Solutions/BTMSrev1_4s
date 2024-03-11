@@ -107,7 +107,8 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         else STINGbits.adc_sample_burn = yes;      //We have burned the first set.
     }
     //Run the LED routine
-    if(Run_Level > Cal_Mode)LED_Mult(on);
+    if(Run_Level > Cal_Mode && (Flags&syslock))LED_Mult(on);
+    else if(!(Flags&syslock))LED_Mult(Ltest);
     else if(Run_Level != Crit_Err || Run_Level != Cal_Mode) LED_Mult(Ballance);
     else LED_Mult(off);
     //End IRQ
@@ -251,7 +252,12 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     dsky.watts = dsky.battery_crnt_average * dsky.pack_vltg_average;
 
     //Get average voltage and current.
-    if(avg_cnt >= 8){
+    if(avg_cnt < 8){
+        bt_crnt_avg_temp += dsky.battery_current;
+        bt_vltg_avg_temp += dsky.pack_voltage;
+        avg_cnt++;
+    }
+    else{
         bt_crnt_avg_temp /= 8;
         dsky.battery_crnt_average = bt_crnt_avg_temp;
         bt_vltg_avg_temp /= 8;
@@ -260,11 +266,6 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
         bt_crnt_avg_temp = 0;
         avg_cnt = 0;
         current_cal();
-    }
-    else{
-        bt_crnt_avg_temp += dsky.battery_current;
-        bt_vltg_avg_temp += dsky.pack_voltage;
-        avg_cnt++;
     }
     //*************************
     //Get peak power output.
@@ -281,6 +282,13 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
         vars.battery_remaining += (calc_125 * dsky.battery_current);
     }
     //*************************************************************
+    //LED test sequencer
+    LED_Test*=2;
+    if(LED_Test>8){
+        LED_Test=0x01;
+        if(CONDbits.LED_test_ch)CONDbits.LED_test_ch=0;
+        else CONDbits.LED_test_ch=1;
+    }
     /****************************************/
     /* End the IRQ. */
 	IFS0bits.T2IF = 0;

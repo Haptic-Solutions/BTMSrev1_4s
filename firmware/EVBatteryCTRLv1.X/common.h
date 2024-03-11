@@ -198,6 +198,7 @@ volatile char avg_cnt = 0;
 volatile char analog_avg_cnt = 0;
 volatile char Bcurnt_cal_stage = 0;
 volatile char Ccurnt_cal_stage = 0;
+volatile char LED_Test = 1;
 /* 0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error.
  */
 volatile char power_session = 1;
@@ -230,6 +231,7 @@ typedef struct tagCONDBITS {
   unsigned failSave:1;
   unsigned fastCharge:1;
   unsigned V_Cal:1;
+  unsigned LED_test_ch:1;
   //unsigned MemInUse:1;
 } CONDBITS;
 volatile CONDBITS CONDbits;

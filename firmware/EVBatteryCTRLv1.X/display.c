@@ -400,12 +400,13 @@ void BAL_Out(char LEDS){
     LED_dir_1 = LED_HiZ_1;
     LED_dir_2 = LED_HiZ_2;
     Mult_SEL = 0;
-    Mult_B1 = LEDS&0x01;
-    Mult_B2 = LEDS&0x02;
-    Mult_B3 = LEDS&0x04;
-    Mult_B4 = LEDS&0x08;
+    Mult_B1 = !(!(LEDS&0x01)); //WTF?? Can't do it without !(!())
+    Mult_B2 = !(!(LEDS&0x02)); //Cleaner looking than writing an if()
+    Mult_B3 = !(!(LEDS&0x04));
+    Mult_B4 = !(!(LEDS&0x08));
     LED_dir_1 = DFLT_1;
     LED_dir_2 = DFLT_2;
+    
 }
 
 void LED_Out(char LEDS){
@@ -439,6 +440,10 @@ void LED_Mult(char attributes){
         //Run multiplexed routine.
         //Debug mode LEDs
         if(attributes == Debug)LED_Out(0x06);
+        else if(attributes == Ltest){
+            if(CONDbits.LED_test_ch)BAL_Out(LED_Test);
+            else LED_Out(LED_Test);
+        }
         else if(mult_timer >= LED_Brightness && attributes == on){
             //Display LEDs
             mult_timer = 0;

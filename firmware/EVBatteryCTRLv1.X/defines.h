@@ -103,6 +103,7 @@ SOFTWARE. */
 #define yes 1
 #define no 0
 #define none 0
+#define Ltest 4
 #define Debug 3
 #define Ballance 2
 #define on 1
