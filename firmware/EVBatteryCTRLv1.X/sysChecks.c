@@ -350,14 +350,16 @@ inline void reset_check(void){
 }
 
 void Exception_Check(void){
-    if(Tfaultsbits.OSC)fault_log(0x0D);
-    if(Tfaultsbits.STACK)fault_log(0x0F);
-    if(Tfaultsbits.ADDRESS)fault_log(0x0E);
-    if(Tfaultsbits.MATH)fault_log(0x10);
-    if(Tfaultsbits.FLTA)fault_log(0x0C);        //PWM fault. External.
+    if(Tfaultsbits.OSC || INTCON1bits.OSCFAIL)fault_log(0x0D);
+    if(Tfaultsbits.STACK || INTCON1bits.STKERR)fault_log(0x0F);
+    if(Tfaultsbits.ADDRESS || INTCON1bits.ADDRERR)fault_log(0x0E);
+    if(Tfaultsbits.MATH || INTCON1bits.MATHERR)fault_log(0x10);
+    if(Tfaultsbits.FLTA || IFS2bits.FLTAIF)fault_log(0x0C);        //PWM fault. External.
     if(Tfaultsbits.RESRVD)fault_log(0x11);
     if(Tfaults)Run_Level = Crit_Err;
     Tfaults=0;
+    INTCON1 &= 0xFF00;  ///Clear all flags after checking them.
+    IFS2bits.FLTAIF=0;
 }
 //Used to log fault codes. Simple eh? Just call it with the code you want to log.
 void fault_log(int f_code){

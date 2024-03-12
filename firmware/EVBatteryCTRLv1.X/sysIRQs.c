@@ -88,7 +88,7 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         analog_avg_cnt++;
     }
     else {
-        if(STINGbits.adc_sample_burn)calcAnalog(); //Calculate analog inputs.
+        if(STINGbits.adc_sample_burn && analog_const!=0)calcAnalog(); //Calculate analog inputs.
         //Get open circuit voltage percentage if current is less than 0.1 amps
         if(STINGbits.adc_sample_burn)open_volt_percent();
         //Reset analog average count.
@@ -205,6 +205,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     }
     //**************************************************
     //Calculate battery %
+    if(vars.battery_capacity == 0)vars.battery_capacity=1;  //Prevent divide by zero. Make it a safe value.
     dsky.chrg_percent = ((vars.battery_remaining / vars.battery_capacity) * 100);
     /****************************************/
     //Calculate number of charge cycles the battery is going through
@@ -215,6 +216,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
             if(vars.TotalChargeCycles<65535)vars.TotalChargeCycles++;
             //And decrease battery capacity after every full charge cycle.
             float capDec = sets.cycles_to_80 * 5;
+            if(capDec==0)capDec=1;
             vars.battery_capacity *= 1-(1/capDec);
         }
     }

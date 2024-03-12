@@ -220,6 +220,7 @@ void load_float(float f_data, int serial_port){
 
 unsigned int BaudCalc(float BD, float mlt){
     /* Calculate baud rate. */
+    if(BD==0)BD=9600; //Prevent divide by zero, default to 9600 baud.
     float INS = mlt * 1000000;
     float OutPut = ((INS/BD)/16)-1;
     unsigned int Oputs = OutPut;

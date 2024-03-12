@@ -226,6 +226,7 @@ inline void open_volt_percent(void){
     if (absFloat(dsky.battery_current) < 0.05 && STINGbits.adc_sample_burn){
         dsky.open_voltage = dsky.pack_voltage;
         float VoltsFromDead = sets.battery_rated_voltage - sets.dischrg_voltage;
+        if(VoltsFromDead==0)VoltsFromDead=1;    //Prevent divide by zero.
         for(int i=0;i<Cell_Count;i++){
             float NX = dsky.Cell_Voltage[i] - sets.dischrg_voltage;
             if(NX<0)NX=0;

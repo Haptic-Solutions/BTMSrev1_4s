@@ -54,11 +54,6 @@ SOFTWARE. */
 /***********************************************************
 ***********************************************************/
 int main(void){
-    __asm__ volatile ("DISI #0x3FFF");  //First disable IRQs via instruction.
-    // Clear all interrupts flags
-    IFS0 = 0;
-    IFS1 = 0;
-    IFS2 = 0;
     /* General 3 IO. */
     GENERAL3_TRIS = GENERAL3_DIR;
     GENERAL3_LAT = 0;
@@ -76,6 +71,7 @@ int main(void){
     cfg_space = sizeof(sets) / 2;
     vr_space = sizeof(vars) / 2;
     dsky_space = sizeof(dsky) / 2;
+    Exception_Check();
     //Get either default or custom settings.
     get_settings();
     vars.battery_capacity = sets.amp_hour_rating; //Set capacity based on AH rating.
