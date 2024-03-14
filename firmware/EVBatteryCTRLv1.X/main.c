@@ -20,7 +20,7 @@ SOFTWARE. */
 
 #include "common.h"
 
-/* Include the Source AND Headers HERE or else mplab gets pissy for some reason.
+/* Include the Source AND Headers HERE or else mplab slowINHIBIT_Timergets pissy for some reason.
  * Don't bother trying to include the source and header files into the project,
  * it doesn't work. Either I'm doing it wrong or it's broken, but what I have here WORKS SO DON'T TOUCH IT.
  */
@@ -54,6 +54,9 @@ SOFTWARE. */
 /***********************************************************
 ***********************************************************/
 int main(void){
+    CONDbits.clockSpeed = slow; //Force a switchover to fast clock. It will not switch if this bool is == to fast
+    OSC_Switch(fast);
+    slowINHIBIT_Timer = 10;
     /* General 3 IO. */
     GENERAL3_TRIS = GENERAL3_DIR;
     GENERAL3_LAT = 0;
@@ -110,14 +113,18 @@ int main(void){
              * Oh well, we have ways of getting around it so it works for now.
              */
             //Heat_CTRL = 50;
+            OSC_Switch(slow);
             Idle();
+            OSC_Switch(fast);
             //Sleep();
             STINGbits.deep_sleep = 0;
         }
-        else{
+        else {
             //CPUact = 0;      //Turn CPU ACT light off.
             //Heat_CTRL = 50;
+            OSC_Switch(slow);
             Idle();                 //Idle Loop, saves power.
+            OSC_Switch(fast);
         }
     }
     return 0;

@@ -130,7 +130,7 @@ int eeprom_erase(int addrs){
         __asm__ volatile ("NOP");
         __asm__ volatile ("POP w1");
         while(NVMCONbits.WR) //Wait here until write is finished.
-        DISICNT = 0;    //ReEnable all non-critical IRQs.
+        if(CONDbits.IRQ_RESTART)DISICNT = 0;    //ReEnable all non-critical IRQs.
         return 0;
     }
 }
@@ -168,7 +168,7 @@ int eeprom_write(int addrs, int data){
         __asm__ volatile ("POP w1");
         __asm__ volatile ("POP w0");
         while(NVMCONbits.WR) //Wait here until write is finished.
-        DISICNT = 0;        //ReEnable all non-critical IRQs.
+        if(CONDbits.IRQ_RESTART)DISICNT = 0;        //ReEnable all non-critical IRQs.
         return 0;
     }
 }
@@ -193,7 +193,7 @@ int memread(char Moffset, int Maddress){
     eRead = WREG4;
     __asm__ volatile ("POP w0");
     __asm__ volatile ("POP w4");
-    DISICNT = 0;        //ReEnable all non-critical IRQs.
+    if(CONDbits.IRQ_RESTART)DISICNT = 0;        //ReEnable all non-critical IRQs.
     return eRead; //WREG4 will contain data read from NVmem
 }
 

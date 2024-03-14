@@ -30,6 +30,7 @@ void Buffrst(int serial_port){
         Buff_index[serial_port] = clear;
         portBSY[serial_port] = clear;  //Inhibits writing to buffer while the serial port is transmitting buffer.
     }
+    if(Buff_index[PORT1] == clear && Buff_index[PORT2] == clear)CONDbits.slowINHIBIT = 0;
 }
 
 void B_Sanity_CHK(int serial_port){
@@ -63,13 +64,13 @@ void port_check(int serial_port){
         return;
     }
     //check if port is busy sending data.
-    if(portBSY[serial_port]){
+/*    if(portBSY[serial_port]){
         if(serial_port)
-            fault_log(0x28);       //Log Port2 Busy Error.
+            //fault_log(0x28);       //Log Port2 Busy Error.
         else
-            fault_log(0x27);       //Log Port1 Busy Error.
+            //fault_log(0x27);       //Log Port1 Busy Error.
         return;
-    }
+    }*/
     //check if another process is currently writing to buffer.
     if(writingbuff[serial_port]){
         return;
@@ -220,6 +221,7 @@ void load_float(float f_data, int serial_port){
 
 unsigned int BaudCalc(float BD, float mlt){
     /* Calculate baud rate. */
+    if(CONDbits.clockSpeed == slow)mlt /= 16;
     if(BD==0)BD=9600; //Prevent divide by zero, default to 9600 baud.
     float INS = mlt * 1000000;
     float OutPut = ((INS/BD)/16)-1;

@@ -24,7 +24,7 @@ SOFTWARE. */
 // DSPIC30F3011 Configuration Bit Settings
 // FOSC
 #pragma config FOSFPR = FRC_PLL8        // Oscillator (FRC w/PLL 8x)
-#pragma config FCKSMEN = CSW_FSCM_OFF   // Clock Switching and Monitor (Sw Disabled, Mon Disabled)
+#pragma config FCKSMEN = CSW_ON_FSCM_OFF   // Clock Switching On and Monitor off
 
 // FWDT
 #pragma config FWPSB = WDTPSB_16        // WDT Prescaler B (1:16)

@@ -27,6 +27,7 @@ SOFTWARE. */
 
 inline void chargeDetect(void){
     if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage != calibrating && !D_Flag_Check() && charge_mode > Stop && first_cal == fCalReady){
+        slowINHIBIT_Timer = 10;
         //Check for various charging standards.
         if(charge_mode == Assignment_Ready){
             if(dsky.Cin_voltage<6){
@@ -92,6 +93,7 @@ inline void chargeDetect(void){
     }
     //Wait for voltage to stabilize, or reset from a stop condition unless the charging system as cycled too many times.
     else if(dsky.Cin_voltage<2.5){
+        STINGbits.CH_Voltage_Present = clear;
         if((charge_mode == CHError || Run_Level == Heartbeat) && ch_cycle>0)ch_cycle--; //Cool down the timer when power is disconnected.
         else if(ch_cycle > cycleLimit){
             charge_mode = CHError;
@@ -99,7 +101,6 @@ inline void chargeDetect(void){
         }
         else if(charge_mode == Stop){
             ch_cycle++;
-            STINGbits.CH_Voltage_Present = clear;
             charge_mode = Wait;
             CHwaitTimer=0;
         }
@@ -200,7 +201,7 @@ inline void death_loop(void){
 //Gets run once per second from Heartbeat IRQ.
 inline void main_power_check(void){
     /* Check for charger, or software power up. */
-    if((STINGbits.CH_Voltage_Present || CONDbits.Power_Out_EN) && (Run_Level != Cal_Mode)){
+    if((CONDbits.charger_detected || CONDbits.Power_Out_EN) && (Run_Level != Cal_Mode)){
         //Reset Overcurrent shutdown timer and various fault shutdowns.
         if(shutdown_timer){
             STINGbits.errLight = clear;     //Even though we may still have errors logged, the user is trying again and needs to know their battery charge level.

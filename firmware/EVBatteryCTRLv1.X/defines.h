@@ -157,6 +157,10 @@ SOFTWARE. */
 //Charger limits
 #define cycleLimit 3
 
+//OSC modes
+#define slow 0
+#define fast 1
+
 //##############################################################################
 #endif
 

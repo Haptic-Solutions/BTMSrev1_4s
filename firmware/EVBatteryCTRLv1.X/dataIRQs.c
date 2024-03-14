@@ -36,7 +36,7 @@ SOFTWARE. */
 /* Non time-critical systems. Timer 4 IRQ. 1 Second.*/
 //For low priority CPU intensive processes and checks.
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
-    //CPUact = on;
+    OSC_Switch(fast);
     /* Deep Sleep TIMER stuff. Do this to save power.
      * This is so that this system doesn't drain your 1000wh battery over the
      * course of a couple weeks while being unplugged from a charger.
@@ -91,7 +91,7 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
 //Another Heavy process IRQ
 //For low priority CPU intensive processes and checks, and 0.125 second non-critical timing.
 void __attribute__((interrupt, no_auto_psv)) _T5Interrupt (void){
-    //CPUact = on;
+    OSC_Switch(fast);
     //Do display stuff.
     displayOut(PORT1);
     displayOut(PORT2);
@@ -101,8 +101,9 @@ void __attribute__((interrupt, no_auto_psv)) _T5Interrupt (void){
 
 /* Data and Command input and processing IRQ for Port 1 */
 void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void){
-    //CPUact = on;
-    Command_Interp(PORT1);
+    if(U1STAbits.URXDA)Command_Interp(PORT1);
+        OSC_Switch(fast);
+        slowINHIBIT_Timer = 10;
 /****************************************/
     /* End the IRQ. */
     IFS0bits.U1RXIF = clear;
@@ -110,8 +111,9 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void){
 
 /* Data and Command input and processing IRQ for Port 2. */
 void __attribute__((interrupt, no_auto_psv)) _U2RXInterrupt (void){
-    //CPUact = on;
-    Command_Interp(PORT2);
+    if(U2STAbits.URXDA)Command_Interp(PORT2);
+        OSC_Switch(fast);
+        slowINHIBIT_Timer = 10;
 /****************************************/
     /* End the IRQ. */
     IFS1bits.U2RXIF = clear;
@@ -119,7 +121,8 @@ void __attribute__((interrupt, no_auto_psv)) _U2RXInterrupt (void){
 
 /* Output IRQ for Port 1 */
 void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt (void){
-    //CPUact = on;
+    OSC_Switch(fast);
+    CONDbits.slowINHIBIT = 1;
     //Dispatch the buffer to the little 4 word Serial Port buffer as it empties.
     while(!U1STAbits.UTXBF && (Buffer[PORT1][Buff_index[PORT1]] != NULL) && portBSY[PORT1]){
         U1TXREG = Buffer[PORT1][Buff_index[PORT1]];
@@ -134,7 +137,8 @@ void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt (void){
 
 /* Output IRQ for Port 2 */
 void __attribute__((interrupt, no_auto_psv)) _U2TXInterrupt (void){
-    //CPUact = on;
+    OSC_Switch(fast);
+    CONDbits.slowINHIBIT = 1;
     //Dispatch the buffer to the little 4 word Serial Port buffer as it empties.
     while(!U2STAbits.UTXBF && (Buffer[PORT2][Buff_index[PORT2]] != NULL) && portBSY[PORT2]){
         U2TXREG = Buffer[PORT2][Buff_index[PORT2]];

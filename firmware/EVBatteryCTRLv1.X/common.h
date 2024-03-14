@@ -31,6 +31,8 @@ extern inline void IsSysReady(void);
 extern inline void calcAnalog(void);
 extern inline void Volt_Cal(int);
 extern void CapacityCalc(void);
+extern void OSC_Switch(int);
+extern int PORTS_DONE(void);
 
 /* NOTE: Try to keep memory usage below about 75% for the dsPIC30F3011 as the stack can use as much as 15% */
 /*****************************/
@@ -189,7 +191,6 @@ volatile float bt_crnt_avg_temp = 0;
 volatile float bt_vltg_avg_temp = 0;
 volatile float Max_Charger_Current = 0;
 volatile float Charger_Target_Voltage = 0;
-volatile float analog_smpl_time = 0;
 volatile float Half_ref = 0;
 volatile float analog_const = 0;
 volatile int   OV_Timer[4];
@@ -213,7 +214,7 @@ volatile char v_test = 0;
 volatile char first_cal = 0;
 volatile char Run_Level = 0;
 volatile char ch_cycle = 0;
-
+volatile char slowINHIBIT_Timer = 0;
 /*****************************/
 //Control Output
 volatile unsigned int     charge_power = 0; //charge rate
@@ -234,6 +235,9 @@ typedef struct tagCONDBITS {
   unsigned fastCharge:1;
   unsigned V_Cal:1;
   unsigned LED_test_ch:1;
+  unsigned IRQ_RESTART:1;
+  unsigned clockSpeed:1;
+  unsigned slowINHIBIT:1;
   //unsigned MemInUse:1;
 } CONDBITS;
 volatile CONDBITS CONDbits;

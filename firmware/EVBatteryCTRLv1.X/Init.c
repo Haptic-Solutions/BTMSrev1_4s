@@ -99,9 +99,7 @@ void configure_IO(void){
 
     /**************************/
     /* Osc Config*/
-    OSCCONbits.NOSC = 1;
-    OSCCONbits.OSWEN = 1;
-    OSCCONbits.LPOSCEN = 0;
+    //OSC_Switch(fast, no);
     /**************************/
     //Disable IRQ on port change.
     CNEN1 = 0;
@@ -120,7 +118,7 @@ void configure_IO(void){
     GENERAL2_LAT = 0;
     GENERAL2_PORT = 0;
     /**************************/
-    /* PWM outputs and charge detect input. */
+    /* PWM outputs. */
     PWM_TRIS = PWM_TRIS_DIR;
     PWM_LAT = 0;
     PWM_PORT = 0;
@@ -148,25 +146,28 @@ void configure_IO(void){
     U1STAbits.UTXISEL = 0;
     U1MODE = 0;
     U1MODEbits.ALTIO = 1;           //Use alternate IO for UART1.
-    U1BRG = BaudCalc(BAUD1, IPS);     //calculate the baud rate.
+    U1MODEbits.WAKE = 1;
     //Default power up of UART should be 8n1
 
     //PORT 2 setup
     U2STA = 0;
     U2STAbits.UTXISEL = 0;
     U2MODE = 0;
+    U2MODEbits.WAKE = 1;
+    U1BRG = BaudCalc(BAUD1, IPS);     //calculate the baud rate.
     U2BRG = BaudCalc(BAUD2, IPS);     //calculate the baud rate.
     //Default power up of UART should be 8n1
 /*****************************/
+    //Note: Timers are now all configured by the clock switch routine located in subs.c
 //Timer configs at 58,960,000 hz
 /* Configure Timer 1 */
 /* Scan IO every second when KeySwitch is off. */
 /*****************************/
 /* Timer one CTRL. */
-    PR1 = 0xE0EA;
-    TMR1 = 0x0000;
-    T1CON = 0x0000;
-    T1CONbits.TCKPS = 3;        //1:256 prescale
+    //PR1 = 0xE0EA;
+    //TMR1 = 0x0000;
+    //T1CON = 0x0000;
+    //T1CONbits.TCKPS = 3;        //1:256 prescale
 
 /*****************************/
 /* Configure Timer 2 */
@@ -174,10 +175,10 @@ void configure_IO(void){
 /* For 0.125 second timing operations. */
     //PR2 = 0xE4E2;   //58,594
     //PR2 = 0x7075;     //28,789
-    PR2 = 0x383A;     //14,394
-    TMR2 = 0x0000;
-    T2CON = 0x0000;
-    T2CONbits.TCKPS = 2;  //1:64 prescale
+    //PR2 = 0x383A;     //14,394
+    //TMR2 = 0x0000;
+    //T2CON = 0x0000;
+    //T2CONbits.TCKPS = 2;  //1:64 prescale
 
 /*****************************/
 /* Configure Timer 3 */
@@ -195,29 +196,28 @@ void configure_IO(void){
 /* Non-Critical 1S Timing. */
 /*****************************/
 /* For low priority 1 second timing operations. */
-    PR4 = 0xE0EA;   //57,578
+    //PR4 = 0xE0EA;   //57,578
     //PR3 = 0x7271;     //29,297
-    TMR4 = 0x0000;
-    T4CON = 0x0000;
-    T4CONbits.TCKPS = 3;        //1:256 prescale
+    //TMR4 = 0x0000;
+    //T4CON = 0x0000;
+    //T4CONbits.TCKPS = 3;        //1:256 prescale
 
 /*****************************/
 /* Configure Timer 5 */
 /*****************************/
 /* For low priority 0.125 second timing operations. */
-    PR5 = 0x383A;     //14,394
-    TMR5 = 0x0000;
-    T5CON = 0x0000;
-    T5CONbits.TCKPS = 2;        //1:64 prescale
+    //PR5 = 0x383A;     //14,394
+    //TMR5 = 0x0000;
+    //T5CON = 0x0000;
+    //T5CONbits.TCKPS = 2;        //1:64 prescale
 
 /*****************************/
 /* Configure and Enable analog inputs */
 /*****************************/
-    analog_smpl_time = 1 / (((IPS * 1000000) / 0x1E) / 45);
     ADCON1 = 0x02E4;
     //ADCON2 = 0x0410;
     ADCON2 = 0x0424;
-    ADCON3 = 0x0F0F;
+    ADCON3 = 0x0980;
     ADCHS = 0x0000;
     ADPCFG = 0xFE00;
     ADCSSL = 0x01FF;
@@ -317,6 +317,7 @@ void init_sys_debug(void){
     IEC1bits.U2TXIE = 1; //Enable interrupts for UART2 Tx.
     IEC1bits.T4IE = 1;	// Enable interrupts for timer 4
     DISICNT = 0;
+    CONDbits.IRQ_RESTART = 1;
 /*****************************/
 /* Disable our devices except T4 and serial ports. */
 /*****************************/

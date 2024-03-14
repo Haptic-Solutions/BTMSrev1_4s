@@ -256,4 +256,76 @@ inline void current_cal(void){
     }
 }
 
+int PORTS_DONE(void){
+    if(!U2STAbits.RIDLE ||
+            !U1STAbits.RIDLE ||
+            !U2STAbits.TRMT ||
+            !U1STAbits.TRMT ||
+            U2STAbits.URXDA ||
+            U1STAbits.URXDA) return no;
+    else return yes;
+}
+void OSC_Switch(int speed){
+    int new_Clock = 0;
+    if(!CONDbits.slowINHIBIT && !slowINHIBIT_Timer && !CONDbits.charger_detected &&
+    speed == slow && CONDbits.clockSpeed == fast && PORTS_DONE()){
+        __asm__ volatile ("DISI #0x3FFF");
+        __builtin_write_OSCCONH(0x78);
+        __builtin_write_OSCCONH(0x9A);
+        __builtin_write_OSCCONH(0x07);
+        __builtin_write_OSCCONL(0x46);
+        __builtin_write_OSCCONL(0x57);
+        __builtin_write_OSCCONL(0x81); //Postscale 64
+        CONDbits.clockSpeed = slow;
+        new_Clock = 1;
+            T1CONbits.TCKPS = 0x02;           //1:64 prescale HS is 1:256
+            PR1 = 0x383A;                     //1/4 Count for a total scale down of 1:64
+            TMR1 = 0x0000;
+            
+            T2CONbits.TCKPS = 0x01;           //1:1 prescale HS is 1:64
+            PR2 = 0x7074;                     //Double count
+            TMR2 = 0x0000;
+            
+            //T3CONbits.TCKPS = 0x02;           //1:64 prescale HS is 1:256
+            //TMR3 = 0x0000;
+            //PR3 = 0x383A;                     //1/4 Count for a total scale down of 1:64
+            
+            T4CONbits.TCKPS = 0x02;           //1:64 prescale HS is 1:256
+            TMR4 = 0x0000;
+            PR4 = 0x383A;                     //1/4 Count for a total scale down of 1:64
+            
+            T5CONbits.TCKPS = 0x01;           //1:1 prescale HS is 1:64
+            PR5 = 0x7074;                     //Double count
+            TMR5 = 0x0000;
+    }
+    else if(speed == fast && CONDbits.clockSpeed == slow){
+        CONDbits.clockSpeed = fast;
+        __asm__ volatile ("DISI #0x3FFF");
+        T1CONbits.TCKPS = 0x03;          //1:256 prescale
+        PR1 = 0xE0EA;                    //Full Count
+        T2CONbits.TCKPS = 0x02;          //1:64 prescale
+        PR2 = 0x383A;
+        //T3CONbits.TCKPS = 3;             //1:256 prescale
+        //PR3 = 0xE0EA;                    //Half Count
+        T4CONbits.TCKPS = 0x03;          //1:256 prescale
+        PR4 = 0xE0EA;                    //Half Count
+        T5CONbits.TCKPS = 0x02;          //1:64 prescale
+        PR5 = 0x383A;
+        __builtin_write_OSCCONH(0x78);
+        __builtin_write_OSCCONH(0x9A);
+        __builtin_write_OSCCONH(0x07);
+        __builtin_write_OSCCONL(0x46);
+        __builtin_write_OSCCONL(0x57);
+        __builtin_write_OSCCONL(0x01); //No postscale
+        new_Clock = 1;
+    }
+    if(new_Clock){
+        while(OSCCONbits.OSWEN){
+        __asm__ volatile ("NOP");
+        __asm__ volatile ("NOP");
+        } //Wait for clock switch to finish.
+        if(CONDbits.IRQ_RESTART)DISICNT = 0;
+    }
+}
+
 #endif

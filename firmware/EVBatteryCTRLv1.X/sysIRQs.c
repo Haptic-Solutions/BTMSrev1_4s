@@ -34,7 +34,7 @@ SOFTWARE. */
 
 /* Batter OV fault IRQ. */
 void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
-    //CPUact = 1;
+    OSC_Switch(fast);
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
     fault_log(0x3A);
@@ -45,7 +45,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
 
 /* Current sensor Fault IRQ. */
 void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
-    //CPUact = on;
+    OSC_Switch(fast);
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
     fault_log(0x39);
@@ -55,7 +55,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
 
 /* Analog Input IRQ */
 void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
-    //CPUact = on;
+    OSC_Switch(fast);
     //Get 8 samples for averaging.
     if (analog_avg_cnt < 8){
         //Force use of all 0's if we haven't burned the first ADC sample after a startup.
@@ -117,7 +117,7 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
 
 /* Heartbeat IRQ, Once every Second. Lots of stuff goes on here. */
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
-    //CPUact = on;
+    OSC_Switch(fast);
     ADCON1bits.ADON = on;    // turn ADC on to get a sample.
     //Check for how fast we are charging.
     if(dsky.battery_crnt_average > (sets.chrg_C_rating*sets.amp_hour_rating)*0.75)CONDbits.fastCharge = 1;
@@ -222,6 +222,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     }
     //Initial startup sequence and calibration.
     initialCal();
+    if(PORTS_DONE() && slowINHIBIT_Timer > 0 && !CONDbits.charger_detected)slowINHIBIT_Timer--;
     /* End the IRQ. */
 	IFS0bits.T1IF = 0;
 }
@@ -229,7 +230,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
 /* 0.125 second IRQ */
 //Used for some critical math timing operations. Cycles through every 1/8 sec.
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
-    //CPUact = on;
+    OSC_Switch(fast);
     //Blink some LEDs
     BlinknLights++; //Count up all the time once every 1/8 second.
     //Check pre-charge timer.
