@@ -37,6 +37,7 @@ Under temperature charge slowdown/prevention:
 
 RF emissions within limits:
 
+Battery Safety:
 
 ******************************************************************************************************************************
 ## Destructive tests::
