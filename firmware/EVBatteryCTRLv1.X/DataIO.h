@@ -37,6 +37,7 @@ extern char four_bit_hex_cnvt(int);
 extern void Buffrst(int);
 extern void BuffNull(int);
 void load_hex(int, int);
+int port_Sanity(int);
 
 //Serial port stuff
 float tx_float[2] = {0,0};

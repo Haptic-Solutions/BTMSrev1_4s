@@ -87,12 +87,18 @@ inline void chargeDetect(void){
             }
         }
         else if(CHwaitTimer < 2 && charge_mode == Wait)CHwaitTimer++;
-        else if(charge_mode == Wait)charge_mode = Assignment_Ready;
+        else if(charge_mode == Wait){
+            charge_mode = Assignment_Ready;
+            U1MODEbits.UARTEN = 1;  //enable UART1
+            U1STAbits.UTXEN = 1;    //enable UART1 TX
+        }
         //Check if settings are locked and we can go-ahead with the charging process
         STINGbits.CH_Voltage_Present = set;     //Charger is detected
     }
     //Wait for voltage to stabilize, or reset from a stop condition unless the charging system as cycled too many times.
     else if(dsky.Cin_voltage<2.5){
+        U1MODEbits.UARTEN = 0;  //enable UART1
+        U1STAbits.UTXEN = 0;    //enable UART1 TX
         STINGbits.CH_Voltage_Present = clear;
         if((charge_mode == CHError || Run_Level == Heartbeat) && ch_cycle>0)ch_cycle--; //Cool down the timer when power is disconnected.
         else if(ch_cycle > cycleLimit){

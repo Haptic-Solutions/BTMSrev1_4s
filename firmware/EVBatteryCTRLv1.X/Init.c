@@ -125,9 +125,9 @@ void configure_IO(void){
 /*****************************/
 /* Configure PWM */
 /*****************************/
-    PTCON = 0x0000;     //Set the PWM module and set to free running mode for edge aligned PWM.
+    PTCON = 0x0000;     //Set the PWM module and set to free running mode for edge aligned PWM, and pre-scale divide by 2
     PTMR = 0;
-    PTPER = 98;         //set period. 0% - 99%
+    PTPER = 200;         //set period. 0% - 99%
     SEVTCMP = 0;
     PWMCON1 = 0x0070;           //Set PWM output for single mode.
     PWMCON2 = 0x0000;
@@ -147,6 +147,7 @@ void configure_IO(void){
     U1MODE = 0;
     U1MODEbits.ALTIO = 1;           //Use alternate IO for UART1.
     U1MODEbits.WAKE = 1;
+    U1BRG = BaudCalc(BAUD1, IPS);     //calculate the baud rate.
     //Default power up of UART should be 8n1
 
     //PORT 2 setup
@@ -154,7 +155,6 @@ void configure_IO(void){
     U2STAbits.UTXISEL = 0;
     U2MODE = 0;
     U2MODEbits.WAKE = 1;
-    U1BRG = BaudCalc(BAUD1, IPS);     //calculate the baud rate.
     U2BRG = BaudCalc(BAUD2, IPS);     //calculate the baud rate.
     //Default power up of UART should be 8n1
 /*****************************/
@@ -292,8 +292,8 @@ void Init(void){
     //T3CONbits.TON = 1;      // Start Timer 3
     //T4CONbits.TON = 1;      // Start Timer 4
     T5CONbits.TON = 1;      // Start Timer 5
-    U1MODEbits.UARTEN = 1;  //enable UART1
-    U1STAbits.UTXEN = 1;    //enable UART1 TX
+    //U1MODEbits.UARTEN = 1;  //enable UART1
+    //U1STAbits.UTXEN = 1;    //enable UART1 TX
     U2MODEbits.UARTEN = 1;  //enable UART2
     U2STAbits.UTXEN = 1;    //enable UART2 TX
     //We've done Init.

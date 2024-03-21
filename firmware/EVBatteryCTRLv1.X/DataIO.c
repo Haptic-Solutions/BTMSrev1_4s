@@ -24,8 +24,13 @@ SOFTWARE. */
 #include "common.h"
 #include "DataIO.h"
 
+int port_Sanity(int serial_port){
+    if(serial_port != PORT1 && serial_port != PORT2) return PORT1;
+    else return serial_port;
+}
+
 void Buffrst(int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     if (Buffer[serial_port][Buff_index[serial_port]] == NULL){
         Buff_index[serial_port] = clear;
         portBSY[serial_port] = clear;  //Inhibits writing to buffer while the serial port is transmitting buffer.
@@ -34,7 +39,7 @@ void Buffrst(int serial_port){
 }
 
 void B_Sanity_CHK(int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     if(Buff_index[serial_port]<0)Buff_index[serial_port]=0;
     if(Buff_index[serial_port]>=bfsize)Buff_index[serial_port]=0;
 }
@@ -56,7 +61,7 @@ char four_bit_hex_cnvt(int numb){
 }
 
 void port_check(int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     //Check if valid port has been selected.
     if (serial_port > 0x01){
         fault_log(0x1A);        //Log invalid port error.
@@ -79,7 +84,7 @@ void port_check(int serial_port){
 
 //Loads ascii HEX into buffer.
 void load_hex(int numb, int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     B_Sanity_CHK(serial_port);
     port_check(serial_port);
     nibble[serial_port][0] = (numb & 0xF000)/4096;
@@ -102,7 +107,7 @@ void load_hex(int numb, int serial_port){
 //Start the data transfer from one of the buffers to the selected serial port
 //Dispatch the data in the buffers to the display by creating a TX IRQ
 void dispatch_Serial(int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     B_Sanity_CHK(serial_port);
     if(portBSY[serial_port])return;             //If port is busy, don't dispatch a second time.
     portBSY[serial_port] = yes;                 //Tell everyone else that port is now busy.
@@ -114,7 +119,7 @@ void dispatch_Serial(int serial_port){
 
 //Send a string of text to a buffer that can then be dispatched to a serial port.
 void load_string(char *string_point, int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     B_Sanity_CHK(serial_port);
     port_check(serial_port);
     writingbuff[serial_port] = yes;
@@ -131,7 +136,7 @@ void load_string(char *string_point, int serial_port){
 
 //Send text to buffer and auto dispatch the serial port.
 void send_string(char *string_point, int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     load_string(string_point, serial_port);
     dispatch_Serial(serial_port);
     portBusyIdle(serial_port);  //Check to see if port is ready.
@@ -139,7 +144,7 @@ void send_string(char *string_point, int serial_port){
 
 //Copy float data to buffer.
 void cpyFLT(int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     B_Sanity_CHK(serial_port);
     Buffer[serial_port][Buff_index[serial_port]] = float_out[serial_port][FtempIndex[serial_port]];
     //Do not overrun the buffer.
@@ -147,7 +152,7 @@ void cpyFLT(int serial_port){
 }
 /* Sends a float to buffer as plane text. */
 void load_float(float f_data, int serial_port){
-    if(serial_port != PORT1 || serial_port != PORT2)serial_port = PORT1;
+    serial_port = port_Sanity(serial_port);
     FtempIndex[serial_port] = 0;
     tx_float[serial_port] = 0;
     tx_temp[serial_port] = 0;
