@@ -39,7 +39,7 @@ Fix: voltage readings horribly wrong especially charger input voltage when one s
 
 Change: Replace all film capacitors with the board-flex 100nF capacitors. They aren't needed afaict and are more expensive. <- Fixed in schematic and board.
 
-Fix: Separate analog and digital 3.3v supplies. Digital needs a small switching buck converter, and analog needs a tiny linear regulator. <- Fixed in schematic and board. Need to test thin film inductors on some ready-made buck converters before finalizing this design.
+Fix: Separate analog and digital 3.3v supplies. Digital needs a small switching buck converter, and analog needs a tiny linear regulator. <- Fixed in schematic and board. Need to test thin film inductors on some ready-made buck converters before finalizing this design. <- Tested thin film inductors and they seem to work fine with a 700khz buck converter. Current board design uses 1mhz buck converter.
 
 Fix: Buck-Boost converter is running pretty inefficient. Maybe less than 50%. Tested at 17V input and it works, but buck side low mosfet heats up to over 200F. Maybe the mosfets aren't turning off fast enough and there is shoot-through?
 Found that mosfets are turning on when they aren't supposed to due to Miller Effect. Need to add in schottky diode to half-bridge output to help clamp negative spikes from inductor. Maybe need to change drive circuit(s) to an asymmetric architecture,
