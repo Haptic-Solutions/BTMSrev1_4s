@@ -61,14 +61,13 @@ int main(void){
     GENERAL3_TRIS = GENERAL3_DIR;
     GENERAL3_LAT = 0;
     GENERAL3_PORT = 0;
-    KeepAlive = 1; //Enable Keep Alive signal. System keeps itself on while main_power is enabled.
     /* Analog inputs */
     //Initialize PORTB first.
     ANALOG_TRIS = ANALOG_DIR;          //set portb to analog inputs.
     ANALOG_LAT = 0;
     ANALOG_PORT = 0; //clear portb
     configure_IO();
-    Batt_IO_OFF();
+    KeepAlive = 1; //Enable Keep Alive signal. System keeps itself on while main_power is enabled.
     //CPUact = 1;             //Turn on CPU ACT light.
     //Calculate space required for eeprom storage.
     cfg_space = sizeof(sets) / 2;
@@ -84,7 +83,12 @@ int main(void){
     first_check();
     //Initialize Systems.
     Run_Level = Cal_Mode;
+    for(int i=0;i<Cell_Count;i++){
+        temp_Cell_Voltage_Average[i] = 0;
+    }
     Init();
+    timer_reset();
+    PowerOffTimer = sets.PowerOffAfter-1;
     send_string("Init. \n\r", PORT1);
     send_string("Init. \n\r", PORT2);
 
@@ -113,8 +117,8 @@ int main(void){
              * Oh well, we have ways of getting around it so it works for now.
              */
             //Heat_CTRL = 50;
-            OSC_Switch(slow);
-            Idle();
+            //OSC_Switch(slow);
+            Sleep();
             OSC_Switch(fast);
             //Sleep();
             STINGbits.deep_sleep = 0;
@@ -122,7 +126,7 @@ int main(void){
         else {
             //CPUact = 0;      //Turn CPU ACT light off.
             //Heat_CTRL = 50;
-            OSC_Switch(slow);
+            //OSC_Switch(slow);
             Idle();                 //Idle Loop, saves power.
             OSC_Switch(fast);
         }

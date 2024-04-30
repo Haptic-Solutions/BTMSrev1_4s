@@ -24,8 +24,25 @@ SOFTWARE. */
 #include "common.h"
 #include "DataIO.h"
 
+void USB_Power_Present_Check(void){
+    if(dsky.Cin_voltage>3.5){
+        U1MODEbits.UARTEN = 1;  //enable UART1
+        U1STAbits.UTXEN = 1;    //enable UART1 TX
+        I2CCONbits.I2CEN = 1;   //enable I2C interface
+    }
+    else {
+        U1MODEbits.UARTEN = 0;  //disable UART1
+        U1STAbits.UTXEN = 0;    //disable UART1 TX
+        I2CCONbits.I2CEN = 0;   //disable I2C interface
+    }
+}
+
+//Check to make sure serial_port is either 1 or 2, if it's not then default to port 1
 int port_Sanity(int serial_port){
-    if(serial_port != PORT1 && serial_port != PORT2) return PORT1;
+    if(serial_port != PORT1 && serial_port != PORT2){
+        fault_log(0x3E);
+        return PORT2;   //default to port2 because it's always on.
+    }
     else return serial_port;
 }
 
@@ -42,6 +59,17 @@ void B_Sanity_CHK(int serial_port){
     serial_port = port_Sanity(serial_port);
     if(Buff_index[serial_port]<0)Buff_index[serial_port]=0;
     if(Buff_index[serial_port]>=bfsize)Buff_index[serial_port]=0;
+}
+
+//Check if serial port is busy.
+//If used, ensure that it is used by an IRQ priority that is lower than TX IRQs.
+void portBusyIdle(int serial_port){
+    serial_port = port_Sanity(serial_port);
+    while(portBSY[serial_port]){
+        //CPUact = 0;      //Turn CPU ACT light off.
+        Idle();                 //Idle Loop, saves power.
+    }
+    //CPUact = 1;      //Turn CPU ACT light on.
 }
 
 //*************************************************************************************************
@@ -134,6 +162,23 @@ void load_string(char *string_point, int serial_port){
     writingbuff[serial_port] = no;
 }
 
+//Send a string of text to a buffer that can then be dispatched to a serial port.
+void load_const_string(const char *string_point, int serial_port){
+    serial_port = port_Sanity(serial_port);
+    B_Sanity_CHK(serial_port);
+    port_check(serial_port);
+    writingbuff[serial_port] = yes;
+    StempIndex[serial_port] = clear;
+    while (string_point[StempIndex[serial_port]]){
+        Buffer[serial_port][Buff_index[serial_port]] = string_point[StempIndex[serial_port]];
+        if (Buff_index[serial_port] < bfsize-1)
+            Buff_index[serial_port]++;
+        else break;
+        StempIndex[serial_port]++;
+    }
+    writingbuff[serial_port] = no;
+}
+
 //Send text to buffer and auto dispatch the serial port.
 void send_string(char *string_point, int serial_port){
     serial_port = port_Sanity(serial_port);
@@ -156,23 +201,19 @@ void load_float(float f_data, int serial_port){
     FtempIndex[serial_port] = 0;
     tx_float[serial_port] = 0;
     tx_temp[serial_port] = 0;
-    int extSpc = 0;
 
     float_out[serial_port][0] = ' ';
     if (f_data < 0){
         f_data *= -1;                       //Convert to absolute value.
         float_out[serial_port][0] = '-';    //Put a - in first char
-        extSpc = 1;
     }
     if (f_data > 9999.999){
         f_data = 9999.999;      //truncate it if it's too big of a number.
         float_out[serial_port][0] = '?';    //Put a ? in first char if truncated.
-        extSpc = 1;
     }
-    else if (f_data < 0000.001){
+    else if (f_data < 0000.001 && f_data != 0){
         f_data = 0000.001;      //truncate it if it's too big of a number.
         float_out[serial_port][0] = '<';    //Put a ? in first char if truncated.
-        extSpc = 1;
     }
 
     tx_float[serial_port] = f_data / 1000;
@@ -180,7 +221,7 @@ void load_float(float f_data, int serial_port){
     while (FtempIndex[serial_port] <= 8){
         if (FtempIndex[serial_port] == 5){
             float_out[serial_port][5] = '.';    //Put a decimal at the 5th spot.
-            FtempIndex[serial_port]++;          //Got to 6th spot after.
+            FtempIndex[serial_port]++;          //Go to 6th spot after.
         }
         tx_temp[serial_port] = tx_float[serial_port];   //Truncate anything on the right side of the decimal.
         float_out[serial_port][FtempIndex[serial_port]] = tx_temp[serial_port] + 48; //Convert it to ASCII.
@@ -222,6 +263,39 @@ void load_float(float f_data, int serial_port){
     }
     config_space[serial_port] = 0;
     writingbuff[serial_port] = 0;
+}
+
+//get floating point number from text input
+float Get_Float(int index, int serial_port){
+    float F_Temp = 0;
+    float F_Dec_Mult = 0.1;
+    int Past_Dec = no;
+    int Is_Negative = no;
+    if(CMD_buff[serial_port][index]=='-')Is_Negative = yes;
+    for(int i=index;i<9+index&&i<Clength;i++){
+        if(Is_Negative && i==index)i++;
+        char F_Text = CMD_buff[serial_port][i];
+        if((F_Text==0 || F_Text==' ' || F_Text=='\n' || F_Text=='\r' || F_Text<0x30 || F_Text>0x39) && F_Text!='.'){
+            if(Is_Negative)return F_Temp*-1;
+            else return F_Temp;
+        }
+        if(F_Text=='.'){
+            Past_Dec = yes;
+        }
+        if(Past_Dec && F_Text!='.'){
+            float Tnum = F_Text-0x30;
+            Tnum *= F_Dec_Mult;
+            F_Dec_Mult *= 0.1;
+            F_Temp += Tnum;
+        }
+        else if(F_Text!='.'){
+            float Tnum = F_Text-0x30;
+            F_Temp *= 10;
+            F_Temp += Tnum;
+        }
+    }
+    if(Is_Negative)return F_Temp*-1;
+    else return F_Temp;
 }
 
 unsigned int BaudCalc(float BD, float mlt){

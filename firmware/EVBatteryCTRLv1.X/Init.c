@@ -42,6 +42,7 @@ void default_sets(void){
     sets.over_current_shutdown = 8;        //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
     sets.absolute_max_current = 8.5;      //Max regulating current.
     /**************************************/
+    sets.auto_off_watts = 0.5;       //Minimum amount of power draw to start the auto power off timer.
     sets.cycles_to_80 = 2000;           //Number of charge cycles to 80% capacity.
     //Charge temps.
     sets.chrg_min_temp = 10;          //Battery minimum charge temperature. Stop Charging at this temp.
@@ -59,8 +60,10 @@ void default_sets(void){
     sets.battery_shutdown_temp = 60;      //Max battery temp before shutting down everything.
     sets.ctrlr_shutdown_temp = 80;        //Max motor or motor controller temp shutdown.
     //Some other stuff.
-    sets.max_heat = 10;              //Heater watts that you want to use.
-    sets.PowerOffAfter = 120;    //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours.
+    sets.max_heat = 3;              //Heater watts that you want to use.
+    sets.DeepSleepAfter = 1;    //Deep Sleep the system after this many minutes of not being plugged in or keyed on.
+    sets.PowerOffAfter = 1;     //Power off the output after this many minutes when power off wattage is below set amount or 0. 
+    sets.PWR_SW_MODE = push_and_hold;
     //page[2][5][6];              //Display page holder. (PORT)(Page#)(Variable to Display: A '0' at the start = Skip Page)
     sets.PxVenable[PORT1] = off;         //Port 1 display out is disabled by default.
     sets.PxVenable[PORT2] = off;         //Port 2 display out is disabled by default.
@@ -72,7 +75,7 @@ void default_sets(void){
     sets.page[PORT1][0][0] = 0x01;  //Battery %
     sets.page[PORT1][0][1] = 0x08;  //S1
     sets.page[PORT1][0][2] = 0x09;  //S2
-    sets.page[PORT1][0][3] = 0x0A; //S3
+    sets.page[PORT1][0][3] = 0x0A;  //S3
     sets.page[PORT1][0][4] = 0x0B;  //S4
     sets.page[PORT1][0][5] = 0x0C;  //Watts
     sets.page[PORT1][1][0] = 0x14;  //New Line
@@ -81,6 +84,18 @@ void default_sets(void){
     sets.pageDelay[PORT1][1] = 4;   //0.5 seconds.
     sets.pageDelay[PORT1][2] = 0;
     sets.pageDelay[PORT1][3] = 0;
+    sets.page[PORT2][0][0] = 0x01;  //Battery %
+    sets.page[PORT2][0][1] = 0x08;  //S1
+    sets.page[PORT2][0][2] = 0x09;  //S2
+    sets.page[PORT2][0][3] = 0x0A;  //S3
+    sets.page[PORT2][0][4] = 0x0B;  //S4
+    sets.page[PORT2][0][5] = 0x0C;  //Watts
+    sets.page[PORT2][1][0] = 0x14;  //New Line
+    sets.page[PORT2][1][1] = 0x00;  //NULL terminator
+    sets.pageDelay[PORT2][0] = 0;
+    sets.pageDelay[PORT2][1] = 4;   //0.5 seconds.
+    sets.pageDelay[PORT2][2] = 0;
+    sets.pageDelay[PORT2][3] = 0;
     sets.PxVenable[PORT1] = off;         //Port 1 display out is disabled by default.
     sets.PxVenable[PORT2] = off;         //Port 2 display out is enabled by default.
     ram_chksum_update();        //Generate new checksum.
@@ -127,7 +142,7 @@ void configure_IO(void){
 /*****************************/
     PTCON = 0x0000;     //Set the PWM module and set to free running mode for edge aligned PWM, and pre-scale divide by 2
     PTMR = 0;
-    PTPER = 200;         //set period. 0% - 99%
+    PTPER = PWM_Period;         //set period. 0% - 99%
     SEVTCMP = 0;
     PWMCON1 = 0x0070;           //Set PWM output for single mode.
     PWMCON2 = 0x0000;
@@ -146,7 +161,7 @@ void configure_IO(void){
     U1STAbits.UTXISEL = 0;
     U1MODE = 0;
     U1MODEbits.ALTIO = 1;           //Use alternate IO for UART1.
-    U1MODEbits.WAKE = 1;
+    //U1MODEbits.WAKE = 1;
     U1BRG = BaudCalc(BAUD1, IPS);     //calculate the baud rate.
     //Default power up of UART should be 8n1
 
@@ -154,9 +169,15 @@ void configure_IO(void){
     U2STA = 0;
     U2STAbits.UTXISEL = 0;
     U2MODE = 0;
-    U2MODEbits.WAKE = 1;
+    //U2MODEbits.WAKE = 1;
     U2BRG = BaudCalc(BAUD2, IPS);     //calculate the baud rate.
     //Default power up of UART should be 8n1
+    
+/*****************************/
+/* Configure I2C */
+/*****************************/
+    I2CCON = 0;
+    I2CBRG = 0x0B5; //Speed not too critical. As long as it's within specs.
 /*****************************/
     //Note: Timers are now all configured by the clock switch routine located in subs.c
 //Timer configs at 58,960,000 hz
@@ -223,18 +244,20 @@ void configure_IO(void){
     ADCSSL = 0x01FF;
 
     //Configure IRQ Priorities
-    IPC2bits.ADIP = 7;      //Analog inputs and regulation routines, Most Important.
-    IPC1bits.T2IP = 6;      //0.125 second IRQ for some math timing, Greater priority.
-    IPC4bits.INT1IP = 5;    //Over current IRQ
-    IPC0bits.INT0IP = 5;    //Over voltage IRQ
+    IPC0bits.INT0IP = 7;    //Over voltage IRQ, Most Important.
+    IPC4bits.INT1IP = 7;    //Over current IRQ, Most Important.
+    IPC2bits.ADIP = 6;      //Analog inputs and regulation routines, Important.
+    IPC1bits.T2IP = 5;      //0.125 second IRQ for some math timing, Greater priority.
     IPC0bits.T1IP = 4;      //Heartbeat IRQ, eh, not terribly important.
-    IPC5bits.T5IP = 4;      //0.125 Sec Non-critical. Used for HUD, not important for system functionality.
+    IPC3bits.MI2CIP = 4;    //I2C collision priority.
+    IPC3bits.SI2CIP = 4;    //I2C transfer complete priority.
     IPC2bits.U1TXIP = 3;    //TX 1 IRQ, Text can wait
     IPC6bits.U2TXIP = 3;    //TX 2 IRQ, Text can wait
     IPC2bits.U1RXIP = 2;    //RX 1 IRQ, Text can wait
     IPC6bits.U2RXIP = 2;    //RX 2 IRQ, Text can wait
-    IPC1bits.T3IP = 2;      //Timer 3 IRQ for wheel rotate timeout. Not critical.
-    IPC5bits.T4IP = 1;      //1 Sec Checksum timer IRQ.
+    //IPC1bits.T3IP = 2;      //Timer 3 IRQ for wheel rotate timeout. Not critical.
+    IPC5bits.T5IP = 2;      //0.125 Sec Non-critical. Used for HUD.
+    IPC5bits.T4IP = 1;      //1 Sec Checksum timer IRQ and power off timer.
     IPC5bits.INT2IP = 1;    //Not used.
 }
 void Init(void){
@@ -261,11 +284,13 @@ void Init(void){
     IFS1 = 0;
     IFS2 = 0;
 
-	// enable interrupts
+	// enable selectinterrupts
 	__asm__ volatile ("DISI #0x3FFF");  //First disable IRQs via instruction.
     IEC0 = 0;
     IEC1 = 0;
     IEC2 = 0;
+    IEC0bits.MI2CIE = 1;	// Enable interrupts for I2C collision
+    IEC0bits.SI2CIE = 1;	// Enable interrupts for I2C transfer complete
 	IEC0bits.T1IE = 1;	// Enable interrupts for timer 1
     IEC0bits.U1RXIE = 1; //Enable interrupts for UART1 Rx.
     IEC0bits.U1TXIE = 1; //Enable interrupts for UART1 Tx.
@@ -275,8 +300,8 @@ void Init(void){
     IEC1bits.INT1IE = 1;    //Wheel rotate IRQ
     IEC1bits.INT2IE = 0;  //Disable irq for INT2, not used.
     IEC0bits.T2IE = 1;	// Enable interrupts for timer 2
-    IEC0bits.T3IE = 0;	// Disable interrupts for timer 3
-    IEC1bits.T4IE = 0;	// Disable interrupts for timer 4
+    //IEC0bits.T3IE = 1;	// Enable interrupts for timer 3
+    IEC1bits.T4IE = 1;	// Enable interrupts for timer 4
     IEC1bits.T5IE = 1;	// Enable interrupts for timer 5
     IEC0bits.ADIE = 1;  // Enable ADC IRQs.
     INTCON2bits.INT0EP = 0;
@@ -290,10 +315,9 @@ void Init(void){
     T2CONbits.TON = 1;      // Start Timer 2
     T1CONbits.TON = 1;      // Start Timer 1
     //T3CONbits.TON = 1;      // Start Timer 3
-    //T4CONbits.TON = 1;      // Start Timer 4
+    T4CONbits.TON = 1;      // Start Timer 4
     T5CONbits.TON = 1;      // Start Timer 5
-    //U1MODEbits.UARTEN = 1;  //enable UART1
-    //U1STAbits.UTXEN = 1;    //enable UART1 TX
+    USB_Power_Present_Check(); //Enable or Disable PORT1 depending if there is voltage present to FTDI chip.
     U2MODEbits.UARTEN = 1;  //enable UART2
     U2STAbits.UTXEN = 1;    //enable UART2 TX
     //We've done Init.
@@ -326,10 +350,9 @@ void init_sys_debug(void){
     T2CONbits.TON = 0;      // Disable Timer 2
     T1CONbits.TON = 0;      // Disable Timer 1
     T3CONbits.TON = 0;      // Disable Timer 3
-    T4CONbits.TON = 0;      // Disable Timer 4
+    //T4CONbits.TON = 1;      // Disable Timer 4
     T5CONbits.TON = 0;      // Disable Timer 5
-    U1MODEbits.UARTEN = 1;  //enable UART1
-    U1STAbits.UTXEN = 1;    //enable UART1 TX
+    USB_Power_Present_Check(); //Enable or Disable PORT1 depending if there is voltage present to FTDI chip.
     U2MODEbits.UARTEN = 1;  //enable UART2
     U2STAbits.UTXEN = 1;    //enable UART2 TX
 /* End Of Initial Config stuff. */
@@ -339,15 +362,15 @@ void init_sys_debug(void){
 void low_power_mode(void){
     Batt_IO_OFF();
     //ADCON1bits.ADON = 0;    // turn ADC off
-    T2CONbits.TON = 0;      // Stop Timer 2
+    //if(!PWR_SW && !CONDbits.Power_Out_Lock)T2CONbits.TON = 0;      // Stop Timer 2 only if power switch is released.
     T3CONbits.TON = 0;      // Stop Timer 3
-    T4CONbits.TON = 0;      // Stop Timer 4
+    //T4CONbits.TON = 0;      // Stop Timer 4
     T5CONbits.TON = 0;      // Stop Timer 5
     // disable interrupts
     IEC1bits.INT1IE = 0;    //disable Wheel rotate IRQ
-    IEC0bits.T2IE = 0;      //disable interrupts for timer 2
+    //IEC0bits.T2IE = 0;      //disable interrupts for timer 2
     IEC0bits.T3IE = 0;	// Disable interrupts for timer 3
-    IEC1bits.T4IE = 0;	// Disable interrupts for timer 4
+    //IEC1bits.T4IE = 1;	// Disable interrupts for timer 4
     IEC1bits.T5IE = 0;	// Disable interrupts for timer 5
     INTCON2bits.INT1EP = 0;
     INTCON2bits.INT2EP = 0;

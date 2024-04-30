@@ -31,22 +31,22 @@ inline void chargeDetect(void){
         //Check for various charging standards.
         if(charge_mode == Assignment_Ready){
             if(dsky.Cin_voltage<6){
-                if(V_Bus_Stat){
+                if(0){
                     //Mom! Can we get USB 3.1 charging?
                     //No sweetie, we have USB 3.1 charging at home.
                     //*USB 3.1 charging at home*
                     Max_Charger_Current=2.5; //USB_3.1 up to 25v. Probably a cheap wimpy charger if it can only do 5v, don't overload it.
-                    Charger_Target_Voltage = 4.8; //Don't pull so much current that the charger voltage goes below this.
+                    Charger_Target_Voltage = 4.5; //Don't pull so much current that the charger voltage goes below this.
                     charge_mode = USB3_Wimp;
                 }
                 else{ 
                     Max_Charger_Current=1.4; //USB_2.0 and down. Likely USB_2.0 charger.
-                    Charger_Target_Voltage = 4.8; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
+                    Charger_Target_Voltage = 4.5; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
                     charge_mode = USB2;
                 }
             }
             else if(dsky.Cin_voltage<19){
-                if(V_Bus_Stat){
+                if(1){
                     Max_Charger_Current=3; //USB_3.1 up to 25v.
                     Charger_Target_Voltage = dsky.Cin_voltage-0.5; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
                     charge_mode = USB3;
@@ -57,7 +57,7 @@ inline void chargeDetect(void){
                 }
             }
             else if(dsky.Cin_voltage<21){
-                if(V_Bus_Stat){
+                if(1){
                     Max_Charger_Current=5; //USB_3.1 up to 25v.
                     Charger_Target_Voltage = 19.5; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
                     charge_mode = USB3_Fast;
@@ -68,7 +68,7 @@ inline void chargeDetect(void){
                 }
             }
             else if(dsky.Cin_voltage<26){
-                if(V_Bus_Stat){
+                if(1){
                     Max_Charger_Current=0; //USB_3.1 error? Voltage should not be this high from any supported USB chargers.
                     charge_mode = Stop;
                     fault_log(0x1B);
@@ -95,7 +95,7 @@ inline void chargeDetect(void){
         //Check if settings are locked and we can go-ahead with the charging process
         STINGbits.CH_Voltage_Present = set;     //Charger is detected
     }
-    //Wait for voltage to stabilize, or reset from a stop condition unless the charging system as cycled too many times.
+    //Wait for voltage to stabilize, or reset from a stop condition unless the charging system has cycled too many times.
     else if(dsky.Cin_voltage<2.5){
         U1MODEbits.UARTEN = 0;  //enable UART1
         U1STAbits.UTXEN = 0;    //enable UART1 TX
@@ -165,6 +165,7 @@ inline void chargeDetect(void){
     else if(!STINGbits.CH_Voltage_Present){
         CONDbits.charger_detected = 0;  //If charger has been unplugged, clear this.
     }
+    USB_Power_Present_Check(); //Enable or Disable PORT1 depending if there is voltage present to FTDI chip.
 }
 
 //Initiate current calibration, heater calibration, and try to get battery capacity from NVmem upon cold and dead startup.
@@ -247,10 +248,11 @@ inline void analog_sanity(void){
         fault_log(0x1D);
         ALL_shutdown();
     }
-    if(ChargeVoltage < 0x0002){
-        fault_log(0x1E);
-        ALL_shutdown();
-    }
+    //charger voltage is expected to go to 0v
+    //if(ChargeVoltage < 0x0002){
+    //    fault_log(0x1E);
+    //    ALL_shutdown();
+    //}
     //Charger Current
     if(CCsense > 0xFFFD){
         fault_log(0x1F);
@@ -347,12 +349,12 @@ inline void first_check(void){
 }
 //Check reset conditions and log them.
 inline void reset_check(void){
-    if(RCONbits.BOR)fault_log(0x13);        //Brown Out Event.
+    //if(RCONbits.BOR)fault_log(0x13);        //Brown Out Event.
     if(RCONbits.WDTO)fault_log(0x14);        //WDT Reset Event.
     if(RCONbits.TRAPR)fault_log(0x15);        //TRAP Conflict Event. Multiple TRAPs at the same time.
     if(RCONbits.IOPUWR)fault_log(0x16);        //Illegal opcode or uninitialized W register access Event.
-    if(RCONbits.EXTR)fault_log(0x17);        //External Reset Event.
-    if(RCONbits.SWR)fault_log(0x19);        //Reset Instruction Event.
+    //if(RCONbits.EXTR)fault_log(0x17);        //External Reset Event.
+    //if(RCONbits.SWR)fault_log(0x19);        //Reset Instruction Event.
     rst_flag_rst();
 }
 
@@ -410,15 +412,15 @@ inline void heater_calibration(void){
         if (watts < sets.max_heat){
             heat_set++;
             Heat_CTRL = heat_set;
-            if (heat_set > 95){
+            if (heat_set > (PWM_Period*2)*0.9){
                 fault_log(0x01);      //Log fault, heater is too small for the watts you want.
                 heatStuffOff(RLtemp);
             }
-            if (heat_set > 50 && watts < 2){
+            if (heat_set > (PWM_Period*2)*0.5 && watts < 0.5){
                 fault_log(0x02);      //Log fault, no heater detected.
                 heatStuffOff(RLtemp);
             }
-            if (heat_set < 5 && watts > 10){
+            if (heat_set < (PWM_Period*2)*0.1 && watts > 10){
                 fault_log(0x03);      //Log fault, short circuit on heater.
                 heatStuffOff(RLtemp);
             }
@@ -453,7 +455,7 @@ inline void explody_preventy_check(void){
     //Battery over voltage check
     for(int i=0;i<Cell_Count;i++){
         if(dsky.Cell_Voltage[i] > sets.max_battery_voltage){
-            if(OV_Timer[i]<10)OV_Timer[i]++;
+            if(OV_Timer[i]<20)OV_Timer[i]++;
             else {
                 fault_log(0x07);    //Log a high battery voltage shutdown event.
                 Flags |= HighVLT;
@@ -526,11 +528,10 @@ inline void ALL_shutdown(void){
 inline void Batt_IO_OFF(void){
     CH_Boost = off;           //set charge boost control off.
     CHctrl = off;             //set charge control off.
-    Heat_CTRL = off;          //set heater control off.
-    PreCharge = off;          //Turn off pre-charge circuit.
     PowerOutEnable = off;     //Output off.
     heat_power = off;         //set heater routine control off.
     power_session = UnknownStart; //If a discharge evaluation is disrupted then reset the meter routine.
+    if(Run_Level != Cal_Mode)Heat_CTRL = off;          //set heater control off.
 }
 
 //Check un-resettable flags.

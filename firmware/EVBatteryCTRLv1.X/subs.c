@@ -58,21 +58,19 @@ inline void calcAnalog(void){
             BavgVolt[i] /= analog_const;
             if(CONDbits.V_Cal) S_V[i] = BavgVolt[i] / resistor_divide_const;
             else S_V[i] = (BavgVolt[i] / resistor_divide_const) + sets.S_vlt_adjst[i];    //Use resistor divider values to covert to actual voltage.
+            BavgVolt[i] = 0;       //Clear average.
         }
         
         if(CONDbits.V_Cal){
             for(int i=0;i<4;i++)dsky.Cell_Voltage[i] = S_V[i];
         }
         else {
-            dsky.Cell_Voltage[0] = 0.05 + S_V[0]; //Safer to have the voltages read a little high than a little low.
-            dsky.Cell_Voltage[1] = 0.05 + (S_V[1] - S_V[0]);
-            dsky.Cell_Voltage[2] = 0.05 + (S_V[2] - S_V[1]);
-            dsky.Cell_Voltage[3] = 0.05 + (S_V[3] - S_V[2]);
+            dsky.Cell_Voltage[0] = S_V[0]; //Safer to have the voltages read a little high than a little low.
+            dsky.Cell_Voltage[1] = (S_V[1] - S_V[0]);
+            dsky.Cell_Voltage[2] = (S_V[2] - S_V[1]);
+            dsky.Cell_Voltage[3] = (S_V[3] - S_V[2]);
         }
-        
-        for(int i=0;i<4;i++){
-            BavgVolt[i] = 0;       //Clear average.
-        }
+
         //Calculate pack voltage. Why not just use S4 input? Because
         //S4 may not be used in smaller packs.
         //Recalculating based on calibrated and calculated values should
@@ -124,26 +122,33 @@ inline void Volt_Cal(int serial_port){
     STINGbits.adc_sample_burn = 0;
     STINGbits.adc_valid_data = 0;//Get fresh analog data
     ADCON1bits.ADON = on;    // turn ADC on to get a sample.
-    while(!STINGbits.adc_valid_data || !STINGbits.adc_sample_burn){
+    avg_rdy=0;
+    while(avg_rdy<2){
         Idle();
     }
+    int param = Get_Float(2, serial_port) - 1;
+    float tollarance = param + 2;
+    float set_Volt = Get_Float(4, serial_port);
     char anyCal=0;
-    for(int i=0;i<4;i++){
+    load_string("Checking: ",serial_port);
+    load_float(param+1, serial_port);
+    load_string("\n\r", serial_port);
+    if(param>=0 && param<=3){
         //float Fi = i;
         //float testV = 2*(Fi+1);  //Calculate a test value. 2V for S1, S2, S3, and S4.
         //Calibrate the voltage only if it's within +-1V. We may be doing one at a time.
-        if((dsky.Cell_Voltage[i]>1) && (dsky.Cell_Voltage[i]<3)){
-            sets.S_vlt_adjst[i] = 2-dsky.Cell_Voltage[i];
-            if(i==0)load_string("S1: ", serial_port);
-            if(i==1)load_string("S2: ", serial_port);
-            if(i==2)load_string("S3: ", serial_port);
-            if(i==3)load_string("S4: ", serial_port);
+        if((Cell_Voltage_Average[param]>set_Volt-tollarance) && (Cell_Voltage_Average[param]<set_Volt+tollarance)){
+            sets.S_vlt_adjst[param] = set_Volt-Cell_Voltage_Average[param];
+            if(param==0)load_string("S1: ", serial_port);
+            else if(param==1)load_string("S2: ", serial_port);
+            else if(param==2)load_string("S3: ", serial_port);
+            else if(param==3)load_string("S4: ", serial_port);
             anyCal = 1;
         }
     }
     //Now do charger input voltage
-    if((dsky.Cin_voltage>4.0) && (dsky.Cin_voltage<6.0)){
-            sets.Ch_vlt_adjst = 5-dsky.Cin_voltage;
+    if(param==4 && (dsky.Cin_voltage>set_Volt-2) && (dsky.Cin_voltage<set_Volt+2)){
+            sets.Ch_vlt_adjst = set_Volt-dsky.Cin_voltage;
             load_string("CH: ", serial_port);
             anyCal = 1;
     }
@@ -151,7 +156,8 @@ inline void Volt_Cal(int serial_port){
     if(Run_Level != Crit_Err)Run_Level = RL_Temp; //Return back to whatever run level we were in before.
     CONDbits.V_Cal = 0;
     if(anyCal)send_string("voltage input(s) cal.\n\r", serial_port);
-    else send_string("Nothing cal! Voltages out of range.\n\r", serial_port);
+    else if(param>=0 || param<=4) send_string("Nothing cal! Voltage out of range.\n\r", serial_port);
+    else send_string("Nothing cal! Input number out of range. \n\r", serial_port);
 }
 //Gets ran by analog IRQ in sysIRQs.cBatt_IO_OFF();
 //Runs on every 8th IRQ.
@@ -243,6 +249,7 @@ inline void current_cal(void){
     //do the current cal.
     if(Bcurnt_cal_stage == 2){
         Bcurrent_compensate = dsky.battery_crnt_average * -1;
+        Ccurrent_compensate = CavgCurnt * -1;
         Bcurnt_cal_stage = 3;        //Current Cal Complete
         //Do a heater cal after we have done current cal unless it is disabled.
         if(vars.heat_cal_stage != disabled) vars.heat_cal_stage = initialize;

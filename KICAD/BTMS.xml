@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/jarrett/Desktop/BTMSrev1_4S/KICAD/BTMS.kicad_sch</source>
-    <date>Tue 19 Mar 2024 06:21:22 PM CDT</date>
+    <date>Mon 08 Apr 2024 07:10:41 PM CDT</date>
     <tool>Eeschema 6.0.11+dfsg-1~bpo11+1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -25,7 +25,7 @@
   </design>
   <components>
     <comp ref="C1">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -40,7 +40,7 @@
       <tstamps>64c76206-53c0-4f04-b9c5-7beac0937b65</tstamps>
     </comp>
     <comp ref="C2">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -55,7 +55,7 @@
       <tstamps>a6827c9a-400c-4bb7-afb9-769ee7761a4c</tstamps>
     </comp>
     <comp ref="C3">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -71,21 +71,21 @@
     </comp>
     <comp ref="C4">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>33772569-5158-425c-8cfe-36940be9cf94</tstamps>
     </comp>
     <comp ref="C5">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -100,7 +100,7 @@
       <tstamps>02e066bf-32b3-4dc2-91a1-29bd73d07321</tstamps>
     </comp>
     <comp ref="C6">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -115,7 +115,7 @@
       <tstamps>931ad5fb-c968-49cf-93f1-f84f4ca663a8</tstamps>
     </comp>
     <comp ref="C7">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -131,21 +131,21 @@
     </comp>
     <comp ref="C8">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>14b77fdb-fd1a-4daf-9a08-60a16910a3cd</tstamps>
     </comp>
     <comp ref="C9">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -160,7 +160,7 @@
       <tstamps>2a0576ca-782d-4839-93ff-fa8f7ea173b3</tstamps>
     </comp>
     <comp ref="C10">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -191,14 +191,14 @@
     </comp>
     <comp ref="C12">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -206,14 +206,14 @@
     </comp>
     <comp ref="C13">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -221,14 +221,14 @@
     </comp>
     <comp ref="C14">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -236,21 +236,21 @@
     </comp>
     <comp ref="C15">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>4c754e25-de8d-4f3b-8671-5f5a2016f7e1</tstamps>
     </comp>
     <comp ref="C16">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -266,14 +266,14 @@
     </comp>
     <comp ref="C17">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -295,7 +295,7 @@
       <tstamps>8b3a5815-7482-4f58-bb30-414a7da6fcf2</tstamps>
     </comp>
     <comp ref="C19">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -311,14 +311,14 @@
     </comp>
     <comp ref="C20">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -326,14 +326,14 @@
     </comp>
     <comp ref="C21">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -341,14 +341,14 @@
     </comp>
     <comp ref="C22">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -356,14 +356,14 @@
     </comp>
     <comp ref="C23">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -371,14 +371,14 @@
     </comp>
     <comp ref="C24">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -401,14 +401,14 @@
     </comp>
     <comp ref="C26">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -416,14 +416,14 @@
     </comp>
     <comp ref="C27">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -431,21 +431,21 @@
     </comp>
     <comp ref="C28">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>db2ece04-30c3-405c-8fbc-012bfeb4a441</tstamps>
     </comp>
     <comp ref="C29">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -461,21 +461,21 @@
     </comp>
     <comp ref="C30">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>be035c16-8b1e-4fcf-95de-6787ab24c9e8</tstamps>
     </comp>
     <comp ref="C31">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -491,21 +491,21 @@
     </comp>
     <comp ref="C32">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>5101f2d8-23b0-46c3-bab0-e431f0b0c8dd</tstamps>
     </comp>
     <comp ref="C33">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -521,21 +521,21 @@
     </comp>
     <comp ref="C34">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>1fd51a2d-70ec-4f02-b326-45625c71365a</tstamps>
     </comp>
     <comp ref="C35">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -550,7 +550,7 @@
       <tstamps>40da5a2f-7d97-4abe-a0fb-caf98674234d</tstamps>
     </comp>
     <comp ref="C36">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -595,7 +595,7 @@
       <tstamps>1e4e0677-2471-45cc-bc7a-4a0dc2ad8f23</tstamps>
     </comp>
     <comp ref="C39">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -611,21 +611,21 @@
     </comp>
     <comp ref="C40">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>4c82ee6f-283b-4685-9aa0-8599e5170d6c</tstamps>
     </comp>
     <comp ref="C41">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -641,14 +641,14 @@
     </comp>
     <comp ref="C42">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -656,21 +656,21 @@
     </comp>
     <comp ref="C43">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>25ec543e-fe42-4de0-acfe-d254447c01be</tstamps>
     </comp>
     <comp ref="C44">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -685,7 +685,7 @@
       <tstamps>5a1a43ca-c974-4c1e-9650-6f156502536e</tstamps>
     </comp>
     <comp ref="C45">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -700,7 +700,7 @@
       <tstamps>0ead6991-5b34-47de-bf01-04c8a264000c</tstamps>
     </comp>
     <comp ref="C46">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -715,7 +715,7 @@
       <tstamps>10f5dec5-ec66-4898-bd01-bf6f0649c2a8</tstamps>
     </comp>
     <comp ref="C47">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -730,7 +730,7 @@
       <tstamps>9ee56277-b4ea-4828-972a-88f056c4bb65</tstamps>
     </comp>
     <comp ref="C48">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -775,7 +775,7 @@
       <tstamps>fe3f8025-b9d1-47c0-b999-fb4b78acde20</tstamps>
     </comp>
     <comp ref="C51">
-      <value>0.1uf BF</value>
+      <value>0.1uf</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL05A104KA5NNNC/3886701</field>
@@ -836,14 +836,14 @@
     </comp>
     <comp ref="C55">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -851,14 +851,14 @@
     </comp>
     <comp ref="C56">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -866,33 +866,123 @@
     </comp>
     <comp ref="C57">
       <value>1uf 25v BF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180</field>
-        <field name="Digi-Key_PN">445-173615-1-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1608X7R1E105K080AE/5809180"/>
-      <property name="Digi-Key_PN" value="445-173615-1-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>166fceb8-93e6-48b5-9929-cc13f174966d</tstamps>
     </comp>
-    <comp ref="D1">
-      <value>Diode40V</value>
-      <footprint>Diode_SMD:D_0603_1608Metric</footprint>
+    <comp ref="C58">
+      <value>10uf 25v BF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
-        <field name="Digi-Key_PN">CCS15S40L3FCT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983</field>
+        <field name="Digi-Key_PN">490-GRJ21BR61E106KE01KCT-ND</field>
       </fields>
-      <libsource lib="Device" part="D" description="Diode"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646"/>
-      <property name="Digi-Key_PN" value="CCS15S40L3FCT-ND"/>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983"/>
+      <property name="Digi-Key_PN" value="490-GRJ21BR61E106KE01KCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>b076c518-0955-4f02-949c-137f196b3c84</tstamps>
+      <tstamps>bbebf875-3605-449a-a111-b22a6aa52270</tstamps>
+    </comp>
+    <comp ref="C59">
+      <value>10uf 25v BF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983</field>
+        <field name="Digi-Key_PN">490-GRJ21BR61E106KE01KCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983"/>
+      <property name="Digi-Key_PN" value="490-GRJ21BR61E106KE01KCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>04a9fc65-497e-48a4-83f4-205462e1ce00</tstamps>
+    </comp>
+    <comp ref="C60">
+      <value>10uf 25v BF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983</field>
+        <field name="Digi-Key_PN">490-GRJ21BR61E106KE01KCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983"/>
+      <property name="Digi-Key_PN" value="490-GRJ21BR61E106KE01KCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>fcdc4e7e-9847-4368-b78e-50de0d83a74c</tstamps>
+    </comp>
+    <comp ref="C61">
+      <value>10uf 25v BF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983</field>
+        <field name="Digi-Key_PN">490-GRJ21BR61E106KE01KCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983"/>
+      <property name="Digi-Key_PN" value="490-GRJ21BR61E106KE01KCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b6df066b-61af-442a-a8b9-f2064498b275</tstamps>
+    </comp>
+    <comp ref="C62">
+      <value>10uf 25v BF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983</field>
+        <field name="Digi-Key_PN">490-GRJ21BR61E106KE01KCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/murata-electronics/GRJ21BR61E106KE01K/10705983"/>
+      <property name="Digi-Key_PN" value="490-GRJ21BR61E106KE01KCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>94202f4c-53d0-42b7-adfc-708bfd748efd</tstamps>
+    </comp>
+    <comp ref="C63">
+      <value>1uf 25v BF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739</field>
+        <field name="Digi-Key_PN">445-175215-1-ND</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/tdk-corporation/C1005X5R1E105K050BE/7907739"/>
+      <property name="Digi-Key_PN" value="445-175215-1-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8eed686c-147a-405b-a42e-3f8a2923d4b2</tstamps>
+    </comp>
+    <comp ref="D1">
+      <value>SBRT15U50SP5-13</value>
+      <footprint>Package_TO_SOT_SMD:TO-277B</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/diodes-incorporated/SBRT15U50SP5-13/4567773</field>
+        <field name="Digi-Key_PN">SBRT15U50SP5-13DICT-ND</field>
+      </fields>
+      <libsource lib="Device" part="D_Schottky_AAK" description="Schottky diode, anode on pins 1 and 2"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/diodes-incorporated/SBRT15U50SP5-13/4567773"/>
+      <property name="Digi-Key_PN" value="SBRT15U50SP5-13DICT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6ca46fb0-edf1-4589-8ace-172ff9647bed</tstamps>
     </comp>
     <comp ref="D2">
       <value>LED_RED</value>
@@ -922,7 +1012,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>260651b2-b8c7-41ff-bf4c-23e5852f9e03</tstamps>
+      <tstamps>dd128be9-77fc-4a8c-b722-7fe8ecd1c1d5</tstamps>
     </comp>
     <comp ref="D4">
       <value>LED_RED</value>
@@ -937,7 +1027,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>373bedba-6719-4bd6-b123-b39d8252e0fe</tstamps>
+      <tstamps>be9fe7e7-eceb-45d5-bd6d-3b40eb54ad1e</tstamps>
     </comp>
     <comp ref="D5">
       <value>LED_RED</value>
@@ -952,37 +1042,22 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>0fb1f7f9-2d0f-4e3c-be99-5dfa74c75543</tstamps>
+      <tstamps>2a06dc99-62fb-428b-8c83-1e3e0e59d591</tstamps>
     </comp>
     <comp ref="D6">
-      <value>15V</value>
-      <footprint>Diode_SMD:D_SOD-123</footprint>
+      <value>D_Schottky40V</value>
+      <footprint>Diode_SMD:D_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/diodes-incorporated/DDZ15-7/3877405</field>
-        <field name="Digi-Key_PN">DDZ15-7DICT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646</field>
+        <field name="Digi-Key_PN">CCS15S40L3FCT-ND</field>
       </fields>
-      <libsource lib="Device" part="D_Zener" description="Zener diode"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/diodes-incorporated/DDZ15-7/3877405"/>
-      <property name="Digi-Key_PN" value="DDZ15-7DICT-ND"/>
+      <libsource lib="Device" part="D" description="Diode"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/toshiba-semiconductor-and-storage/CCS15S40L3F/5210646"/>
+      <property name="Digi-Key_PN" value="CCS15S40L3FCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>7797ca83-7140-491e-88c6-176f419f9652</tstamps>
-    </comp>
-    <comp ref="D7">
-      <value>15V</value>
-      <footprint>Diode_SMD:D_SOD-123</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/diodes-incorporated/DDZ15-7/3877405</field>
-        <field name="Digi-Key_PN">DDZ15-7DICT-ND</field>
-      </fields>
-      <libsource lib="Device" part="D_Zener" description="Zener diode"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/diodes-incorporated/DDZ15-7/3877405"/>
-      <property name="Digi-Key_PN" value="DDZ15-7DICT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>19fdf436-394b-448a-8809-bbaf449bb950</tstamps>
+      <tstamps>96391b78-8f80-4b24-a916-5340d52e10c6</tstamps>
     </comp>
     <comp ref="D8">
       <value>D_Schottky40V</value>
@@ -1481,7 +1556,7 @@
     </comp>
     <comp ref="J1">
       <value>Batt_Ballance</value>
-      <footprint>Connector_JST:JST_VH_B5PS-VH_1x05_P3.96mm_Horizontal</footprint>
+      <footprint>Connector_JST:JST_EH_S5B-EH_1x05_P2.50mm_Horizontal</footprint>
       <libsource lib="Connector" part="Conn_01x05_Male" description="Generic connector, single row, 01x05, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
@@ -1788,21 +1863,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>5b9fbebd-fdca-46ac-a6df-d8b5e88524d0</tstamps>
     </comp>
-    <comp ref="Q1">
-      <value>DMN65D8L</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/diodes-incorporated/DMN65D8L-7/3678136</field>
-        <field name="Digi-Key_PN">DMN65D8L-7DICT-ND</field>
-      </fields>
-      <libsource lib="Device" part="Q_NMOS_GSD" description="N-MOSFET transistor, gate/source/drain"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/diodes-incorporated/DMN65D8L-7/3678136"/>
-      <property name="Digi-Key_PN" value="DMN65D8L-7DICT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>eed9d25b-af88-4c3b-9282-4cd16ed3f5cc</tstamps>
-    </comp>
     <comp ref="Q2">
       <value>SSM3K341R</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
@@ -1909,19 +1969,19 @@
       <tstamps>2ab1cf18-83be-4be6-b6bd-3f648b1a4f38</tstamps>
     </comp>
     <comp ref="R3">
-      <value>10K</value>
+      <value>27R</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/yageo/RC0603FR-1327RL/14286630</field>
+        <field name="Digi-Key_PN">13-RC0603FR-1327RLCT-ND</field>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/yageo/RC0603FR-1327RL/14286630"/>
+      <property name="Digi-Key_PN" value="13-RC0603FR-1327RLCT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>6d080a5a-4b29-41fb-a42e-dbebc27e4312</tstamps>
+      <tstamps>bb5dce44-7308-41f7-a148-f0ba1f2ebe10</tstamps>
     </comp>
     <comp ref="R4">
       <value>150</value>
@@ -1951,82 +2011,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>049f207f-83d4-474c-8d0f-c42a184b0296</tstamps>
-    </comp>
-    <comp ref="R6">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>5b9c4b4a-d886-4843-9adb-71f87b07d88e</tstamps>
-    </comp>
-    <comp ref="R7">
-      <value>150</value>
-      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/koa-speer-electronics-inc/RK73B2ATTD151J/10236460</field>
-        <field name="Digi-Key_PN">2019-RK73B2ATTD151JCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/koa-speer-electronics-inc/RK73B2ATTD151J/10236460"/>
-      <property name="Digi-Key_PN" value="2019-RK73B2ATTD151JCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>3d43e1eb-b16c-4990-bbed-a8ba42f3d3b7</tstamps>
-    </comp>
-    <comp ref="R8">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>b70ec2aa-2b9c-4b6a-97ba-3661a38a426e</tstamps>
-    </comp>
-    <comp ref="R9">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>92ad9472-af88-4901-aaba-aefde353951c</tstamps>
-    </comp>
-    <comp ref="R10">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>d2c73d81-0f43-4396-ab36-2d38fb4038f9</tstamps>
+      <tstamps>cd949518-ec4d-4eb4-a0b3-857a5bae73f4</tstamps>
     </comp>
     <comp ref="R11">
       <value>100</value>
@@ -2163,21 +2148,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>40d1a496-95fd-4d6f-8919-31a36e8a3d51</tstamps>
     </comp>
-    <comp ref="R20">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/rohm-semiconductor/ESR03EZPJ103/1762722</field>
-        <field name="Digi-Key_PN">RHM10KDCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/rohm-semiconductor/ESR03EZPJ103/1762722"/>
-      <property name="Digi-Key_PN" value="RHM10KDCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>0c05fa4c-7135-487d-81f3-33830a7c0190</tstamps>
-    </comp>
     <comp ref="R21">
       <value>10K_NTC</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -2238,36 +2208,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>a1dc1758-36f2-4032-bf87-96a366d0d64d</tstamps>
     </comp>
-    <comp ref="R25">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/rohm-semiconductor/ESR03EZPJ103/1762722</field>
-        <field name="Digi-Key_PN">RHM10KDCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/rohm-semiconductor/ESR03EZPJ103/1762722"/>
-      <property name="Digi-Key_PN" value="RHM10KDCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>a736a586-1d24-43cb-94ab-5bc29918b34b</tstamps>
-    </comp>
-    <comp ref="R26">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/rohm-semiconductor/ESR03EZPJ103/1762722</field>
-        <field name="Digi-Key_PN">RHM10KDCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/rohm-semiconductor/ESR03EZPJ103/1762722"/>
-      <property name="Digi-Key_PN" value="RHM10KDCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>d2ec7342-df5f-40d7-8c9b-37f2c8d062b6</tstamps>
-    </comp>
     <comp ref="R27">
       <value>1K</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -2298,36 +2238,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>fa370f56-9bef-43eb-ba58-766d7f785382</tstamps>
     </comp>
-    <comp ref="R29">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>6bda5e88-e565-4759-8a56-05144a70a9e9</tstamps>
-    </comp>
-    <comp ref="R30">
-      <value>1K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/yageo/RC0603FR-071KL/726843</field>
-        <field name="Digi-Key_PN">311-1.00KHRCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/yageo/RC0603FR-071KL/726843"/>
-      <property name="Digi-Key_PN" value="311-1.00KHRCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>10b26c10-d7f6-45e2-a8fb-acb992296e93</tstamps>
-    </comp>
     <comp ref="R31">
       <value>150</value>
       <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
@@ -2342,21 +2252,6 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>6bed0018-c0f1-4748-a211-8c52e9a71baf</tstamps>
-    </comp>
-    <comp ref="R32">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>dd74f949-15fa-406e-be64-440995fea032</tstamps>
     </comp>
     <comp ref="R33">
       <value>27R</value>
@@ -2433,21 +2328,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>662c5fd6-a88f-4dfb-a8e3-ee522794beda</tstamps>
     </comp>
-    <comp ref="R38">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>3d8bd9ca-99d9-4686-9cbb-5aed49acfd0d</tstamps>
-    </comp>
     <comp ref="R39">
       <value>27R</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -2508,21 +2388,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>a343d8a7-ad85-4324-a147-926f31115e53</tstamps>
     </comp>
-    <comp ref="R43">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>0f30afed-f880-442b-bb78-ef049ccf99dd</tstamps>
-    </comp>
     <comp ref="R44">
       <value>31K6</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -2537,21 +2402,6 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>bafdd88f-f90a-4682-a122-5017b950e7e6</tstamps>
-    </comp>
-    <comp ref="R45">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>28de6044-df09-4d50-8738-8e4d12149af2</tstamps>
     </comp>
     <comp ref="R46">
       <value>100</value>
@@ -2598,21 +2448,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>e4391be7-6535-4ba4-8451-bc54afbfd92e</tstamps>
     </comp>
-    <comp ref="R49">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>e72ebb1b-6dff-4341-94fe-9fc818944816</tstamps>
-    </comp>
     <comp ref="R50">
       <value>100</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -2627,21 +2462,6 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>994950de-ce6e-4a32-b8ee-557c9aa684d4</tstamps>
-    </comp>
-    <comp ref="R51">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>dedbf46c-d122-4eac-abfb-99836a9ea094</tstamps>
     </comp>
     <comp ref="R52">
       <value>1K</value>
@@ -2658,36 +2478,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>0351acf7-69a1-42cb-8ad5-bc3f71351d13</tstamps>
     </comp>
-    <comp ref="R53">
-      <value>150</value>
-      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/koa-speer-electronics-inc/RK73B2ATTD151J/10236460</field>
-        <field name="Digi-Key_PN">2019-RK73B2ATTD151JCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/koa-speer-electronics-inc/RK73B2ATTD151J/10236460"/>
-      <property name="Digi-Key_PN" value="2019-RK73B2ATTD151JCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>6cd8836e-6f6a-4c1f-8cb2-0b0bd835eba9</tstamps>
-    </comp>
-    <comp ref="R54">
-      <value>1K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/yageo/RC0603FR-071KL/726843</field>
-        <field name="Digi-Key_PN">311-1.00KHRCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/yageo/RC0603FR-071KL/726843"/>
-      <property name="Digi-Key_PN" value="311-1.00KHRCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>9e2d3ecf-85d8-4a1c-b5d0-310916681a0b</tstamps>
-    </comp>
     <comp ref="R55">
       <value>150</value>
       <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
@@ -2702,51 +2492,6 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>ea2ab450-ad1e-417e-8117-dd32eb5cbf43</tstamps>
-    </comp>
-    <comp ref="R56">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>11d616fe-2bf5-410d-85cc-3708d625b288</tstamps>
-    </comp>
-    <comp ref="R57">
-      <value>150</value>
-      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/koa-speer-electronics-inc/RK73B2ATTD151J/10236460</field>
-        <field name="Digi-Key_PN">2019-RK73B2ATTD151JCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/koa-speer-electronics-inc/RK73B2ATTD151J/10236460"/>
-      <property name="Digi-Key_PN" value="2019-RK73B2ATTD151JCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>7e9caec2-b45a-4ee1-a4a3-9e91b4a506f9</tstamps>
-    </comp>
-    <comp ref="R58">
-      <value>1K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/yageo/RC0603FR-071KL/726843</field>
-        <field name="Digi-Key_PN">311-1.00KHRCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/yageo/RC0603FR-071KL/726843"/>
-      <property name="Digi-Key_PN" value="311-1.00KHRCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>77f8571d-a7a4-4cbd-a909-7c0907dfc2bf</tstamps>
     </comp>
     <comp ref="R59">
       <value>150</value>
@@ -2763,36 +2508,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>b26cd198-fc25-4d41-b28d-2df619e01c71</tstamps>
     </comp>
-    <comp ref="R60">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>5318db61-fe0e-4ec0-a81f-a8c0773f9bf9</tstamps>
-    </comp>
-    <comp ref="R61">
-      <value>150</value>
-      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/koa-speer-electronics-inc/RK73B2ATTD151J/10236460</field>
-        <field name="Digi-Key_PN">2019-RK73B2ATTD151JCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/koa-speer-electronics-inc/RK73B2ATTD151J/10236460"/>
-      <property name="Digi-Key_PN" value="2019-RK73B2ATTD151JCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>afdd097a-3ed3-424e-89c0-efc8c7791059</tstamps>
-    </comp>
     <comp ref="R62">
       <value>27R</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -2807,21 +2522,6 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>80390199-ed45-44f9-b04e-dd39875c61e3</tstamps>
-    </comp>
-    <comp ref="R63">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>0c7b096c-02bc-414b-afc7-9951e5db94eb</tstamps>
     </comp>
     <comp ref="R64">
       <value>10K*</value>
@@ -2890,36 +2590,6 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>dd95cbd9-f968-4bdb-9790-371736ecdb18</tstamps>
-    </comp>
-    <comp ref="R68">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>2cbf3756-4b75-4ac4-94c2-72536ffe7a37</tstamps>
-    </comp>
-    <comp ref="R69">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>30ab57ae-31b1-4ef4-b0c4-0d5f018a2aee</tstamps>
     </comp>
     <comp ref="R70">
       <value>10K*</value>
@@ -3003,21 +2673,6 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>9a7b2da1-2b9c-4460-b2cf-41900e21e5bb</tstamps>
-    </comp>
-    <comp ref="R75">
-      <value>10K</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188</field>
-        <field name="Digi-Key_PN">CR0603-FX-1002ELFCT-ND</field>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CR0603-FX-1002ELF/3593188"/>
-      <property name="Digi-Key_PN" value="CR0603-FX-1002ELFCT-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>bce280dc-5920-488d-896f-31f80f475eda</tstamps>
     </comp>
     <comp ref="R76">
       <value>1K</value>
@@ -3128,6 +2783,21 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>82934a6d-e5ef-448c-8251-de02e7845c6d</tstamps>
     </comp>
+    <comp ref="RN4">
+      <value>5K</value>
+      <footprint>Resistor_SMD:R_Array_Convex_4x0612</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CAY16-4991F4LF/2566602</field>
+        <field name="Digi-Key_PN">CAY16-4991F4LFCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="R_Pack04" description="4 resistor network, parallel topology"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CAY16-4991F4LF/2566602"/>
+      <property name="Digi-Key_PN" value="CAY16-4991F4LFCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a0e34582-a613-4e37-9a7d-505e84d9fe47</tstamps>
+    </comp>
     <comp ref="RN5">
       <value>5K</value>
       <footprint>Resistor_SMD:R_Array_Convex_4x0612</footprint>
@@ -3142,6 +2812,21 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>b35b8cbd-1e41-4d77-ac56-0c2ea3140947</tstamps>
+    </comp>
+    <comp ref="RN6">
+      <value>5K</value>
+      <footprint>Resistor_SMD:R_Array_Convex_4x0612</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CAY16-4991F4LF/2566602</field>
+        <field name="Digi-Key_PN">CAY16-4991F4LFCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="R_Pack04" description="4 resistor network, parallel topology"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CAY16-4991F4LF/2566602"/>
+      <property name="Digi-Key_PN" value="CAY16-4991F4LFCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>dd9d3ca1-86fe-41d2-9863-b44c80bf7093</tstamps>
     </comp>
     <comp ref="RN7">
       <value>5K</value>
@@ -3188,6 +2873,51 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>e994e1ce-42bd-4d20-a9aa-29616d0fc4dc</tstamps>
     </comp>
+    <comp ref="RN10">
+      <value>5K</value>
+      <footprint>Resistor_SMD:R_Array_Convex_4x0612</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CAY16-4991F4LF/2566602</field>
+        <field name="Digi-Key_PN">CAY16-4991F4LFCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="R_Pack04" description="4 resistor network, parallel topology"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CAY16-4991F4LF/2566602"/>
+      <property name="Digi-Key_PN" value="CAY16-4991F4LFCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1374584a-5f5c-4445-9d0d-1dd1146b3977</tstamps>
+    </comp>
+    <comp ref="RN11">
+      <value>10K</value>
+      <footprint>Resistor_SMD:R_Array_Convex_4x0612</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CAY16-1002F4LF/2566505</field>
+        <field name="Digi-Key_PN">CAY16-1002F4LFCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="R_Pack04" description="4 resistor network, parallel topology"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CAY16-1002F4LF/2566505"/>
+      <property name="Digi-Key_PN" value="CAY16-1002F4LFCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b66f269e-2d09-4e1a-afc8-6e2add1ac452</tstamps>
+    </comp>
+    <comp ref="RN12">
+      <value>10K</value>
+      <footprint>Resistor_SMD:R_Array_Convex_4x0612</footprint>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/bourns-inc/CAY16-1002F4LF/2566505</field>
+        <field name="Digi-Key_PN">CAY16-1002F4LFCT-ND</field>
+      </fields>
+      <libsource lib="Device" part="R_Pack04" description="4 resistor network, parallel topology"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/bourns-inc/CAY16-1002F4LF/2566505"/>
+      <property name="Digi-Key_PN" value="CAY16-1002F4LFCT-ND"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BTMS.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>673cc644-b808-4df7-977d-9fe18b271fd0</tstamps>
+    </comp>
     <comp ref="SW1">
       <value>PTS526</value>
       <footprint>Button_Switch_SMD:SW_SPST_SKQG_WithStem</footprint>
@@ -3202,36 +2932,6 @@
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>67647a8b-db66-4202-969a-7d17a16bd4a5</tstamps>
-    </comp>
-    <comp ref="U1">
-      <value>AONR21321</value>
-      <footprint>Package_DFN_QFN:DFN-8-1EP_3x3mm_P0.65mm_EP1.7x2.05mm</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/alpha-omega-semiconductor-inc/AONR21321/9664182</field>
-        <field name="Digi-Key_PN">785-1797-1-ND</field>
-      </fields>
-      <libsource lib="New_Library" part="AONR21321" description=""/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/alpha-omega-semiconductor-inc/AONR21321/9664182"/>
-      <property name="Digi-Key_PN" value="785-1797-1-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>bad644dc-c1e3-4f79-8d54-099864c78c77</tstamps>
-    </comp>
-    <comp ref="U2">
-      <value>AONR21321</value>
-      <footprint>Package_DFN_QFN:DFN-8-1EP_3x3mm_P0.65mm_EP1.7x2.05mm</footprint>
-      <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/alpha-omega-semiconductor-inc/AONR21321/9664182</field>
-        <field name="Digi-Key_PN">785-1797-1-ND</field>
-      </fields>
-      <libsource lib="New_Library" part="AONR21321" description=""/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/alpha-omega-semiconductor-inc/AONR21321/9664182"/>
-      <property name="Digi-Key_PN" value="785-1797-1-ND"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BTMS.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>c2b6a322-60cc-47e0-b91b-320e79c7d093</tstamps>
     </comp>
     <comp ref="U3">
       <value>Q294700DSGR</value>
@@ -3297,12 +2997,12 @@
       <value>AP33772</value>
       <footprint>Package_DFN_QFN:WQFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/diodes-incorporated/AP33771DKZ-13/15995287</field>
-        <field name="Digi-Key_PN">31-AP33771DKZ-13CT-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/diodes-incorporated/AP33772DKZ-13/16528005</field>
+        <field name="Digi-Key_PN">31-AP33772DKZ-13CT-ND</field>
       </fields>
       <libsource lib="New_Library" part="AP33771" description=""/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/diodes-incorporated/AP33771DKZ-13/15995287"/>
-      <property name="Digi-Key_PN" value="31-AP33771DKZ-13CT-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/diodes-incorporated/AP33772DKZ-13/16528005"/>
+      <property name="Digi-Key_PN" value="31-AP33772DKZ-13CT-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -3517,17 +3217,17 @@
       <tstamps>8ba956c5-37ad-4931-bb68-45b71ac53493</tstamps>
     </comp>
     <comp ref="U20">
-      <value>dsPIC30F3011-PT</value>
+      <value>dsPIC30F4011-PT</value>
       <footprint>Package_DFN_QFN:QFN-44-1EP_8x8mm_P0.65mm_EP6.45x6.45mm</footprint>
       <fields>
-        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/microchip-technology/DSPIC30F3011-30I-ML/718171</field>
-        <field name="Digi-Key_PN">DSPIC30F301130IML-ND</field>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/microchip-technology/DSPIC30F4011-30I-ML/718195</field>
+        <field name="Digi-Key_PN">DSPIC30F401130IML-ND</field>
         <field name="Manufacturer">Microchip</field>
       </fields>
       <libsource lib="BTMS-rescue" part="dsPIC30F3011-PT-dspic" description=""/>
       <property name="Manufacturer" value="Microchip"/>
-      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/microchip-technology/DSPIC30F3011-30I-ML/718171"/>
-      <property name="Digi-Key_PN" value="DSPIC30F301130IML-ND"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/microchip-technology/DSPIC30F4011-30I-ML/718195"/>
+      <property name="Digi-Key_PN" value="DSPIC30F401130IML-ND"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BTMS.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -4381,7 +4081,7 @@
       <node ref="U21" pin="9" pinfunction="~{RESET}" pintype="input"/>
       <node ref="U7" pin="12" pinfunction="V3VD" pintype="bidirectional"/>
     </net>
-    <net code="3" name="+5C">
+    <net code="3" name="+3V3">
       <node ref="C29" pin="1" pintype="passive"/>
       <node ref="C33" pin="1" pintype="passive"/>
       <node ref="C35" pin="1" pintype="passive"/>
@@ -4390,17 +4090,16 @@
       <node ref="C41" pin="1" pintype="passive"/>
       <node ref="C50" pin="1" pintype="passive"/>
       <node ref="C53" pin="1" pintype="passive"/>
-      <node ref="D1" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="J9" pin="2" pintype="passive"/>
       <node ref="L4" pin="2" pinfunction="2" pintype="input"/>
       <node ref="Q3" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R12" pin="1" pintype="passive"/>
       <node ref="R13" pin="2" pintype="passive"/>
       <node ref="R14" pin="1" pintype="passive"/>
-      <node ref="R29" pin="1" pintype="passive"/>
       <node ref="R35" pin="2" pintype="passive"/>
       <node ref="R44" pin="2" pintype="passive"/>
-      <node ref="R49" pin="2" pintype="passive"/>
+      <node ref="R5" pin="2" pintype="passive"/>
+      <node ref="RN11" pin="8" pinfunction="R1.2" pintype="passive"/>
       <node ref="RN8" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="RN9" pin="3" pinfunction="R3.1" pintype="passive"/>
       <node ref="U16" pin="1" pinfunction="G" pintype="input"/>
@@ -4503,13 +4202,13 @@
       <node ref="D17" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D18" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="Q3" pin="1" pinfunction="G" pintype="input"/>
-      <node ref="R29" pin="2" pintype="passive"/>
+      <node ref="RN11" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="U10" pin="6" pinfunction="~{FAULT}" pintype="output"/>
       <node ref="U4" pin="6" pinfunction="~{FAULT}" pintype="output"/>
     </net>
     <net code="19" name="/C_Fault_In">
       <node ref="Q3" pin="3" pinfunction="D" pintype="passive"/>
-      <node ref="R20" pin="2" pintype="passive"/>
+      <node ref="RN11" pin="7" pinfunction="R2.2" pintype="passive"/>
       <node ref="U20" pin="42" pinfunction="EMUC2/OC1/IC1/INT1/RD0" pintype="bidirectional"/>
     </net>
     <net code="20" name="/C_Switched">
@@ -4519,7 +4218,6 @@
     </net>
     <net code="21" name="/ChargeVoltage">
       <node ref="C34" pin="1" pintype="passive"/>
-      <node ref="D1" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R78" pin="1" pintype="passive"/>
       <node ref="R79" pin="1" pintype="passive"/>
       <node ref="U20" pin="19" pinfunction="EMUD3/AN0/VREF+/CN2/RB0" pintype="bidirectional"/>
@@ -4528,161 +4226,167 @@
       <node ref="C11" pin="1" pintype="passive"/>
       <node ref="C28" pin="1" pintype="passive"/>
       <node ref="C47" pin="1" pintype="passive"/>
+      <node ref="C59" pin="1" pintype="passive"/>
+      <node ref="C60" pin="1" pintype="passive"/>
+      <node ref="C61" pin="1" pintype="passive"/>
+      <node ref="C62" pin="1" pintype="passive"/>
       <node ref="F5" pin="1" pintype="passive"/>
       <node ref="FB2" pin="2" pintype="passive"/>
-      <node ref="R26" pin="1" pintype="passive"/>
+      <node ref="RN11" pin="4" pinfunction="R4.1" pintype="passive"/>
       <node ref="U6" pin="3" pinfunction="T2" pintype="bidirectional"/>
       <node ref="U9" pin="1" pinfunction="S" pintype="free"/>
       <node ref="U9" pin="2" pinfunction="S" pintype="free"/>
       <node ref="U9" pin="3" pinfunction="S" pintype="free"/>
     </net>
-    <net code="23" name="/Heat_CTRL">
+    <net code="23" name="/ExtBus_RES">
+      <node ref="Q5" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="RN11" pin="5" pinfunction="R4.2" pintype="passive"/>
+      <node ref="U9" pin="4" pinfunction="G" pintype="free"/>
+    </net>
+    <net code="24" name="/Heat_CTRL">
       <node ref="RN7" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="U17" pin="3" pinfunction="IN+" pintype="input"/>
       <node ref="U20" pin="14" pinfunction="PWM1H/RE1" pintype="bidirectional"/>
     </net>
-    <net code="24" name="/HighCHfet">
+    <net code="25" name="/HighCHfet">
       <node ref="U11" pin="1" pinfunction="UGATE" pintype="bidirectional"/>
       <node ref="U12" pin="4" pinfunction="G" pintype="free"/>
     </net>
-    <net code="25" name="/IntBus">
+    <net code="26" name="/IntBus">
       <node ref="C32" pin="1" pintype="passive"/>
       <node ref="D33" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="L2" pin="1" pinfunction="1" pintype="input"/>
       <node ref="Q7" pin="2" pinfunction="S" pintype="passive"/>
-      <node ref="R51" pin="1" pintype="passive"/>
+      <node ref="RN12" pin="8" pinfunction="R1.2" pintype="passive"/>
       <node ref="U4" pin="1" pinfunction="IP+" pintype="passive"/>
       <node ref="U4" pin="2" pinfunction="IP+" pintype="passive"/>
       <node ref="U6" pin="1" pinfunction="T1" pintype="bidirectional"/>
     </net>
-    <net code="26" name="/KeepAlive">
+    <net code="27" name="/KeepAlive">
       <node ref="D27" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="U20" pin="5" pinfunction="RF0" pintype="bidirectional"/>
     </net>
-    <net code="27" name="/LBatt_Cell_1">
+    <net code="28" name="/LBatt_Cell_1">
       <node ref="J1" pin="2" pinfunction="Pin_2" pintype="passive"/>
-      <node ref="R30" pin="1" pintype="passive"/>
       <node ref="R31" pin="1" pintype="passive"/>
-      <node ref="R53" pin="1" pintype="passive"/>
-      <node ref="R6" pin="2" pintype="passive"/>
-      <node ref="R63" pin="2" pintype="passive"/>
       <node ref="RN1" pin="8" pinfunction="R1.2" pintype="passive"/>
-      <node ref="U23" pin="6" pinfunction="D1" pintype="bidirectional"/>
-      <node ref="U25" pin="6" pinfunction="D1" pintype="bidirectional"/>
+      <node ref="RN10" pin="8" pinfunction="R1.2" pintype="passive"/>
+      <node ref="RN4" pin="2" pinfunction="R2.1" pintype="passive"/>
+      <node ref="RN6" pin="8" pinfunction="R1.2" pintype="passive"/>
+      <node ref="U23" pin="5" pinfunction="S1" pintype="bidirectional"/>
+      <node ref="U25" pin="5" pinfunction="S1" pintype="bidirectional"/>
       <node ref="U5" pin="13" pinfunction="out2_E" pintype="open_emitter"/>
       <node ref="U8" pin="13" pinfunction="out2_E" pintype="open_emitter"/>
     </net>
-    <net code="28" name="/LBatt_Cell_2">
+    <net code="29" name="/LBatt_Cell_2">
       <node ref="J1" pin="3" pinfunction="Pin_3" pintype="passive"/>
-      <node ref="R32" pin="2" pintype="passive"/>
-      <node ref="R54" pin="1" pintype="passive"/>
       <node ref="R55" pin="1" pintype="passive"/>
-      <node ref="R57" pin="1" pintype="passive"/>
-      <node ref="R68" pin="2" pintype="passive"/>
       <node ref="RN1" pin="7" pinfunction="R2.2" pintype="passive"/>
-      <node ref="U23" pin="4" pinfunction="D2" pintype="bidirectional"/>
-      <node ref="U25" pin="4" pinfunction="D2" pintype="bidirectional"/>
+      <node ref="RN10" pin="7" pinfunction="R2.2" pintype="passive"/>
+      <node ref="RN4" pin="3" pinfunction="R3.1" pintype="passive"/>
+      <node ref="RN6" pin="7" pinfunction="R2.2" pintype="passive"/>
+      <node ref="U23" pin="2" pinfunction="S2" pintype="bidirectional"/>
+      <node ref="U25" pin="2" pinfunction="S2" pintype="bidirectional"/>
       <node ref="U5" pin="11" pinfunction="out3_E" pintype="open_emitter"/>
       <node ref="U8" pin="11" pinfunction="out3_E" pintype="open_emitter"/>
     </net>
-    <net code="29" name="/LBatt_Cell_3">
+    <net code="30" name="/LBatt_Cell_3">
       <node ref="J1" pin="4" pinfunction="Pin_4" pintype="passive"/>
-      <node ref="R56" pin="2" pintype="passive"/>
-      <node ref="R58" pin="1" pintype="passive"/>
       <node ref="R59" pin="1" pintype="passive"/>
-      <node ref="R61" pin="1" pintype="passive"/>
-      <node ref="R69" pin="2" pintype="passive"/>
       <node ref="RN1" pin="6" pinfunction="R3.2" pintype="passive"/>
-      <node ref="U24" pin="6" pinfunction="D1" pintype="bidirectional"/>
-      <node ref="U26" pin="6" pinfunction="D1" pintype="bidirectional"/>
+      <node ref="RN10" pin="6" pinfunction="R3.2" pintype="passive"/>
+      <node ref="RN4" pin="4" pinfunction="R4.1" pintype="passive"/>
+      <node ref="RN6" pin="6" pinfunction="R3.2" pintype="passive"/>
+      <node ref="U24" pin="5" pinfunction="S1" pintype="bidirectional"/>
+      <node ref="U26" pin="5" pinfunction="S1" pintype="bidirectional"/>
       <node ref="U5" pin="9" pinfunction="out4_E" pintype="open_emitter"/>
       <node ref="U8" pin="9" pinfunction="out4_E" pintype="open_emitter"/>
     </net>
-    <net code="30" name="/LBatt_Cell_4">
+    <net code="31" name="/LBatt_Cell_4">
       <node ref="J1" pin="5" pinfunction="Pin_5" pintype="passive"/>
-      <node ref="R60" pin="2" pintype="passive"/>
-      <node ref="R75" pin="2" pintype="passive"/>
       <node ref="RN1" pin="5" pinfunction="R4.2" pintype="passive"/>
-      <node ref="U24" pin="4" pinfunction="D2" pintype="bidirectional"/>
-      <node ref="U26" pin="4" pinfunction="D2" pintype="bidirectional"/>
+      <node ref="RN10" pin="5" pinfunction="R4.2" pintype="passive"/>
+      <node ref="RN6" pin="5" pinfunction="R4.2" pintype="passive"/>
+      <node ref="U24" pin="2" pinfunction="S2" pintype="bidirectional"/>
+      <node ref="U26" pin="2" pinfunction="S2" pintype="bidirectional"/>
     </net>
-    <net code="31" name="/LithCell_V1">
+    <net code="32" name="/LithCell_V1">
       <node ref="C12" pin="1" pintype="passive"/>
       <node ref="R64" pin="2" pintype="passive"/>
       <node ref="R65" pin="2" pintype="passive"/>
       <node ref="U20" pin="23" pinfunction="AN4/QEA/IC7/CN6/RB4" pintype="bidirectional"/>
     </net>
-    <net code="32" name="/LithCell_V2">
+    <net code="33" name="/LithCell_V2">
       <node ref="C14" pin="1" pintype="passive"/>
       <node ref="R66" pin="2" pintype="passive"/>
       <node ref="R67" pin="2" pintype="passive"/>
       <node ref="U20" pin="24" pinfunction="AN5/QEB/IC8/CN7/RB5" pintype="bidirectional"/>
     </net>
-    <net code="33" name="/LithCell_V3">
+    <net code="34" name="/LithCell_V3">
       <node ref="C15" pin="1" pintype="passive"/>
       <node ref="R70" pin="2" pintype="passive"/>
       <node ref="R71" pin="2" pintype="passive"/>
       <node ref="U20" pin="25" pinfunction="AN6/OCFA/RB6" pintype="bidirectional"/>
     </net>
-    <net code="34" name="/LithCell_V4">
+    <net code="35" name="/LithCell_V4">
       <node ref="C17" pin="1" pintype="passive"/>
       <node ref="R73" pin="2" pintype="passive"/>
       <node ref="R74" pin="2" pintype="passive"/>
       <node ref="U20" pin="26" pinfunction="AN7/RB7" pintype="bidirectional"/>
     </net>
-    <net code="35" name="/LowCHfet">
+    <net code="36" name="/LowCHfet">
       <node ref="U11" pin="5" pinfunction="LGATE" pintype="bidirectional"/>
       <node ref="U13" pin="4" pinfunction="G" pintype="free"/>
     </net>
-    <net code="36" name="/MCLR">
+    <net code="37" name="/MCLR">
       <node ref="J9" pin="1" pintype="passive"/>
       <node ref="R37" pin="2" pintype="passive"/>
     </net>
-    <net code="37" name="/Mult_B1">
+    <net code="38" name="/Mult_B1">
       <node ref="RN2" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="U20" pin="15" pinfunction="PWM1L/RE0" pintype="bidirectional"/>
     </net>
-    <net code="38" name="/Mult_B2">
+    <net code="39" name="/Mult_B2">
       <node ref="RN2" pin="2" pinfunction="R2.1" pintype="passive"/>
       <node ref="U20" pin="37" pinfunction="EMUD2/OC2/IC2/INT2/RD1" pintype="bidirectional"/>
     </net>
-    <net code="39" name="/Mult_B3">
+    <net code="40" name="/Mult_B3">
       <node ref="RN2" pin="3" pinfunction="R3.1" pintype="passive"/>
       <node ref="U20" pin="41" pinfunction="OC3/RD2" pintype="bidirectional"/>
     </net>
-    <net code="40" name="/Mult_B4">
+    <net code="41" name="/Mult_B4">
       <node ref="RN2" pin="4" pinfunction="R4.1" pintype="passive"/>
       <node ref="U20" pin="38" pinfunction="OC4/RD3" pintype="bidirectional"/>
     </net>
-    <net code="41" name="/Mult_SEL">
+    <net code="42" name="/Mult_SEL">
       <node ref="D12" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="D13" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="D14" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="D15" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="U20" pin="12" pinfunction="PWM2L/RE2" pintype="bidirectional"/>
+      <node ref="R3" pin="1" pintype="passive"/>
       <node ref="U5" pin="2" pinfunction="in1_C" pintype="input"/>
       <node ref="U5" pin="4" pinfunction="in2_C" pintype="input"/>
       <node ref="U5" pin="6" pinfunction="in3_C" pintype="input"/>
       <node ref="U5" pin="8" pinfunction="in4_C" pintype="input"/>
     </net>
-    <net code="42" name="/PGMC">
+    <net code="43" name="/PGMC">
       <node ref="J9" pin="5" pintype="passive"/>
       <node ref="R14" pin="2" pintype="passive"/>
       <node ref="R15" pin="1" pintype="passive"/>
       <node ref="U20" pin="1" pinfunction="PGC/EMUC/U1RX/SDI1/SDA/RF2" pintype="bidirectional"/>
     </net>
-    <net code="43" name="/PGMD">
+    <net code="44" name="/PGMD">
       <node ref="J9" pin="4" pintype="passive"/>
       <node ref="R12" pin="2" pintype="passive"/>
       <node ref="R16" pin="1" pintype="passive"/>
       <node ref="U20" pin="44" pinfunction="PGD/EMUD/U1TX/SDO1/SCL/RF3" pintype="bidirectional"/>
     </net>
-    <net code="44" name="/PowerOutEnable">
+    <net code="45" name="/PowerOutEnable">
       <node ref="R23" pin="2" pintype="passive"/>
       <node ref="RN7" pin="2" pinfunction="R2.1" pintype="passive"/>
       <node ref="U20" pin="33" pinfunction="OSC2/CLKO/RC15" pintype="bidirectional"/>
     </net>
-    <net code="45" name="/PowerOutput">
+    <net code="46" name="/PowerOutput">
       <node ref="J5" pin="1" pintype="passive"/>
       <node ref="U9" pin="5" pinfunction="D" pintype="free"/>
       <node ref="U9" pin="6" pinfunction="D" pintype="free"/>
@@ -4690,47 +4394,48 @@
       <node ref="U9" pin="8" pinfunction="D" pintype="free"/>
       <node ref="U9" pin="9" pinfunction="D" pintype="free"/>
     </net>
-    <net code="46" name="/SW_Signal">
+    <net code="47" name="/SW_Signal">
       <node ref="D26" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN9" pin="1" pinfunction="R1.1" pintype="passive"/>
     </net>
-    <net code="47" name="/U1RX">
+    <net code="48" name="/U1RX">
       <node ref="R47" pin="2" pintype="passive"/>
-      <node ref="R49" pin="1" pintype="passive"/>
       <node ref="U20" pin="35" pinfunction="EMUC1/SOSCO/T1CK/U1ARX/CN0/RC14" pintype="bidirectional"/>
     </net>
-    <net code="48" name="/U1TX">
+    <net code="49" name="/U1TX">
       <node ref="R48" pin="2" pintype="passive"/>
       <node ref="U20" pin="34" pinfunction="EMUD1/SOSCI/T2CK/U1ATX/CN1/RC13" pintype="bidirectional"/>
     </net>
-    <net code="49" name="/U2RX">
+    <net code="50" name="/U2RX">
       <node ref="R33" pin="2" pintype="passive"/>
       <node ref="R35" pin="1" pintype="passive"/>
       <node ref="U20" pin="3" pinfunction="U2RX/CN17/RF4" pintype="bidirectional"/>
     </net>
-    <net code="50" name="/U2TX">
+    <net code="51" name="/U2TX">
       <node ref="R34" pin="2" pintype="passive"/>
       <node ref="U20" pin="2" pinfunction="U2TX/CN18/RF5" pintype="bidirectional"/>
     </net>
-    <net code="51" name="/USB_D+">
+    <net code="52" name="/USB_D+">
       <node ref="J2" pin="A6" pinfunction="D+" pintype="bidirectional"/>
       <node ref="J2" pin="B6" pinfunction="D+" pintype="bidirectional"/>
       <node ref="R41" pin="1" pintype="passive"/>
     </net>
-    <net code="52" name="/USB_D-">
+    <net code="53" name="/USB_D-">
       <node ref="J2" pin="A7" pinfunction="D-" pintype="bidirectional"/>
       <node ref="J2" pin="B7" pinfunction="D-" pintype="bidirectional"/>
       <node ref="R40" pin="1" pintype="passive"/>
     </net>
-    <net code="53" name="/V_Switched">
+    <net code="54" name="/V_Switched">
       <node ref="R76" pin="2" pintype="passive"/>
       <node ref="R77" pin="2" pintype="passive"/>
       <node ref="U20" pin="10" pinfunction="PWM3L/RE4" pintype="bidirectional"/>
     </net>
-    <net code="54" name="/__PwrKey">
+    <net code="55" name="/__PwrKey">
+      <node ref="D6" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R5" pin="1" pintype="passive"/>
       <node ref="U20" pin="4" pinfunction="RF1" pintype="bidirectional"/>
     </net>
-    <net code="55" name="GND">
+    <net code="56" name="GND">
       <node ref="C10" pin="2" pintype="passive"/>
       <node ref="C11" pin="2" pintype="passive"/>
       <node ref="C12" pin="2" pintype="passive"/>
@@ -4777,7 +4482,13 @@
       <node ref="C55" pin="2" pintype="passive"/>
       <node ref="C56" pin="2" pintype="passive"/>
       <node ref="C57" pin="2" pintype="passive"/>
+      <node ref="C58" pin="2" pintype="passive"/>
+      <node ref="C59" pin="2" pintype="passive"/>
       <node ref="C6" pin="2" pintype="passive"/>
+      <node ref="C60" pin="2" pintype="passive"/>
+      <node ref="C61" pin="2" pintype="passive"/>
+      <node ref="C62" pin="2" pintype="passive"/>
+      <node ref="C63" pin="2" pintype="passive"/>
       <node ref="C7" pin="2" pintype="passive"/>
       <node ref="C8" pin="2" pintype="passive"/>
       <node ref="C9" pin="2" pintype="passive"/>
@@ -4791,7 +4502,6 @@
       <node ref="D30" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D31" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D32" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="D7" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="D9" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="J1" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="J10" pin="2" pintype="passive"/>
@@ -4807,33 +4517,29 @@
       <node ref="J6" pin="4" pintype="passive"/>
       <node ref="J7" pin="1" pintype="passive"/>
       <node ref="J9" pin="3" pintype="passive"/>
-      <node ref="Q1" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="Q2" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="Q5" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="Q6" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R1" pin="1" pintype="passive"/>
-      <node ref="R10" pin="1" pintype="passive"/>
       <node ref="R2" pin="1" pintype="passive"/>
-      <node ref="R20" pin="1" pintype="passive"/>
       <node ref="R21" pin="1" pintype="passive"/>
-      <node ref="R25" pin="1" pintype="passive"/>
       <node ref="R27" pin="2" pintype="passive"/>
-      <node ref="R38" pin="1" pintype="passive"/>
       <node ref="R4" pin="1" pintype="passive"/>
-      <node ref="R43" pin="1" pintype="passive"/>
-      <node ref="R45" pin="1" pintype="passive"/>
-      <node ref="R5" pin="1" pintype="passive"/>
       <node ref="R65" pin="1" pintype="passive"/>
       <node ref="R67" pin="1" pintype="passive"/>
-      <node ref="R7" pin="1" pintype="passive"/>
       <node ref="R71" pin="1" pintype="passive"/>
       <node ref="R74" pin="1" pintype="passive"/>
       <node ref="R79" pin="2" pintype="passive"/>
-      <node ref="R9" pin="1" pintype="passive"/>
+      <node ref="RN11" pin="2" pinfunction="R2.1" pintype="passive"/>
+      <node ref="RN11" pin="3" pinfunction="R3.1" pintype="passive"/>
+      <node ref="RN12" pin="5" pinfunction="R4.2" pintype="passive"/>
+      <node ref="RN12" pin="6" pinfunction="R3.2" pintype="passive"/>
+      <node ref="RN12" pin="7" pinfunction="R2.2" pintype="passive"/>
       <node ref="RN3" pin="5" pinfunction="R4.2" pintype="passive"/>
       <node ref="RN3" pin="6" pinfunction="R3.2" pintype="passive"/>
       <node ref="RN3" pin="7" pinfunction="R2.2" pintype="passive"/>
       <node ref="RN3" pin="8" pinfunction="R1.2" pintype="passive"/>
+      <node ref="RN4" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="SW1" pin="1" pinfunction="A" pintype="passive"/>
       <node ref="U10" pin="5" pinfunction="GND" pintype="power_in"/>
       <node ref="U11" pin="4" pinfunction="GND" pintype="bidirectional"/>
@@ -4872,59 +4578,59 @@
       <node ref="U8" pin="4" pinfunction="in2_C" pintype="input"/>
       <node ref="U8" pin="8" pinfunction="in4_C" pintype="input"/>
     </net>
-    <net code="56" name="Net-(C1-Pad1)">
+    <net code="57" name="Net-(C1-Pad1)">
       <node ref="C1" pin="1" pintype="passive"/>
       <node ref="C3" pin="2" pintype="passive"/>
       <node ref="RN1" pin="2" pinfunction="R2.1" pintype="passive"/>
       <node ref="U3" pin="4" pinfunction="V2" pintype="input"/>
     </net>
-    <net code="57" name="Net-(C1-Pad2)">
+    <net code="58" name="Net-(C1-Pad2)">
       <node ref="C1" pin="2" pintype="passive"/>
       <node ref="C2" pin="1" pintype="passive"/>
       <node ref="RN1" pin="3" pinfunction="R3.1" pintype="passive"/>
       <node ref="U3" pin="3" pinfunction="V3" pintype="input"/>
     </net>
-    <net code="58" name="Net-(C2-Pad2)">
+    <net code="59" name="Net-(C2-Pad2)">
       <node ref="C2" pin="2" pintype="passive"/>
       <node ref="RN1" pin="4" pinfunction="R4.1" pintype="passive"/>
       <node ref="U3" pin="2" pinfunction="V4" pintype="input"/>
     </net>
-    <net code="59" name="Net-(C3-Pad1)">
+    <net code="60" name="Net-(C3-Pad1)">
       <node ref="C3" pin="1" pintype="passive"/>
       <node ref="C6" pin="1" pintype="passive"/>
       <node ref="RN1" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="U3" pin="5" pinfunction="V1" pintype="input"/>
     </net>
-    <net code="60" name="Net-(C4-Pad1)">
+    <net code="61" name="Net-(C4-Pad1)">
       <node ref="C4" pin="1" pintype="passive"/>
       <node ref="R11" pin="1" pintype="passive"/>
       <node ref="U3" pin="1" pinfunction="VDD" pintype="input"/>
     </net>
-    <net code="61" name="Net-(C5-Pad1)">
+    <net code="62" name="Net-(C5-Pad1)">
       <node ref="C5" pin="1" pintype="passive"/>
       <node ref="U3" pin="7" pinfunction="CD" pintype="bidirectional"/>
     </net>
-    <net code="62" name="Net-(C7-Pad1)">
+    <net code="63" name="Net-(C7-Pad1)">
       <node ref="C7" pin="1" pintype="passive"/>
       <node ref="R62" pin="1" pintype="passive"/>
       <node ref="U4" pin="8" pinfunction="VCC" pintype="power_in"/>
     </net>
-    <net code="63" name="Net-(C10-Pad1)">
+    <net code="64" name="Net-(C10-Pad1)">
       <node ref="C10" pin="1" pintype="passive"/>
       <node ref="U7" pin="15" pinfunction="IFB" pintype="bidirectional"/>
     </net>
-    <net code="64" name="Net-(C13-Pad1)">
+    <net code="65" name="Net-(C13-Pad1)">
       <node ref="C13" pin="1" pintype="passive"/>
       <node ref="FB1" pin="2" pintype="passive"/>
       <node ref="U10" pin="1" pinfunction="IP+" pintype="passive"/>
       <node ref="U10" pin="2" pinfunction="IP+" pintype="passive"/>
     </net>
-    <net code="65" name="Net-(C16-Pad1)">
+    <net code="66" name="Net-(C16-Pad1)">
       <node ref="C16" pin="1" pintype="passive"/>
       <node ref="R72" pin="2" pintype="passive"/>
       <node ref="U10" pin="8" pinfunction="VCC" pintype="power_in"/>
     </net>
-    <net code="66" name="Net-(C18-Pad1)">
+    <net code="67" name="Net-(C18-Pad1)">
       <node ref="C18" pin="1" pintype="passive"/>
       <node ref="C20" pin="1" pintype="passive"/>
       <node ref="C22" pin="1" pintype="passive"/>
@@ -4936,191 +4642,193 @@
       <node ref="U12" pin="8" pinfunction="D" pintype="free"/>
       <node ref="U12" pin="9" pinfunction="D" pintype="free"/>
     </net>
-    <net code="67" name="Net-(C19-Pad1)">
+    <net code="68" name="Net-(C19-Pad1)">
       <node ref="C19" pin="1" pintype="passive"/>
       <node ref="U11" pin="2" pinfunction="BOOT" pintype="bidirectional"/>
     </net>
-    <net code="68" name="Net-(C23-Pad1)">
+    <net code="69" name="Net-(C23-Pad1)">
       <node ref="C23" pin="1" pintype="passive"/>
       <node ref="F4" pin="2" pintype="passive"/>
       <node ref="J6" pin="5" pintype="passive"/>
     </net>
-    <net code="69" name="Net-(C25-Pad1)">
+    <net code="70" name="Net-(C25-Pad1)">
       <node ref="C25" pin="1" pintype="passive"/>
       <node ref="C27" pin="1" pintype="passive"/>
+      <node ref="C58" pin="1" pintype="passive"/>
       <node ref="D24" pin="3" pinfunction="K" pintype="passive"/>
       <node ref="FB2" pin="1" pintype="passive"/>
     </net>
-    <net code="70" name="Net-(C30-Pad1)">
+    <net code="71" name="Net-(C30-Pad1)">
       <node ref="C30" pin="1" pintype="passive"/>
       <node ref="RN8" pin="5" pinfunction="R4.2" pintype="passive"/>
       <node ref="U20" pin="22" pinfunction="AN3/INDX/CN5/RB3" pintype="bidirectional"/>
     </net>
-    <net code="71" name="Net-(C31-Pad1)">
+    <net code="72" name="Net-(C31-Pad1)">
       <node ref="C31" pin="1" pintype="passive"/>
       <node ref="D25" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="R37" pin="1" pintype="passive"/>
       <node ref="U20" pin="18" pinfunction="~{MCLR}" pintype="input"/>
     </net>
-    <net code="72" name="Net-(C37-Pad1)">
+    <net code="73" name="Net-(C37-Pad1)">
       <node ref="C37" pin="1" pintype="passive"/>
       <node ref="C38" pin="1" pintype="passive"/>
       <node ref="L2" pin="2" pinfunction="2" pintype="input"/>
       <node ref="U18" pin="1" pinfunction="VIN" pintype="power_in"/>
       <node ref="U19" pin="1" pinfunction="VIN" pintype="power_in"/>
     </net>
-    <net code="73" name="Net-(C44-Pad1)">
+    <net code="74" name="Net-(C44-Pad1)">
       <node ref="C44" pin="1" pintype="passive"/>
       <node ref="U18" pin="4" pinfunction="BST" pintype="passive"/>
     </net>
-    <net code="74" name="Net-(C44-Pad2)">
+    <net code="75" name="Net-(C44-Pad2)">
       <node ref="C44" pin="2" pintype="passive"/>
       <node ref="L3" pin="1" pinfunction="1" pintype="input"/>
       <node ref="U18" pin="2" pinfunction="SW" pintype="output"/>
     </net>
-    <net code="75" name="Net-(C45-Pad1)">
+    <net code="76" name="Net-(C45-Pad1)">
       <node ref="C45" pin="1" pintype="passive"/>
       <node ref="U19" pin="4" pinfunction="BST" pintype="passive"/>
     </net>
-    <net code="76" name="Net-(C45-Pad2)">
+    <net code="77" name="Net-(C45-Pad2)">
       <node ref="C45" pin="2" pintype="passive"/>
       <node ref="L4" pin="1" pinfunction="1" pintype="input"/>
       <node ref="U19" pin="2" pinfunction="SW" pintype="output"/>
     </net>
-    <net code="77" name="Net-(C47-Pad2)">
+    <net code="78" name="Net-(C47-Pad2)">
       <node ref="C47" pin="2" pintype="passive"/>
       <node ref="FB3" pin="1" pintype="passive"/>
       <node ref="Q6" pin="3" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="78" name="Net-(C48-Pad1)">
+    <net code="79" name="Net-(C48-Pad1)">
       <node ref="C48" pin="1" pintype="passive"/>
       <node ref="C51" pin="1" pintype="passive"/>
       <node ref="R46" pin="2" pintype="passive"/>
       <node ref="U20" pin="17" pinfunction="AVDD" pintype="power_in"/>
     </net>
-    <net code="79" name="Net-(C54-Pad1)">
+    <net code="80" name="Net-(C54-Pad1)">
       <node ref="C54" pin="1" pintype="passive"/>
       <node ref="C55" pin="1" pintype="passive"/>
       <node ref="R50" pin="2" pintype="passive"/>
       <node ref="U22" pin="1" pinfunction="VIN" pintype="power_in"/>
       <node ref="U22" pin="3" pinfunction="EN" pintype="input"/>
     </net>
-    <net code="80" name="Net-(C56-Pad1)">
+    <net code="81" name="Net-(C56-Pad1)">
       <node ref="C56" pin="1" pintype="passive"/>
+      <node ref="D6" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="J10" pin="1" pintype="passive"/>
       <node ref="R52" pin="2" pintype="passive"/>
       <node ref="SW1" pin="2" pinfunction="B" pintype="passive"/>
     </net>
-    <net code="81" name="Net-(D2-Pad1)">
+    <net code="82" name="Net-(C63-Pad1)">
+      <node ref="C63" pin="1" pintype="passive"/>
+      <node ref="D1" pin="3" pinfunction="K" pintype="passive"/>
+      <node ref="R17" pin="2" pintype="passive"/>
+      <node ref="U7" pin="1" pinfunction="ISENP" pintype="input"/>
+    </net>
+    <net code="83" name="Net-(D1-Pad1)">
+      <node ref="D1" pin="1" pinfunction="A" pintype="passive"/>
+      <node ref="D1" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="F1" pin="2" pintype="passive"/>
+    </net>
+    <net code="84" name="Net-(D2-Pad1)">
       <node ref="D2" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="R5" pin="2" pintype="passive"/>
+      <node ref="RN4" pin="8" pinfunction="R1.2" pintype="passive"/>
     </net>
-    <net code="82" name="Net-(D3-Pad1)">
+    <net code="85" name="Net-(D2-Pad2)">
+      <node ref="D2" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R4" pin="2" pintype="passive"/>
+      <node ref="U23" pin="6" pinfunction="D1" pintype="bidirectional"/>
+    </net>
+    <net code="86" name="Net-(D3-Pad1)">
       <node ref="D3" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="R30" pin="2" pintype="passive"/>
+      <node ref="RN4" pin="7" pinfunction="R2.2" pintype="passive"/>
     </net>
-    <net code="83" name="Net-(D3-Pad2)">
+    <net code="87" name="Net-(D3-Pad2)">
       <node ref="D3" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R31" pin="2" pintype="passive"/>
-      <node ref="R53" pin="2" pintype="passive"/>
-      <node ref="U23" pin="2" pinfunction="S2" pintype="bidirectional"/>
+      <node ref="U23" pin="4" pinfunction="D2" pintype="bidirectional"/>
     </net>
-    <net code="84" name="Net-(D4-Pad1)">
+    <net code="88" name="Net-(D4-Pad1)">
       <node ref="D4" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="R54" pin="2" pintype="passive"/>
+      <node ref="RN4" pin="6" pinfunction="R3.2" pintype="passive"/>
     </net>
-    <net code="85" name="Net-(D4-Pad2)">
+    <net code="89" name="Net-(D4-Pad2)">
       <node ref="D4" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R55" pin="2" pintype="passive"/>
-      <node ref="R57" pin="2" pintype="passive"/>
-      <node ref="U24" pin="5" pinfunction="S1" pintype="bidirectional"/>
+      <node ref="U24" pin="6" pinfunction="D1" pintype="bidirectional"/>
     </net>
-    <net code="86" name="Net-(D5-Pad1)">
+    <net code="90" name="Net-(D5-Pad1)">
       <node ref="D5" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="R58" pin="2" pintype="passive"/>
+      <node ref="RN4" pin="5" pinfunction="R4.2" pintype="passive"/>
     </net>
-    <net code="87" name="Net-(D5-Pad2)">
+    <net code="91" name="Net-(D5-Pad2)">
       <node ref="D5" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R59" pin="2" pintype="passive"/>
-      <node ref="R61" pin="2" pintype="passive"/>
-      <node ref="U24" pin="2" pinfunction="S2" pintype="bidirectional"/>
+      <node ref="U24" pin="4" pinfunction="D2" pintype="bidirectional"/>
     </net>
-    <net code="88" name="Net-(D6-Pad1)">
-      <node ref="D6" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="D6" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="Q1" pin="1" pinfunction="G" pintype="input"/>
-      <node ref="R3" pin="1" pintype="passive"/>
-      <node ref="U1" pin="4" pinfunction="G" pintype="free"/>
-    </net>
-    <net code="89" name="Net-(D7-Pad1)">
-      <node ref="D7" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="Q1" pin="3" pinfunction="D" pintype="passive"/>
-      <node ref="R8" pin="2" pintype="passive"/>
-      <node ref="U2" pin="4" pinfunction="G" pintype="free"/>
-    </net>
-    <net code="90" name="Net-(D8-Pad1)">
+    <net code="92" name="Net-(D8-Pad1)">
       <node ref="D8" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="Q2" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U3" pin="8" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="91" name="Net-(D9-Pad2)">
+    <net code="93" name="Net-(D9-Pad2)">
       <node ref="D9" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R18" pin="1" pintype="passive"/>
     </net>
-    <net code="92" name="Net-(D10-Pad1)">
+    <net code="94" name="Net-(D10-Pad1)">
       <node ref="D10" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D11" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U7" pin="24" pinfunction="VCC" pintype="input"/>
     </net>
-    <net code="93" name="Net-(D10-Pad2)">
+    <net code="95" name="Net-(D10-Pad2)">
       <node ref="D10" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R17" pin="1" pintype="passive"/>
       <node ref="R19" pin="2" pintype="passive"/>
     </net>
-    <net code="94" name="Net-(D12-Pad1)">
+    <net code="96" name="Net-(D12-Pad1)">
       <node ref="D12" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="RN5" pin="8" pinfunction="R1.2" pintype="passive"/>
     </net>
-    <net code="95" name="Net-(D13-Pad1)">
+    <net code="97" name="Net-(D13-Pad1)">
       <node ref="D13" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="RN5" pin="7" pinfunction="R2.2" pintype="passive"/>
     </net>
-    <net code="96" name="Net-(D14-Pad1)">
+    <net code="98" name="Net-(D14-Pad1)">
       <node ref="D14" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="RN5" pin="6" pinfunction="R3.2" pintype="passive"/>
     </net>
-    <net code="97" name="Net-(D15-Pad1)">
+    <net code="99" name="Net-(D15-Pad1)">
       <node ref="D15" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="RN5" pin="5" pinfunction="R4.2" pintype="passive"/>
     </net>
-    <net code="98" name="Net-(D17-Pad2)">
+    <net code="100" name="Net-(D17-Pad2)">
       <node ref="D17" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="Q5" pin="1" pinfunction="G" pintype="input"/>
       <node ref="R23" pin="1" pintype="passive"/>
-      <node ref="R25" pin="2" pintype="passive"/>
+      <node ref="RN11" pin="6" pinfunction="R3.2" pintype="passive"/>
     </net>
-    <net code="99" name="Net-(D18-Pad2)">
+    <net code="101" name="Net-(D18-Pad2)">
       <node ref="D18" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R22" pin="2" pintype="passive"/>
       <node ref="U11" pin="3" pinfunction="PWM" pintype="bidirectional"/>
     </net>
-    <net code="100" name="Net-(D19-Pad2)">
+    <net code="102" name="Net-(D19-Pad2)">
       <node ref="D19" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN7" pin="5" pinfunction="R4.2" pintype="passive"/>
     </net>
-    <net code="101" name="Net-(D20-Pad2)">
+    <net code="103" name="Net-(D20-Pad2)">
       <node ref="D20" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN7" pin="6" pinfunction="R3.2" pintype="passive"/>
     </net>
-    <net code="102" name="Net-(D21-Pad2)">
+    <net code="104" name="Net-(D21-Pad2)">
       <node ref="D21" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN7" pin="7" pinfunction="R2.2" pintype="passive"/>
     </net>
-    <net code="103" name="Net-(D22-Pad2)">
+    <net code="105" name="Net-(D22-Pad2)">
       <node ref="D22" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN7" pin="8" pinfunction="R1.2" pintype="passive"/>
     </net>
-    <net code="104" name="Net-(D24-Pad1)">
+    <net code="106" name="Net-(D24-Pad1)">
       <node ref="D24" pin="1" pinfunction="A" pintype="passive"/>
       <node ref="D24" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="L1" pin="2" pinfunction="2" pintype="passive"/>
@@ -5130,72 +4838,50 @@
       <node ref="U15" pin="8" pinfunction="D" pintype="free"/>
       <node ref="U15" pin="9" pinfunction="D" pintype="free"/>
     </net>
-    <net code="105" name="Net-(D25-Pad2)">
+    <net code="107" name="Net-(D25-Pad2)">
       <node ref="D25" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN8" pin="8" pinfunction="R1.2" pintype="passive"/>
     </net>
-    <net code="106" name="Net-(D30-Pad2)">
+    <net code="108" name="Net-(D30-Pad2)">
       <node ref="D30" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN9" pin="5" pinfunction="R4.2" pintype="passive"/>
     </net>
-    <net code="107" name="Net-(D31-Pad2)">
+    <net code="109" name="Net-(D31-Pad2)">
       <node ref="D31" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN9" pin="6" pinfunction="R3.2" pintype="passive"/>
     </net>
-    <net code="108" name="Net-(D32-Pad2)">
+    <net code="110" name="Net-(D32-Pad2)">
       <node ref="D32" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="RN9" pin="7" pinfunction="R2.2" pintype="passive"/>
     </net>
-    <net code="109" name="Net-(D33-Pad2)">
+    <net code="111" name="Net-(D33-Pad2)">
       <node ref="D33" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="Q7" pin="1" pinfunction="G" pintype="input"/>
-      <node ref="R51" pin="2" pintype="passive"/>
       <node ref="R52" pin="1" pintype="passive"/>
+      <node ref="RN12" pin="1" pinfunction="R1.1" pintype="passive"/>
     </net>
-    <net code="110" name="Net-(F1-Pad1)">
+    <net code="112" name="Net-(F1-Pad1)">
       <node ref="F1" pin="1" pintype="passive"/>
       <node ref="J2" pin="A4" pinfunction="VBUS" pintype="passive"/>
       <node ref="J2" pin="A9" pinfunction="VBUS" pintype="passive"/>
       <node ref="J2" pin="B4" pinfunction="VBUS" pintype="passive"/>
       <node ref="J2" pin="B9" pinfunction="VBUS" pintype="passive"/>
     </net>
-    <net code="111" name="Net-(F1-Pad2)">
-      <node ref="F1" pin="2" pintype="passive"/>
-      <node ref="R10" pin="2" pintype="passive"/>
-      <node ref="R3" pin="2" pintype="passive"/>
-      <node ref="U2" pin="5" pinfunction="D" pintype="free"/>
-      <node ref="U2" pin="6" pinfunction="D" pintype="free"/>
-      <node ref="U2" pin="7" pinfunction="D" pintype="free"/>
-      <node ref="U2" pin="8" pinfunction="D" pintype="free"/>
-      <node ref="U2" pin="9" pinfunction="D" pintype="free"/>
-    </net>
-    <net code="112" name="Net-(F2-Pad1)">
+    <net code="113" name="Net-(F2-Pad1)">
       <node ref="F2" pin="1" pintype="passive"/>
       <node ref="J4" pin="1" pintype="passive"/>
     </net>
-    <net code="113" name="Net-(F3-Pad1)">
+    <net code="114" name="Net-(F3-Pad1)">
       <node ref="F3" pin="1" pintype="passive"/>
-      <node ref="U1" pin="1" pinfunction="S" pintype="free"/>
-      <node ref="U1" pin="2" pinfunction="S" pintype="free"/>
-      <node ref="U1" pin="3" pinfunction="S" pintype="free"/>
+      <node ref="J3" pin="1" pintype="passive"/>
     </net>
-    <net code="114" name="Net-(F5-Pad2)">
+    <net code="115" name="Net-(F5-Pad2)">
       <node ref="F5" pin="2" pintype="passive"/>
       <node ref="J8" pin="1" pintype="passive"/>
     </net>
-    <net code="115" name="Net-(FB3-Pad2)">
+    <net code="116" name="Net-(FB3-Pad2)">
       <node ref="FB3" pin="2" pintype="passive"/>
       <node ref="J8" pin="2" pintype="passive"/>
-    </net>
-    <net code="116" name="Net-(J3-Pad1)">
-      <node ref="J3" pin="1" pintype="passive"/>
-      <node ref="R8" pin="1" pintype="passive"/>
-      <node ref="R9" pin="2" pintype="passive"/>
-      <node ref="U1" pin="5" pinfunction="D" pintype="free"/>
-      <node ref="U1" pin="6" pinfunction="D" pintype="free"/>
-      <node ref="U1" pin="7" pinfunction="D" pintype="free"/>
-      <node ref="U1" pin="8" pinfunction="D" pintype="free"/>
-      <node ref="U1" pin="9" pinfunction="D" pintype="free"/>
     </net>
     <net code="117" name="Net-(J6-Pad1)">
       <node ref="J6" pin="1" pintype="passive"/>
@@ -5209,271 +4895,257 @@
       <node ref="Q2" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="U6" pin="2" pinfunction="Trig" pintype="input"/>
     </net>
-    <net code="120" name="Net-(Q5-Pad3)">
-      <node ref="Q5" pin="3" pinfunction="D" pintype="passive"/>
-      <node ref="R26" pin="2" pintype="passive"/>
-      <node ref="U9" pin="4" pinfunction="G" pintype="free"/>
-    </net>
-    <net code="121" name="Net-(Q6-Pad1)">
+    <net code="120" name="Net-(Q6-Pad1)">
       <node ref="Q6" pin="1" pinfunction="G" pintype="input"/>
       <node ref="R39" pin="2" pintype="passive"/>
     </net>
-    <net code="122" name="Net-(Q7-Pad3)">
+    <net code="121" name="Net-(Q7-Pad3)">
       <node ref="Q7" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="RN9" pin="8" pinfunction="R1.2" pintype="passive"/>
     </net>
-    <net code="123" name="Net-(R4-Pad2)">
-      <node ref="D2" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="R4" pin="2" pintype="passive"/>
-      <node ref="R7" pin="2" pintype="passive"/>
-      <node ref="U23" pin="5" pinfunction="S1" pintype="bidirectional"/>
+    <net code="122" name="Net-(R3-Pad2)">
+      <node ref="R3" pin="2" pintype="passive"/>
+      <node ref="U20" pin="12" pinfunction="PWM2L/RE2" pintype="bidirectional"/>
     </net>
-    <net code="124" name="Net-(R15-Pad2)">
+    <net code="123" name="Net-(R15-Pad2)">
       <node ref="R15" pin="2" pintype="passive"/>
       <node ref="U7" pin="4" pinfunction="SDA" pintype="bidirectional"/>
     </net>
-    <net code="125" name="Net-(R16-Pad2)">
+    <net code="124" name="Net-(R16-Pad2)">
       <node ref="R16" pin="2" pintype="passive"/>
       <node ref="U7" pin="5" pinfunction="SCL" pintype="input"/>
     </net>
-    <net code="126" name="Net-(R17-Pad2)">
-      <node ref="R17" pin="2" pintype="passive"/>
-      <node ref="U2" pin="1" pinfunction="S" pintype="free"/>
-      <node ref="U2" pin="2" pinfunction="S" pintype="free"/>
-      <node ref="U2" pin="3" pinfunction="S" pintype="free"/>
-      <node ref="U7" pin="1" pinfunction="ISENP" pintype="input"/>
-    </net>
-    <net code="127" name="Net-(R18-Pad2)">
+    <net code="125" name="Net-(R18-Pad2)">
       <node ref="R18" pin="2" pintype="passive"/>
       <node ref="U7" pin="6" pinfunction="GPIO4" pintype="bidirectional"/>
     </net>
-    <net code="128" name="Net-(R21-Pad2)">
+    <net code="126" name="Net-(R21-Pad2)">
       <node ref="R21" pin="2" pintype="passive"/>
       <node ref="U7" pin="13" pinfunction="OTP" pintype="bidirectional"/>
     </net>
-    <net code="129" name="Net-(R24-Pad1)">
+    <net code="127" name="Net-(R24-Pad1)">
       <node ref="R24" pin="1" pintype="passive"/>
       <node ref="R27" pin="1" pintype="passive"/>
       <node ref="U11" pin="7" pinfunction="FCCM" pintype="bidirectional"/>
     </net>
-    <net code="130" name="Net-(R28-Pad1)">
+    <net code="128" name="Net-(R28-Pad1)">
       <node ref="R28" pin="1" pintype="passive"/>
       <node ref="U4" pin="7" pinfunction="VIOUT" pintype="output"/>
     </net>
-    <net code="131" name="Net-(R39-Pad1)">
+    <net code="129" name="Net-(R39-Pad1)">
       <node ref="R39" pin="1" pintype="passive"/>
       <node ref="U17" pin="5" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="132" name="Net-(R40-Pad2)">
+    <net code="130" name="Net-(R40-Pad2)">
       <node ref="R40" pin="2" pintype="passive"/>
       <node ref="U21" pin="7" pinfunction="USBDM" pintype="bidirectional"/>
     </net>
-    <net code="133" name="Net-(R41-Pad2)">
+    <net code="131" name="Net-(R41-Pad2)">
       <node ref="R41" pin="2" pintype="passive"/>
       <node ref="U21" pin="6" pinfunction="USBDP" pintype="bidirectional"/>
     </net>
-    <net code="134" name="Net-(R42-Pad1)">
+    <net code="132" name="Net-(R42-Pad1)">
       <node ref="R42" pin="1" pintype="passive"/>
-      <node ref="R43" pin="2" pintype="passive"/>
+      <node ref="RN12" pin="2" pinfunction="R2.1" pintype="passive"/>
       <node ref="U18" pin="6" pinfunction="FB" pintype="input"/>
     </net>
-    <net code="135" name="Net-(R44-Pad1)">
+    <net code="133" name="Net-(R44-Pad1)">
       <node ref="R44" pin="1" pintype="passive"/>
-      <node ref="R45" pin="2" pintype="passive"/>
+      <node ref="RN12" pin="4" pinfunction="R4.1" pintype="passive"/>
       <node ref="U19" pin="6" pinfunction="FB" pintype="input"/>
     </net>
-    <net code="136" name="Net-(R47-Pad1)">
+    <net code="134" name="Net-(R47-Pad1)">
       <node ref="R47" pin="1" pintype="passive"/>
       <node ref="U21" pin="15" pinfunction="TXD" pintype="output"/>
     </net>
-    <net code="137" name="Net-(R48-Pad1)">
+    <net code="135" name="Net-(R48-Pad1)">
       <node ref="R48" pin="1" pintype="passive"/>
       <node ref="U21" pin="2" pinfunction="RXD" pintype="input"/>
     </net>
-    <net code="138" name="Net-(R64-Pad1)">
+    <net code="136" name="Net-(R64-Pad1)">
       <node ref="R64" pin="1" pintype="passive"/>
-      <node ref="U25" pin="5" pinfunction="S1" pintype="bidirectional"/>
+      <node ref="U25" pin="6" pinfunction="D1" pintype="bidirectional"/>
     </net>
-    <net code="139" name="Net-(R66-Pad1)">
+    <net code="137" name="Net-(R66-Pad1)">
       <node ref="R66" pin="1" pintype="passive"/>
-      <node ref="U25" pin="2" pinfunction="S2" pintype="bidirectional"/>
+      <node ref="U25" pin="4" pinfunction="D2" pintype="bidirectional"/>
     </net>
-    <net code="140" name="Net-(R70-Pad1)">
+    <net code="138" name="Net-(R70-Pad1)">
       <node ref="R70" pin="1" pintype="passive"/>
-      <node ref="U26" pin="5" pinfunction="S1" pintype="bidirectional"/>
+      <node ref="U26" pin="6" pinfunction="D1" pintype="bidirectional"/>
     </net>
-    <net code="141" name="Net-(R73-Pad1)">
+    <net code="139" name="Net-(R73-Pad1)">
       <node ref="R73" pin="1" pintype="passive"/>
-      <node ref="U26" pin="2" pinfunction="S2" pintype="bidirectional"/>
+      <node ref="U26" pin="4" pinfunction="D2" pintype="bidirectional"/>
     </net>
-    <net code="142" name="Net-(RN3-Pad1)">
-      <node ref="RN3" pin="1" pinfunction="R1.1" pintype="passive"/>
-      <node ref="U7" pin="11" pinfunction="GPIO5" pintype="bidirectional"/>
+    <net code="140" name="Net-(R76-Pad1)">
+      <node ref="R76" pin="1" pintype="passive"/>
+      <node ref="U8" pin="5" pinfunction="in3_A" pintype="input"/>
     </net>
-    <net code="143" name="Net-(RN3-Pad2)">
-      <node ref="RN3" pin="2" pinfunction="R2.1" pintype="passive"/>
-      <node ref="U7" pin="9" pinfunction="GPIO3" pintype="bidirectional"/>
+    <net code="141" name="Net-(R77-Pad1)">
+      <node ref="R77" pin="1" pintype="passive"/>
+      <node ref="U8" pin="1" pinfunction="in1_A" pintype="input"/>
     </net>
-    <net code="144" name="Net-(RN3-Pad3)">
-      <node ref="RN3" pin="3" pinfunction="R3.1" pintype="passive"/>
-      <node ref="U7" pin="8" pinfunction="GPIO1" pintype="bidirectional"/>
-    </net>
-    <net code="145" name="Net-(RN3-Pad4)">
-      <node ref="RN3" pin="4" pinfunction="R4.1" pintype="passive"/>
-      <node ref="U7" pin="7" pinfunction="GPIO2" pintype="bidirectional"/>
-    </net>
-    <net code="146" name="Net-(RN5-Pad1)">
+    <net code="142" name="Net-(RN2-Pad5)">
       <node ref="RN2" pin="5" pinfunction="R4.2" pintype="passive"/>
       <node ref="RN5" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="U5" pin="7" pinfunction="in4_A" pintype="input"/>
     </net>
-    <net code="147" name="Net-(RN5-Pad2)">
+    <net code="143" name="Net-(RN2-Pad6)">
       <node ref="RN2" pin="6" pinfunction="R3.2" pintype="passive"/>
       <node ref="RN5" pin="2" pinfunction="R2.1" pintype="passive"/>
       <node ref="U5" pin="5" pinfunction="in3_A" pintype="input"/>
     </net>
-    <net code="148" name="Net-(RN5-Pad3)">
+    <net code="144" name="Net-(RN2-Pad7)">
       <node ref="RN2" pin="7" pinfunction="R2.2" pintype="passive"/>
       <node ref="RN5" pin="3" pinfunction="R3.1" pintype="passive"/>
       <node ref="U5" pin="3" pinfunction="in2_A" pintype="input"/>
     </net>
-    <net code="149" name="Net-(RN5-Pad4)">
+    <net code="145" name="Net-(RN2-Pad8)">
       <node ref="RN2" pin="8" pinfunction="R1.2" pintype="passive"/>
       <node ref="RN5" pin="4" pinfunction="R4.1" pintype="passive"/>
       <node ref="U5" pin="1" pinfunction="in1_A" pintype="input"/>
     </net>
-    <net code="150" name="Net-(RN8-Pad4)">
-      <node ref="RN8" pin="4" pinfunction="R4.1" pintype="passive"/>
-      <node ref="U16" pin="2" pinfunction="D" pintype="passive"/>
+    <net code="146" name="Net-(RN3-Pad1)">
+      <node ref="RN3" pin="1" pinfunction="R1.1" pintype="passive"/>
+      <node ref="U7" pin="11" pinfunction="GPIO5" pintype="bidirectional"/>
     </net>
-    <net code="151" name="Net-(U5-Pad10)">
-      <node ref="R60" pin="1" pintype="passive"/>
-      <node ref="U24" pin="3" pinfunction="G2" pintype="input"/>
-      <node ref="U5" pin="10" pinfunction="out4_C" pintype="open_collector"/>
+    <net code="147" name="Net-(RN3-Pad2)">
+      <node ref="RN3" pin="2" pinfunction="R2.1" pintype="passive"/>
+      <node ref="U7" pin="9" pinfunction="GPIO3" pintype="bidirectional"/>
     </net>
-    <net code="152" name="Net-(U5-Pad12)">
-      <node ref="R56" pin="1" pintype="passive"/>
-      <node ref="U24" pin="1" pinfunction="G1" pintype="input"/>
-      <node ref="U5" pin="12" pinfunction="out3_C" pintype="open_collector"/>
+    <net code="148" name="Net-(RN3-Pad3)">
+      <node ref="RN3" pin="3" pinfunction="R3.1" pintype="passive"/>
+      <node ref="U7" pin="8" pinfunction="GPIO1" pintype="bidirectional"/>
     </net>
-    <net code="153" name="Net-(U5-Pad14)">
-      <node ref="R32" pin="1" pintype="passive"/>
-      <node ref="U23" pin="3" pinfunction="G2" pintype="input"/>
-      <node ref="U5" pin="14" pinfunction="out2_C" pintype="open_collector"/>
+    <net code="149" name="Net-(RN3-Pad4)">
+      <node ref="RN3" pin="4" pinfunction="R4.1" pintype="passive"/>
+      <node ref="U7" pin="7" pinfunction="GPIO2" pintype="bidirectional"/>
     </net>
-    <net code="154" name="Net-(U5-Pad16)">
-      <node ref="R6" pin="1" pintype="passive"/>
+    <net code="150" name="Net-(RN6-Pad1)">
+      <node ref="RN6" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="U23" pin="1" pinfunction="G1" pintype="input"/>
       <node ref="U5" pin="16" pinfunction="out1_C" pintype="open_collector"/>
     </net>
-    <net code="155" name="Net-(U8-Pad1)">
-      <node ref="R77" pin="1" pintype="passive"/>
-      <node ref="U8" pin="1" pinfunction="in1_A" pintype="input"/>
+    <net code="151" name="Net-(RN6-Pad2)">
+      <node ref="RN6" pin="2" pinfunction="R2.1" pintype="passive"/>
+      <node ref="U23" pin="3" pinfunction="G2" pintype="input"/>
+      <node ref="U5" pin="14" pinfunction="out2_C" pintype="open_collector"/>
     </net>
-    <net code="156" name="Net-(U8-Pad2)">
-      <node ref="U8" pin="2" pinfunction="in1_C" pintype="input"/>
-      <node ref="U8" pin="3" pinfunction="in2_A" pintype="input"/>
+    <net code="152" name="Net-(RN6-Pad3)">
+      <node ref="RN6" pin="3" pinfunction="R3.1" pintype="passive"/>
+      <node ref="U24" pin="1" pinfunction="G1" pintype="input"/>
+      <node ref="U5" pin="12" pinfunction="out3_C" pintype="open_collector"/>
     </net>
-    <net code="157" name="Net-(U8-Pad5)">
-      <node ref="R76" pin="1" pintype="passive"/>
-      <node ref="U8" pin="5" pinfunction="in3_A" pintype="input"/>
+    <net code="153" name="Net-(RN6-Pad4)">
+      <node ref="RN6" pin="4" pinfunction="R4.1" pintype="passive"/>
+      <node ref="U24" pin="3" pinfunction="G2" pintype="input"/>
+      <node ref="U5" pin="10" pinfunction="out4_C" pintype="open_collector"/>
     </net>
-    <net code="158" name="Net-(U8-Pad6)">
-      <node ref="U8" pin="6" pinfunction="in3_C" pintype="input"/>
-      <node ref="U8" pin="7" pinfunction="in4_A" pintype="input"/>
+    <net code="154" name="Net-(RN8-Pad4)">
+      <node ref="RN8" pin="4" pinfunction="R4.1" pintype="passive"/>
+      <node ref="U16" pin="2" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="159" name="Net-(U8-Pad10)">
-      <node ref="R75" pin="1" pintype="passive"/>
-      <node ref="U26" pin="3" pinfunction="G2" pintype="input"/>
-      <node ref="U8" pin="10" pinfunction="out4_C" pintype="open_collector"/>
-    </net>
-    <net code="160" name="Net-(U8-Pad12)">
-      <node ref="R69" pin="1" pintype="passive"/>
-      <node ref="U26" pin="1" pinfunction="G1" pintype="input"/>
-      <node ref="U8" pin="12" pinfunction="out3_C" pintype="open_collector"/>
-    </net>
-    <net code="161" name="Net-(U8-Pad14)">
-      <node ref="R68" pin="1" pintype="passive"/>
-      <node ref="U25" pin="3" pinfunction="G2" pintype="input"/>
-      <node ref="U8" pin="14" pinfunction="out2_C" pintype="open_collector"/>
-    </net>
-    <net code="162" name="Net-(U8-Pad16)">
-      <node ref="R63" pin="1" pintype="passive"/>
+    <net code="155" name="Net-(RN10-Pad1)">
+      <node ref="RN10" pin="1" pinfunction="R1.1" pintype="passive"/>
       <node ref="U25" pin="1" pinfunction="G1" pintype="input"/>
       <node ref="U8" pin="16" pinfunction="out1_C" pintype="open_collector"/>
     </net>
-    <net code="163" name="Net-(U14-Pad5)">
+    <net code="156" name="Net-(RN10-Pad2)">
+      <node ref="RN10" pin="2" pinfunction="R2.1" pintype="passive"/>
+      <node ref="U25" pin="3" pinfunction="G2" pintype="input"/>
+      <node ref="U8" pin="14" pinfunction="out2_C" pintype="open_collector"/>
+    </net>
+    <net code="157" name="Net-(RN10-Pad3)">
+      <node ref="RN10" pin="3" pinfunction="R3.1" pintype="passive"/>
+      <node ref="U26" pin="1" pinfunction="G1" pintype="input"/>
+      <node ref="U8" pin="12" pinfunction="out3_C" pintype="open_collector"/>
+    </net>
+    <net code="158" name="Net-(RN10-Pad4)">
+      <node ref="RN10" pin="4" pinfunction="R4.1" pintype="passive"/>
+      <node ref="U26" pin="3" pinfunction="G2" pintype="input"/>
+      <node ref="U8" pin="10" pinfunction="out4_C" pintype="open_collector"/>
+    </net>
+    <net code="159" name="Net-(U8-Pad2)">
+      <node ref="U8" pin="2" pinfunction="in1_C" pintype="input"/>
+      <node ref="U8" pin="3" pinfunction="in2_A" pintype="input"/>
+    </net>
+    <net code="160" name="Net-(U8-Pad6)">
+      <node ref="U8" pin="6" pinfunction="in3_C" pintype="input"/>
+      <node ref="U8" pin="7" pinfunction="in4_A" pintype="input"/>
+    </net>
+    <net code="161" name="Net-(U14-Pad5)">
       <node ref="U14" pin="5" pinfunction="OUT" pintype="output"/>
       <node ref="U15" pin="4" pinfunction="G" pintype="free"/>
     </net>
-    <net code="164" name="Power_EN">
+    <net code="162" name="Power_EN">
       <node ref="D26" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D27" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D28" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D29" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="R38" pin="2" pintype="passive"/>
+      <node ref="RN12" pin="3" pinfunction="R3.1" pintype="passive"/>
       <node ref="U18" pin="5" pinfunction="EN" pintype="input"/>
       <node ref="U19" pin="5" pinfunction="EN" pintype="input"/>
     </net>
-    <net code="165" name="VBUS">
+    <net code="163" name="VBUS">
       <node ref="D11" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="F3" pin="2" pintype="passive"/>
       <node ref="FB1" pin="1" pintype="passive"/>
       <node ref="R19" pin="1" pintype="passive"/>
       <node ref="R78" pin="2" pintype="passive"/>
     </net>
-    <net code="166" name="unconnected-(J2-PadA8)">
+    <net code="164" name="unconnected-(J2-PadA8)">
       <node ref="J2" pin="A8" pinfunction="SBU1" pintype="bidirectional"/>
     </net>
-    <net code="167" name="unconnected-(J2-PadB8)">
+    <net code="165" name="unconnected-(J2-PadB8)">
       <node ref="J2" pin="B8" pinfunction="SBU2" pintype="bidirectional"/>
     </net>
-    <net code="168" name="unconnected-(U7-Pad2)">
+    <net code="166" name="unconnected-(U7-Pad2)">
       <node ref="U7" pin="2" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="169" name="unconnected-(U7-Pad10)">
+    <net code="167" name="unconnected-(U7-Pad10)">
       <node ref="U7" pin="10" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="170" name="unconnected-(U7-Pad14)">
+    <net code="168" name="unconnected-(U7-Pad14)">
       <node ref="U7" pin="14" pinfunction="VFB" pintype="bidirectional"/>
     </net>
-    <net code="171" name="unconnected-(U7-Pad18)">
+    <net code="169" name="unconnected-(U7-Pad18)">
       <node ref="U7" pin="18" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="172" name="unconnected-(U7-Pad19)">
+    <net code="170" name="unconnected-(U7-Pad19)">
       <node ref="U7" pin="19" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="173" name="unconnected-(U7-Pad21)">
+    <net code="171" name="unconnected-(U7-Pad21)">
       <node ref="U7" pin="21" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="174" name="unconnected-(U7-Pad22)">
+    <net code="172" name="unconnected-(U7-Pad22)">
       <node ref="U7" pin="22" pinfunction="VBUS" pintype="bidirectional"/>
     </net>
-    <net code="175" name="unconnected-(U7-Pad23)">
+    <net code="173" name="unconnected-(U7-Pad23)">
       <node ref="U7" pin="23" pinfunction="PWR_EN" pintype="bidirectional"/>
     </net>
-    <net code="176" name="unconnected-(U20-Pad13)">
+    <net code="174" name="unconnected-(U20-Pad13)">
       <node ref="U20" pin="13" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="177" name="unconnected-(U20-Pad32)">
+    <net code="175" name="unconnected-(U20-Pad32)">
       <node ref="U20" pin="32" pinfunction="OSC1/CLKI" pintype="bidirectional"/>
     </net>
-    <net code="178" name="unconnected-(U21-Pad5)">
+    <net code="176" name="unconnected-(U21-Pad5)">
       <node ref="U21" pin="5" pinfunction="CBUS2" pintype="bidirectional"/>
     </net>
-    <net code="179" name="unconnected-(U21-Pad11)">
+    <net code="177" name="unconnected-(U21-Pad11)">
       <node ref="U21" pin="11" pinfunction="CBUS1" pintype="bidirectional"/>
     </net>
-    <net code="180" name="unconnected-(U21-Pad12)">
+    <net code="178" name="unconnected-(U21-Pad12)">
       <node ref="U21" pin="12" pinfunction="CBUS0" pintype="bidirectional"/>
     </net>
-    <net code="181" name="unconnected-(U21-Pad14)">
+    <net code="179" name="unconnected-(U21-Pad14)">
       <node ref="U21" pin="14" pinfunction="CBUS3" pintype="bidirectional"/>
     </net>
-    <net code="182" name="unconnected-(U21-Pad16)">
+    <net code="180" name="unconnected-(U21-Pad16)">
       <node ref="U21" pin="16" pinfunction="~{RTS}" pintype="output"/>
     </net>
-    <net code="183" name="unconnected-(U22-Pad4)">
+    <net code="181" name="unconnected-(U22-Pad4)">
       <node ref="U22" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
   </nets>

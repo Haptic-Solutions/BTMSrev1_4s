@@ -25,7 +25,8 @@ extern void Command_Interp(int);
 extern void fault_read(int);
 extern void displayOut(int);
 extern void LED_Mult(char);
-#define Clength 4   //Command Buff Length
+#define Clength 16   //Command Buff Length
+//Example: 'Q 1 xxxx.xxx' is 12 characters
 unsigned int CMD_Point[2] = {0,0};  //Command Pointer
 unsigned int bufsize[2] = {0,0};
 char CMD_buff[2][Clength];              //Command Buffer

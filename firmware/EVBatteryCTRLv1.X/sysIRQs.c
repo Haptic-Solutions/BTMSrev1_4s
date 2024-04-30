@@ -55,6 +55,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
 
 /* Analog Input IRQ */
 void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
+    Cell_Volt=on; //enable cell voltage sense.
     OSC_Switch(fast);
     //Get 8 samples for averaging.
     if (analog_avg_cnt < 8){
@@ -63,8 +64,9 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         if (STINGbits.adc_sample_burn){
             CavgVolt += ChargeVoltage; //Charger Voltage
             BavgCurnt += BCsense; //Battery Current
-            avgBTemp += Btemp; //Batt Temp
+            //avgBTemp += Btemp; //Batt Temp
             avgSTemp += Mtemp; //Self Temp
+            avgBTemp = avgSTemp;
             BavgVolt[0] += LithCell_V1;
             BavgVolt[1] += LithCell_V2;
             BavgVolt[2] += LithCell_V3;
@@ -100,14 +102,15 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         //Check to see if the system is ready to run.
         if(Flags&syslock)IsSysReady(); //If there is a fault, keep system from running. Do this only if settings are LOCKED
         //ADC sample burn check. Only burn once when main power is on. Otherwise burn every time heartbeat activates the ADC
-        if (Run_Level < Cal_Mode && STINGbits.adc_sample_burn == yes){
+        if (Run_Level < Cal_Mode && STINGbits.adc_sample_burn == yes && gas_gauge_timer == 0){
             ADCON1bits.ADON = off;                // turn ADC off to save power.
+            Cell_Volt=off; //disable cell voltage sense.
             STINGbits.adc_sample_burn = no;     //Burn the first ADC sample on every power up of ADC.
         }
         else STINGbits.adc_sample_burn = yes;      //We have burned the first set.
     }
     //Run the LED routine
-    if(Run_Level > Cal_Mode && (Flags&syslock))LED_Mult(on);
+    if((Run_Level > Cal_Mode || (gas_gauge_timer > 0 && Run_Level != Cal_Mode)) && (Flags&syslock))LED_Mult(on);
     else if(!(Flags&syslock) && !CONDbits.V_Cal)LED_Mult(Ltest);
     else if(Run_Level != Crit_Err && Run_Level != Cal_Mode) LED_Mult(Ballance);
     else LED_Mult(off);
@@ -233,6 +236,45 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     OSC_Switch(fast);
     //Blink some LEDs
     BlinknLights++; //Count up all the time once every 1/8 second.
+    //Check power switch or button.
+    if(PWR_SW)gas_gauge_timer = gauge_timer;
+    else if(gas_gauge_timer>0 && Run_Level != Cal_Mode)gas_gauge_timer--;
+    switch(sets.PWR_SW_MODE){
+        case push_and_hold:
+            if(PWR_SW){
+                if(button_timer == 16){
+                    if(CONDbits.Power_Out_EN)CONDbits.Power_Out_EN = 0;
+                    else CONDbits.Power_Out_EN = 1;
+                    button_timer = 17;
+                }
+                else if(button_timer < 16) button_timer++;
+            }
+            else button_timer = 0;
+        break;
+        case toggle_switch:
+            if(PWR_SW && !CONDbits.Power_Out_Lock)CONDbits.Power_Out_EN = 1;
+            else {
+                CONDbits.Power_Out_EN = 0;
+                CONDbits.Power_Out_Lock = 0;
+            }
+        break;
+        case on_with_charger:
+            if(dsky.Cin_voltage>4 && !CONDbits.Power_Out_Lock)CONDbits.Power_Out_EN = 1;
+            else if(dsky.Cin_voltage<1) {
+                CONDbits.Power_Out_EN = 0;
+                CONDbits.Power_Out_Lock = 0;
+            }
+        break;
+        case off_with_charger:
+            if(dsky.Cin_voltage<1 && !CONDbits.Power_Out_Lock)CONDbits.Power_Out_EN = 1;
+            else if(dsky.Cin_voltage>4) {
+                CONDbits.Power_Out_EN = 0;
+                CONDbits.Power_Out_Lock = 0;
+            }
+        break;
+        default:
+        break;
+    }
     //Check pre-charge timer.
     if(CONDbits.Power_Out_EN && precharge_timer<PreChargeTime)precharge_timer++;
     //Soft over-current monitoring.
@@ -256,19 +298,34 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
 
     //Get average voltage and current.
     if(avg_cnt < 8){
+        for(int i=0;i<Cell_Count;i++){
+            temp_Cell_Voltage_Average[i] += dsky.Cell_Voltage[i];
+        }
+        CavgCurnt_temp += dsky.Cin_current;
         bt_crnt_avg_temp += dsky.battery_current;
         bt_vltg_avg_temp += dsky.pack_voltage;
         avg_cnt++;
     }
     else{
+        for(int i=0;i<Cell_Count;i++){
+            temp_Cell_Voltage_Average[i] /= 8;
+            Cell_Voltage_Average[i] = temp_Cell_Voltage_Average[i];
+        }
+        CavgCurnt_temp /= 8;
+        CavgCurnt = CavgCurnt_temp;
         bt_crnt_avg_temp /= 8;
         dsky.battery_crnt_average = bt_crnt_avg_temp;
         bt_vltg_avg_temp /= 8;
         dsky.pack_vltg_average = bt_vltg_avg_temp;
+        for(int i=0;i<Cell_Count;i++){
+            temp_Cell_Voltage_Average[i] = 0;
+        }
+        CavgCurnt_temp = 0;
         bt_vltg_avg_temp = 0;
         bt_crnt_avg_temp = 0;
         avg_cnt = 0;
         current_cal();
+        if(avg_rdy<5)avg_rdy++;
     }
     //*************************
     //Get peak power output.

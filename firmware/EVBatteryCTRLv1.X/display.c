@@ -72,7 +72,7 @@ void pageOut(int pageNum, int serial_port){
         else if(varNum[serial_port] < varLimit){
             if(varNum[serial_port] != nlNum)load_float(0.01+dsky.dskyarrayFloat[varNum[serial_port]], serial_port);   //Load the number.
             Buff_index[serial_port] -= 2;  //Subtract 2 from buffer index.
-            load_string(Vlookup[varNum[serial_port]], serial_port);        //Load the number's text.
+            load_const_string(Vlookup[varNum[serial_port]], serial_port);        //Load the number's text.
             load_string(" ", serial_port);  //Load a space after everything.
             dodispatch[serial_port] = yes; //if we have at least one variable to display then dispatch.
         }
@@ -96,17 +96,6 @@ void displayOut(int serial_port){
     }
 }
 
-//Check if serial port is busy.
-//If used, ensure that it is used by an IRQ priority that is lower than TX IRQs.
-void portBusyIdle(int serial_port){
-    serial_port = port_Sanity(serial_port);
-    while(portBSY[serial_port]){
-        //CPUact = 0;      //Turn CPU ACT light off.
-        Idle();                 //Idle Loop, saves power.
-    }
-    //CPUact = 1;      //Turn CPU ACT light on.
-}
-
 /* Read fault codes to serial port.
  * This takes up about 2% of program space.*/
 void fault_read(int serial_port){
@@ -125,8 +114,8 @@ void fault_read(int serial_port){
             load_hex(vars.fault_codes[flt_index[serial_port]],serial_port);
             load_string(" -> ", serial_port);
             int ecode = vars.fault_codes[flt_index[serial_port]];
-            if(!ecode || ecode < sizeof(errArray))load_string(errArray[ecode-1], serial_port);
-            else load_string(codeDefault, serial_port);
+            if(!ecode || ecode < sizeof(errArray))load_const_string(errArray[ecode-1], serial_port);
+            else load_const_string(codeDefault, serial_port);
             send_string("\n\r", serial_port);
         }
     }
@@ -192,13 +181,16 @@ void all_info(int serial_port){
     send_string("1: |B%|      |PV|     |TV|    |PW|     |AV|\n\r", serial_port);
     send_Float_Array(dsky.dskyarrayFloat, 1, 5, serial_port);
     send_string("\n\r", serial_port);
-    send_string("2: |CV|      |CA|     |S1|    |S2|     |S3|    |S4|\n\r", serial_port);
-    send_Float_Array(dsky.dskyarrayFloat, 6, 11, serial_port);
+    send_string("2: |CV|      |CA|\n\r", serial_port);
+    send_Float_Array(dsky.dskyarrayFloat, 6, 7, serial_port);
     send_string("\n\r", serial_port);
-    send_string("3: |W|      |CW|     |A|    |CB|\n\r", serial_port);
+    send_string("3: |S1|    |S2|     |S3|    |S4|\n\r", serial_port);
+    send_Float_Array(Cell_Voltage_Average, 0, 3, serial_port);
+    send_string("\n\r", serial_port);
+    send_string("4: |W|      |CW|     |A|    |CB|\n\r", serial_port);
     send_Float_Array(dsky.dskyarrayFloat, 12, 15, serial_port);
     send_string("\n\r", serial_port);
-    send_string("4: |CM|      |AA|     |OCV|    |MC|\n\r", serial_port);
+    send_string("5: |CM|      |AA|     |OCV|    |MC|\n\r", serial_port);
     send_Float_Array(dsky.dskyarrayFloat, 16, 19, serial_port);
     send_string("\n\r Ah Rating: ", serial_port);
     load_float(sets.amp_hour_rating, serial_port);
@@ -248,7 +240,7 @@ void Command_Interp(int serial_port){
         //Check for faults.
         if(vars.fault_count){
             //Send fault alert "!"
-            load_string(" CF!", serial_port);
+            load_string("!", serial_port);
         }
         if(Run_Level == Crit_Err){
             //Send fault alert "!"
@@ -343,6 +335,16 @@ void Command_Interp(int serial_port){
                 sets.PxVenable[serial_port] = off;
                 ram_chksum_update();        //Generate new checksum.
             break;
+            case 't':
+                load_string("Time left: ", serial_port);
+                load_float(DeepSleepTimer, serial_port);
+                load_string(" minutes and ", serial_port);
+                load_float(DeepSleepTimerSec, serial_port);
+                load_string(" seconds.\n\r", serial_port);
+            break;
+            case 'T':
+                timer_reset();
+            break;
             case 'C':
                 vars.fault_count = clear;
                 STINGbits.errLight = clear;
@@ -372,6 +374,7 @@ void Command_Interp(int serial_port){
                 load_string(version, serial_port);
             break;
             case 'i':   //Print info.
+                ADCON1bits.ADON = on;                // turn ADC on
                 all_info(serial_port);
             break;
             case 'l':  //Unlock the system and allow variables to be modified.
@@ -394,9 +397,9 @@ void Command_Interp(int serial_port){
                 else if(Flags&syslock)setsLockedErr(serial_port);
             break;
             case 'm':
-                if(CONDbits.Power_Out_EN)load_string("Power Out On.\n\r", serial_port);
-                if(CONDbits.charger_detected)load_string("Charge Go.\n\r", serial_port);
-                load_string("RL ", serial_port);
+                if(CONDbits.Power_Out_EN)load_string("\n\rPower Out On.", serial_port);
+                if(CONDbits.charger_detected)load_string("\n\rCharge Go.", serial_port);
+                load_string("\n\rRL ", serial_port);
                 load_float(Run_Level, serial_port);
                 load_string("\n\rCH ", serial_port);
                 load_float(charge_mode, serial_port);

@@ -33,6 +33,11 @@ SOFTWARE. */
 /* IRQs go here. */
 /*****************/
 
+void timer_reset(void){
+    DeepSleepTimer = sets.DeepSleepAfter-1;      //reset the timer when main_power is on.
+    DeepSleepTimerSec = 59;                   //60 seconds.
+}
+
 /* Non time-critical systems. Timer 4 IRQ. 1 Second.*/
 //For low priority CPU intensive processes and checks.
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
@@ -44,26 +49,46 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
      * For future people, KEEP USING IRQs FOR STUFF!!! Don't make the CPU wait
      * for anything! The dsPIC30F3011 is a power drain and will consume all
      * your electrons and burn your lunch and house down from the heat that it generates! */
-    if(Run_Level > Heartbeat){
+    if(Run_Level > Cal_Mode && Run_Level != On_W_Err){
         if(STINGbits.OverCRNT_Fault){
             //If there has been a hardware over-current event then we need to power off sooner to reset the OC latches.
-            PowerOffTimer=0;
-            PowerOffTimerSec = 19;
+            DeepSleepTimer=0;
+            DeepSleepTimerSec = 5;
         }
         else {
-            PowerOffTimer = sets.PowerOffAfter;      //reset the timer when main_power is on.
-            PowerOffTimerSec = 59;                   //60 seconds.
+            timer_reset();
         }
     }
     //Run_Level is at Heartbeat or below. Start counting down.
-    else{
+    else if (sets.DeepSleepAfter > -1){
         //When main_power is off count down in minutes.
-        if(PowerOffTimerSec <= 0){
-            PowerOffTimerSec = 59;
-            if(PowerOffTimer <= 0) STINGbits.deep_sleep = 1; //set deep_sleep to 1. Power off the system to save power after all IRQ's are finished.
-            else PowerOffTimer--;
+        if(DeepSleepTimerSec <= 0){
+            DeepSleepTimerSec = 59;
+            if(DeepSleepTimer <= 0) STINGbits.deep_sleep = 1; //set deep_sleep to 1. Power off the system to save power after all IRQ's are finished.
+            else DeepSleepTimer--;
         }
-        else PowerOffTimerSec--;
+        else DeepSleepTimerSec--;
+    }
+    //Auto power off stuff
+    float C_Curnt_test = 0;
+    if(dsky.Cin_current>0)C_Curnt_test = dsky.Cin_current;
+    float W_Diff_Test = dsky.battery_current*dsky.pack_voltage - C_Curnt_test*dsky.Cin_voltage;
+    if(CONDbits.Power_Out_EN && (sets.auto_off_watts > -1) && ((-1*W_Diff_Test) < sets.auto_off_watts)){
+        if(PowerOffTimerSec <= 0){
+            if(PowerOffTimer <= 0){
+                CONDbits.Power_Out_EN = 0;  //Turn off the power.
+                CONDbits.Power_Out_Lock = 1; //Keep other processes from turning the power back on right away.
+            }
+            else {
+                PowerOffTimer--;
+                PowerOffTimerSec = 59;
+            }
+        }
+        PowerOffTimerSec--;
+    }
+    else {
+        PowerOffTimer = sets.PowerOffAfter-1;
+        PowerOffTimerSec = 59;
     }
     //Runtime program memory check. Checks every half hour except on startup it will run after 10 seconds.
     //This seems to cause a stack error sometimes? Maybe too much as getting nested causing the stack to grow too large.
@@ -105,6 +130,7 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void){
         OSC_Switch(fast);
         slowINHIBIT_Timer = 10;
 /****************************************/
+    if(Run_Level == Cal_Mode)timer_reset(); //if in cal mode, reset timer after every byte received via serial.
     /* End the IRQ. */
     IFS0bits.U1RXIF = clear;
 }
@@ -115,6 +141,7 @@ void __attribute__((interrupt, no_auto_psv)) _U2RXInterrupt (void){
         OSC_Switch(fast);
         slowINHIBIT_Timer = 10;
 /****************************************/
+    if(Run_Level == Cal_Mode)timer_reset(); //if in cal mode, reset timer after every byte received via serial.
     /* End the IRQ. */
     IFS1bits.U2RXIF = clear;
 }
@@ -149,6 +176,19 @@ void __attribute__((interrupt, no_auto_psv)) _U2TXInterrupt (void){
     /****************************************/
     /* End the IRQ. */
     IFS1bits.U2TXIF = clear;
+}
+
+/* I2C stuff */
+void __attribute__((interrupt, no_auto_psv)) _MI2CInterrupt (void){
+    /****************************************/
+    /* End the IRQ. */
+    IFS0bits.MI2CIF = clear;
+}
+
+void __attribute__((interrupt, no_auto_psv)) _SI2CInterrupt (void){
+    /****************************************/
+    /* End the IRQ. */
+    IFS0bits.SI2CIF = clear;
 }
 
 /****************/

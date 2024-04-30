@@ -4,15 +4,15 @@
   <executable name="dist/default/production/EVBatteryCTRLv1.X.production.elf">
     <memory name="data">
       <units>bytes</units>
-      <length>1024</length>
-      <used>762</used>
-      <free>262</free>
+      <length>2048</length>
+      <used>918</used>
+      <free>1130</free>
     </memory>
     <memory name="program">
       <units>bytes</units>
-      <length>24192</length>
-      <used>23007</used>
-      <free>1185</free>
+      <length>48768</length>
+      <used>26166</used>
+      <free>22602</free>
     </memory>
   </executable>
 </project>

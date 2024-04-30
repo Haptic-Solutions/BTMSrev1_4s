@@ -96,14 +96,14 @@ void flash_checksum(void){
     int xaddr = 0;
     int yaddr = 0;
     //Read program memory space.
-    for(xaddr=0;xaddr<0x1FFF;xaddr++){
+    for(xaddr=0;xaddr<0x3FFF;xaddr++){
         flash_chksum += ((0x00FF & memread(0x00,xaddr*2)) + ((0xFF00 & memread(0x00,xaddr*2)) / 256));
         flash_chksum += upperMem;
     }
     //Read chip config memory space.
     for(yaddr=0xF8;yaddr<0xFF;yaddr++)
         for(xaddr=0;xaddr<0x7FFF;xaddr++){flash_chksum += ((0x00FF & memread(yaddr,xaddr*2)) + ((0xFF00 & memread(yaddr,xaddr*2)) / 256));}
-    flash_chksum += (423); //No matter what I do, the checksum is always a difference of 423 from what MPLAB says it should be.
+    flash_chksum += (409); //No matter what I do, the checksum is always a difference of 416 from what MPLAB says it should be.
 }
 //Generates checksum of EEPROM memory.
 void eeprom_checksum(void){

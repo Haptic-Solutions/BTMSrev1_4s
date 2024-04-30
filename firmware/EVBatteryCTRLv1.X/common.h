@@ -33,6 +33,7 @@ extern inline void Volt_Cal(int);
 extern void CapacityCalc(void);
 extern void OSC_Switch(int);
 extern int PORTS_DONE(void);
+extern void timer_reset(void);
 
 /* NOTE: Try to keep memory usage below about 75% for the dsPIC30F3011 as the stack can use as much as 15% */
 /*****************************/
@@ -68,6 +69,7 @@ struct Settings{
     float   over_current_shutdown;      //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
     float   absolute_max_current;       //Max regulating current.
     /******************************/
+    float   auto_off_watts;
     int   settingsINT[1];
     int   cycles_to_80;               //Number of charge cycles to 80% capacity.
     //Charge temps.
@@ -87,8 +89,10 @@ struct Settings{
     int   ctrlr_shutdown_temp;        //Max motor or motor controller temp shutdown.
     //Some other stuff.
     int   max_heat;           //Heater watts that you want to use.
-    unsigned int     PowerOffAfter;      //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours.
+    int     DeepSleepAfter;      //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours. -1 disables timer.
+    int     PowerOffAfter;
     unsigned int     flash_chksum_old;   //System Flash Checksum as stored in NV-mem
+    char    PWR_SW_MODE;
     char    PxVenable[2];
     char    custom_data1[6];    //4 blocks of 6 chars of custom user text or data, can be terminated by a NULL char. (0xFC - 0xFF)
     char    custom_data2[6];
@@ -179,12 +183,15 @@ volatile float   resistor_divide_const = 0;              //Value for calculating
 /*****************************/
 /* General Vars */
 volatile float voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
-volatile float Bcurrent_compensate;     //Battery Current compensation.
-volatile float Ccurrent_compensate;      //Charger Current compensation.
+volatile float temp_Cell_Voltage_Average[4];
+volatile float Cell_Voltage_Average[4];
+volatile float Bcurrent_compensate = 0;     //Battery Current compensation.
+volatile float Ccurrent_compensate = 0;      //Charger Current compensation.
 volatile float CavgVolt = 0;     //averaged voltage from charger
 volatile float BavgVolt[4];     //averaged voltage from battery
 volatile float BavgCurnt = 0;    //averaged current input for battery
 volatile float CavgCurnt = 0;    //averaged current input from charger
+volatile float CavgCurnt_temp = 0;
 volatile float avgBTemp = 0;    //averaged battery temperature
 volatile float avgSTemp = 0;    //averaged self temperature
 volatile float bt_crnt_avg_temp = 0;
@@ -194,10 +201,12 @@ volatile float Charger_Target_Voltage = 0;
 volatile float Half_ref = 0;
 volatile float analog_const = 0;
 volatile int   OV_Timer[4];
+volatile int  gas_gauge_timer = gauge_timer;
 volatile char soft_OVC_Timer = 0;
 volatile char precharge_timer = 0;
 volatile char charge_mode = Wait;
 volatile char avg_cnt = 0;
+volatile char avg_rdy = 0;
 volatile char analog_avg_cnt = 0;
 volatile char Bcurnt_cal_stage = 0;
 volatile char Ccurnt_cal_stage = 0;
@@ -205,6 +214,8 @@ volatile char LED_Test = 1;
 /* 0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error.
  */
 volatile char power_session = 1;
+volatile char DeepSleepTimer = 0;
+volatile char DeepSleepTimerSec = 59;      //default state.
 volatile char PowerOffTimer = 0;
 volatile char PowerOffTimerSec = 59;      //default state.
 volatile char cfg_space = 0;
@@ -215,6 +226,7 @@ volatile char first_cal = 0;
 volatile char Run_Level = 0;
 volatile char ch_cycle = 0;
 volatile char slowINHIBIT_Timer = 0;
+volatile char button_timer = 0;
 /*****************************/
 //Control Output
 volatile unsigned int     charge_power = 0; //charge rate
@@ -228,6 +240,7 @@ volatile unsigned int     heat_power = 0;   //heater power
 volatile unsigned int COND = 0;
 typedef struct tagCONDBITS {
   unsigned Power_Out_EN:1;
+  unsigned Power_Out_Lock:1;
   unsigned charger_detected:1; //Used for when the charger is plugged in.
   unsigned diagmode:1;
   unsigned got_open_voltage:1;

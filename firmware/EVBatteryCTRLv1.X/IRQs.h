@@ -33,6 +33,8 @@ extern void __attribute__((interrupt, no_auto_psv)) _AddressError (void);
 extern void __attribute__((interrupt, no_auto_psv)) _StackError (void);
 extern void __attribute__((interrupt, no_auto_psv)) _MathError (void);
 extern void __attribute__((interrupt, no_auto_psv)) _ReservedTrap7 (void);
+extern void __attribute__((interrupt, no_auto_psv)) _MI2CInterrupt (void);
+extern void __attribute__((interrupt, no_auto_psv)) _SI2CInterrupt (void);
 
 
 #endif	/* IRQS_H */

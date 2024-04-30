@@ -56,7 +56,7 @@ inline void temperatureCalc(void){
 
 inline void outputReg(void){
     ////Check for key power or command power signal, but not soft power signal.
-    if((CONDbits.Power_Out_EN)){
+    if((CONDbits.Power_Out_EN && Run_Level != Cal_Mode)){
         //Run heater if needed, but don't run this sub a second time if we are getting charge power while key is on.
         //If we are getting charge power then we need to use it to warm the battery to a higher temp if needed.
         //So check charge input first.
@@ -64,13 +64,11 @@ inline void outputReg(void){
             heat_control(sets.dischrg_target_temp);
         }
         dsky.max_current = dischrg_current;
-        PreCharge = on;
         if(precharge_timer==PreChargeTime)PowerOutEnable = on;
 
             
     }
     else{
-        PreCharge = off;
         PowerOutEnable = off;
         precharge_timer = 0;
     }
@@ -79,9 +77,9 @@ inline void outputReg(void){
 inline void chargeReg(void){
     //Charge current read and target calculation.
     //// Check for Charger.
-    if(STINGbits.CH_Voltage_Present && CONDbits.charger_detected){
-        //Check to see if anything has happened with our USB_3 charging.
-        if((charge_mode >= USB3_Wimp && charge_mode <= USB3_Fast) && !V_Bus_Stat){
+    if(STINGbits.CH_Voltage_Present && CONDbits.charger_detected && Run_Level != Cal_Mode){
+        //Check to see if anything has happened with our USB_3 charging. && !V_Bus_Stat
+        if((charge_mode >= USB3_Wimp && charge_mode <= USB3_Fast)){
             STINGbits.CH_Voltage_Present=0;
             charge_mode = Stop;
         }
@@ -109,8 +107,8 @@ inline void chargeReg(void){
             if(ch_boost_power > 0)ch_boost_power-=2;
             else charge_power-=2;
         }
-        else if(ch_boost_power < 300 && (dsky.battery_current < chrg_current && !Cell_HV_Check() && dsky.Cin_current < Max_Charger_Current && dsky.Cin_voltage > Charger_Target_Voltage + 0.05)){
-            if(charge_power < 380)charge_power+=2;
+        else if(ch_boost_power < PWM_MaxBoost && (dsky.battery_current < chrg_current && !Cell_HV_Check() && dsky.Cin_current < Max_Charger_Current && dsky.Cin_voltage > Charger_Target_Voltage + 0.05)){
+            if(charge_power < PWM_MaxChrg)charge_power+=2;
             else ch_boost_power+=2;
         }
     }

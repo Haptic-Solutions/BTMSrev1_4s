@@ -13266,10 +13266,10 @@
   (symbol (lib_id "Device:R_Pack04") (at 517.525 88.9 180) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid e994e1ce-42bd-4d20-a9aa-29616d0fc4dc)
-    (property "Reference" "RN9" (id 0) (at 525.145 87.6299 0)
+    (property "Reference" "RN12" (id 0) (at 525.145 87.6299 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "5K" (id 1) (at 525.145 90.1699 0)
+    (property "Value" "10K" (id 1) (at 525.145 90.1699 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_Array_Convex_4x0612" (id 2) (at 510.54 88.9 90)
@@ -13278,10 +13278,10 @@
     (property "Datasheet" "~" (id 3) (at 517.525 88.9 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "DK_Detail_Page" "https://www.digikey.com/en/products/detail/bourns-inc/CAY16-4991F4LF/2566602" (id 4) (at 517.525 88.9 90)
+    (property "DK_Detail_Page" "https://www.digikey.com/en/products/detail/bourns-inc/CAY16-1002F4LF/2566505" (id 4) (at 517.525 88.9 90)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Digi-Key_PN" "CAY16-4991F4LFCT-ND" (id 5) (at 517.525 88.9 90)
+    (property "Digi-Key_PN" "CAY16-1002F4LFCT-ND" (id 5) (at 517.525 88.9 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 6f9f3239-abb3-4cce-bb27-fe293f8a138d))
@@ -14876,9 +14876,6 @@
     (path "/27938f2b-f39d-4f62-bb8e-2b901ecab5c2"
       (reference "RN8") (unit 1) (value "1K") (footprint "Resistor_SMD:R_Array_Convex_4x0612")
     )
-    (path "/e994e1ce-42bd-4d20-a9aa-29616d0fc4dc"
-      (reference "RN9") (unit 1) (value "5K") (footprint "Resistor_SMD:R_Array_Convex_4x0612")
-    )
     (path "/1374584a-5f5c-4445-9d0d-1dd1146b3977"
       (reference "RN10") (unit 1) (value "5K") (footprint "Resistor_SMD:R_Array_Convex_4x0612")
     )
@@ -14886,6 +14883,9 @@
       (reference "RN11") (unit 1) (value "10K") (footprint "Resistor_SMD:R_Array_Convex_4x0612")
     )
     (path "/673cc644-b808-4df7-977d-9fe18b271fd0"
+      (reference "RN12") (unit 1) (value "10K") (footprint "Resistor_SMD:R_Array_Convex_4x0612")
+    )
+    (path "/e994e1ce-42bd-4d20-a9aa-29616d0fc4dc"
       (reference "RN12") (unit 1) (value "10K") (footprint "Resistor_SMD:R_Array_Convex_4x0612")
     )
     (path "/67647a8b-db66-4202-969a-7d17a16bd4a5"

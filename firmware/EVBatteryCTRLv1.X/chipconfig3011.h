@@ -22,13 +22,9 @@ SOFTWARE. */
 #define	CHIPCONFIG_H
 #include <xc.h>
 // DSPIC30F4011 Configuration Bit Settings
-
-// 'C' source line config statements
-
 // FOSC
-#pragma config FPR = FRC_PLL8           // Primary Oscillator Mode (FRC w/ PLL 8x)
-#pragma config FOS = FRC                // Oscillator Source (Internal Fast RC)
-#pragma config FCKSMEN = CSW_ON_FSCM_OFF// Clock Switching and Monitor (Sw Enabled, Mon Disabled)
+#pragma config FOSFPR = FRC_PLL8        // Oscillator (FRC w/PLL 8x)
+#pragma config FCKSMEN = CSW_ON_FSCM_OFF   // Clock Switching On and Monitor off
 
 // FWDT
 #pragma config FWPSB = WDTPSB_16        // WDT Prescaler B (1:16)
@@ -38,14 +34,18 @@ SOFTWARE. */
 // FBORPOR
 #pragma config FPWRT = PWRT_64          // POR Timer Value (64ms)
 #pragma config BODENV = BORV27          // Brown Out Voltage (2.7V)
-#pragma config BOREN = PBOR_ON          // PBOR Enable (Enabled)
+#pragma config BOREN = PBOR_ON          // PBOR Enable
 #pragma config LPOL = PWMxL_ACT_LO      // Low-side PWM Output Polarity (Active Low)
 #pragma config HPOL = PWMxH_ACT_HI      // High-side PWM Output Polarity (Active High)
 #pragma config PWMPIN = RST_IOPIN       // PWM Output Pin Reset (Control with PORT/TRIS regs)
-#pragma config MCLRE = MCLR_EN          // Master Clear Enable (Enabled)
+#pragma config MCLRE = MCLR_EN          // Master Clear Enable
 
 // FGS
-#pragma config GWRP = GWRP_OFF          // General Code Segment Write Protect (Disabled)
+//WARNING!!! These settings can only be reset if voltage rail is > 4.5V
+//You can easily brick (temporarily) the device and will require disconnect
+//of any non-5v compliant devices (EG: FTDI chip) on the voltage rail if
+//you intend to erase these later.
+#pragma config GWRP = GWRP_OFF          // General Code Segment Write Protect (Enabled)
 #pragma config GCP = CODE_PROT_OFF      // General Segment Code Protection (Disabled)
 
 // FICD
@@ -53,7 +53,6 @@ SOFTWARE. */
 
 // #pragma config statements should precede project file includes.
 // Use project enums instead of #define for ON and OFF.
-
 
 #endif	/* CHIPCONFIG_H */
 

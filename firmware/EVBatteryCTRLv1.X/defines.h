@@ -24,6 +24,10 @@ SOFTWARE. */
 // Tm = 32767 * (1 / (((clkSpeedmhz * PLL) / 4) / tiksPerIRQ))
 //#define IPS 29.48;   //million instructions per second.
 #define IPS 14.74   //million instructions per second.
+//PWM period
+#define PWM_Period 100
+#define PWM_MaxChrg (PWM_Period*2)*0.98
+#define PWM_MaxBoost (PWM_Period*2)*0.75
 //#define IPS 7.37   //million instructions per second.
 #define BAUD1 9600  //Default BAUD rate for PORT 1
 #define BAUD2 9600  //Default BAUD rate for PORT 2
@@ -31,9 +35,8 @@ SOFTWARE. */
 //Firmware Version String
 #define version "\n\rV1.0_2S-4S\n\r"
 //IO inputs
-#define __PwrKey !PORTFbits.RF1 //Power on/off switch, button, or key.
+#define PWR_SW !PORTFbits.RF1 //Power on/off switch, button, or key. Active low input.
 #define BV_Fault PORTEbits.RE8  //Battery Voltage Fault.
-#define V_Bus_Stat PORTEbits.RE4 //USB-C VBus status.
 #define C_Fault PORTDbits.RD0 //Battery or charge input/output current fault.
 //Analog inputs
 #define ChargeVoltage ADCBUF0 //Voltage
@@ -47,7 +50,8 @@ SOFTWARE. */
 #define CCsense ADCBUF8 //CCsense
 //IO outputs
 #define KeepAlive LATFbits.LATF0 //Enables power to self and system.
-#define PreCharge LATFbits.LATF6 //Power Output pre-charge
+#define Cell_Volt LATEbits.LATE4 //Cell voltage sense enable.
+#define C_Switched LATFbits.LATF6 //Power controll for current sense IC's
 #define PowerOutEnable LATCbits.LATC15 //Power output enable.
 //LED outputs
 #define Mult_SEL LATEbits.LATE2 //LED and Cell ballance multiplexed select.
@@ -77,7 +81,7 @@ SOFTWARE. */
 #define GENERAL1_LAT LATC
 #define GENERAL1_PORT PORTC
 
-#define GENERAL2_DIR 0xFFBE
+#define GENERAL2_DIR 0xFFB2
 #define GENERAL2_TRIS TRISF
 #define GENERAL2_LAT LATF
 #define GENERAL2_PORT PORTF
@@ -87,7 +91,7 @@ SOFTWARE. */
 #define GENERAL3_LAT LATD
 #define GENERAL3_PORT PORTD
 
-#define PWM_TRIS_DIR 0xFFFA
+#define PWM_TRIS_DIR 0xFFEA
 #define PWM_TRIS TRISE
 #define PWM_LAT LATE
 #define PWM_PORT PORTE
@@ -95,8 +99,8 @@ SOFTWARE. */
 //Memory Defines
 /* This assumes the compiler puts the stack at the end of memory space just after
  * the user variables and the stack pointer counts up */
-#define ramSize 0x03FF //Size of memory.
-#define ramAddressStart 0x0800  //Where the dsPIC30F3011's ram address starts.
+#define ramSize 0x07F0 //Size of memory.
+#define ramAddressStart 0x0800  //Where the dsPIC30F4011's ram address starts.
 #define stackFaultMax ramSize + ramAddressStart - 1
 #define ramFree (ramSize + ramAddressStart) - 2 //Minus 15 bytes of ram. If the stack intrudes on this then it should throw an error code before a complete system crash and undefined behavior.
 
@@ -121,7 +125,7 @@ SOFTWARE. */
 #define AuxFuse 5       //Aux charge port fuse rating placeholder.
 #define PreChargeTime 2 //Output pre-charge timer placeholder.
 #define LED_Brightness 10
-#define V_REF 3.36      //Measured reference voltage placeholder
+#define V_REF 3.35      //Measured reference voltage placeholder
 
 //Run Levels
 #define Shutdown 0
@@ -160,6 +164,14 @@ SOFTWARE. */
 //OSC modes
 #define slow 0
 #define fast 1
+
+//Power switch modes
+#define push_and_hold 0         //Push button switch
+#define toggle_switch 1         //Toggle switch
+#define on_with_charger 2       //??? what would you use this for?
+#define off_with_charger 3      //Solar light, or Emergency light mode.
+
+#define gauge_timer 100
 
 //##############################################################################
 #endif
