@@ -175,6 +175,16 @@ inline void IsSysReady(void){
                 //Shuts down a detected fault just after the regulation routine.
                 if(STINGbits.fault_shutdown)Batt_IO_OFF();
                 else {
+                    //Clamp outputs to within PWM ranges.
+                    if(heat_power<0)heat_power=0;
+                    else if(heat_power>PWM_MaxHeat)heat_power=PWM_MaxHeat;
+                    
+                    if(ch_boost_power<0)ch_boost_power=0;
+                    else if(ch_boost_power>PWM_MaxBoost)ch_boost_power=PWM_MaxBoost;
+                    
+                    if(charge_power<0)charge_power=0;
+                    else if(charge_power>PWM_MaxChrg)charge_power=PWM_MaxChrg;
+                    
                     //Set the PWM output to what the variables are during normal operation.
                     Heat_CTRL = heat_power;               //set heater control
                     CHctrl = charge_power;             //set charge control

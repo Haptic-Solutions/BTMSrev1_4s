@@ -101,7 +101,7 @@ void displayOut(int serial_port){
 void fault_read(int serial_port){
     serial_port = port_Sanity(serial_port);
     send_string("\n\rReading Faults.\n\r", serial_port);
-    if(vars.fault_count > 10){
+    if(vars.fault_count > maxFCodes){
         send_string("Fault Log Full.\n\r", serial_port);
     }
     if(vars.fault_count == 0){
@@ -111,9 +111,11 @@ void fault_read(int serial_port){
         for(flt_index[serial_port]=0;flt_index[serial_port]<vars.fault_count;flt_index[serial_port]++){
             portBusyIdle(serial_port);  //Check to see if port is ready.
             load_string("Code: ", serial_port);
-            load_hex(vars.fault_codes[flt_index[serial_port]],serial_port);
+            load_hex(vars.fault_codes[0][flt_index[serial_port]],serial_port);
+            load_string(" :: Attribute: ", serial_port);
+            load_hex(vars.fault_codes[1][flt_index[serial_port]], serial_port);
             load_string(" -> ", serial_port);
-            int ecode = vars.fault_codes[flt_index[serial_port]];
+            int ecode = vars.fault_codes[0][flt_index[serial_port]];
             if(!ecode || ecode < sizeof(errArray))load_const_string(errArray[ecode-1], serial_port);
             else load_const_string(codeDefault, serial_port);
             send_string("\n\r", serial_port);

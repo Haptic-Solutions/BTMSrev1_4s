@@ -40,7 +40,7 @@ void USB_Power_Present_Check(void){
 //Check to make sure serial_port is either 1 or 2, if it's not then default to port 1
 int port_Sanity(int serial_port){
     if(serial_port != PORT1 && serial_port != PORT2){
-        fault_log(0x3E);
+        fault_log(0x3E, 0x00);
         return PORT2;   //default to port2 because it's always on.
     }
     else return serial_port;
@@ -92,7 +92,7 @@ void port_check(int serial_port){
     serial_port = port_Sanity(serial_port);
     //Check if valid port has been selected.
     if (serial_port > 0x01){
-        fault_log(0x1A);        //Log invalid port error.
+        fault_log(0x1A, 0x00);        //Log invalid port error.
         FtempIndex[serial_port] = clear;
         return;
     }

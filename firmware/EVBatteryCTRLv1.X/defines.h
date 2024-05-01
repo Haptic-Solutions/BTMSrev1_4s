@@ -26,6 +26,7 @@ SOFTWARE. */
 #define IPS 14.74   //million instructions per second.
 //PWM period
 #define PWM_Period 100
+#define PWM_MaxHeat (PWM_Period*2)*0.9
 #define PWM_MaxChrg (PWM_Period*2)*0.98
 #define PWM_MaxBoost (PWM_Period*2)*0.75
 //#define IPS 7.37   //million instructions per second.
@@ -118,6 +119,7 @@ SOFTWARE. */
 #define NULL 0
 #define input 1
 #define output 0
+#define maxFCodes 20
 
 //Constants
 #define Cell_Count 4    //Number of cells placeholder.

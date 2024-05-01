@@ -27,7 +27,7 @@ SOFTWARE. */
 extern inline void explody_preventy_check(void);
 extern inline void currentCheck(void);
 extern inline void heater_calibration(void);
-extern void fault_log(int);
+extern void fault_log(int, int);
 extern inline void ALL_shutdown(void);
 extern inline void Batt_IO_OFF(void);
 extern inline void reset_check(void);

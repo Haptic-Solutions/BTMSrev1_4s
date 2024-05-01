@@ -49,7 +49,7 @@ void nvm_chksum_update(void){
 int check_ramSets(void){
     ramSets_checksum();
     if(ramSets_chksum != ramSets_chksum_old){
-        fault_log(0x2B);    //Log an error if it doesn't match.
+        fault_log(0x2B, 0x00);    //Log an error if it doesn't match.
         return 1;
     }
     return 0;
@@ -59,7 +59,7 @@ int check_nvmSets(void){
     ramSets_checksum();
     nvmSets_checksum();
     if(ramSets_chksum != nvSets_chksum){
-        fault_log(0x2C);    //Log an error if it doesn't match.
+        fault_log(0x2C, 0x00);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
         return 1;
     }
@@ -69,7 +69,7 @@ int check_nvmSets(void){
 int check_prog(void){
     flash_checksum();
     if(sets.flash_chksum_old != flash_chksum){
-        fault_log(0x29);    //Log an error if it doesn't match.
+        fault_log(0x29, 0x00);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
         return 1;
     }
@@ -80,7 +80,7 @@ int check_prog(void){
 int check_nvmem(void){
     eeprom_checksum();
     if(eeprom_read(0x01FF) != rom_chksum){
-        fault_log(0x2A);    //Log an error if it doesn't match.
+        fault_log(0x2A, 0x00);    //Log an error if it doesn't match.
         STINGbits.fault_shutdown = 1;
         return 1;
     }

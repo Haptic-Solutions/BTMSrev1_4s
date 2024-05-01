@@ -37,7 +37,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
     OSC_Switch(fast);
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
-    fault_log(0x3A);
+    fault_log(0x3A, 0x00);
     Flags |= OverVLT_Fault;
     save_vars();
     IFS0bits.INT0IF = 0;
@@ -48,9 +48,9 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
     OSC_Switch(fast);
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
-    fault_log(0x39);
+    fault_log(0x39, 0x00);
     save_vars();
-    IFS1bits.INT1IF = clear;
+    IFS1bits.INT1IF = 0;
 }
 
 /* Analog Input IRQ */
@@ -128,7 +128,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     //Check if a cell has reached it's ballance voltage.
     int bal_L = 0;
     for(int i=0;i<Cell_Count;i++){
-        if(dsky.Cell_Voltage[i]>=sets.battery_rated_voltage){
+        if(Cell_Voltage_Average[i]>=sets.battery_rated_voltage-0.02 && !CONDbits.V_Cal){
             switch(i){
                 case 0 : bal_L = bal_L | 0x01;
                 break;
@@ -146,14 +146,14 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     Ballance_LEDS = bal_L;
     //Check for receive buffer overflow.
     if(U1STAbits.OERR){
-        fault_log(0x2D);
+        fault_log(0x2D, 0x00);
         char garbage;
         //Flush the buffer.
         while(U1STAbits.URXDA)garbage = U1RXREG;
         U1STAbits.OERR = 0; //Clear the fault bit so that receiving can continue.
     }
     if(U2STAbits.OERR){
-        fault_log(0x2E);
+        fault_log(0x2E, 0x00);
         char garbage;
         //Flush the buffer.
         while(U2STAbits.URXDA)garbage = U2RXREG;
@@ -281,7 +281,7 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     if(dsky.max_current > 0 && CONDbits.Power_Out_EN && absFloat(dsky.battery_current) > dsky.max_current && (Flags&syslock)){
         if(soft_OVC_Timer > SOC_Cycles){
             CONDbits.Power_Out_EN = off;
-            fault_log(0x2F);
+            fault_log(0x2F, 0x00);
             STINGbits.fault_shutdown = yes;
         }
         else soft_OVC_Timer++;
@@ -290,7 +290,7 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     for(int i=0;i<Cell_Count;i++){
         if(dsky.Cell_Voltage[i] < sets.low_voltage_shutdown && (Flags&syslock)){
             CONDbits.Power_Out_EN = off;
-            fault_log(0x04);
+            fault_log(0x04, i+1);
             STINGbits.fault_shutdown = yes;
         }
     }

@@ -28,6 +28,11 @@ SOFTWARE. */
 void default_sets(void){
     sets.R1_resistance = 10;            //R1 resistance in Kohms
     sets.R2_resistance = 1;             //R2 resistance in Kohms
+    sets.S_vlt_adjst[0] = 0.221;
+    sets.S_vlt_adjst[1] = 0.182;
+    sets.S_vlt_adjst[2] = 0.137;
+    sets.S_vlt_adjst[3] = 0.084;
+    sets.Ch_vlt_adjst = 0.192;
     /*****************************/
     //Battery Ratings and setpoints
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.

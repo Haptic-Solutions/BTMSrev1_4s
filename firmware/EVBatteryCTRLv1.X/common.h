@@ -114,7 +114,7 @@ struct Variables{
     float   chargeCycleLevel;           //% of a charge cycle completed. Rolls over to 0 once it reaches capacity of battery (for 100%) and increments 'TotalChargeCycles' by 1.
     unsigned int     TotalChargeCycles;  //Total number of charge cycles this battery has been through.
     // Fault Codes.
-    unsigned int     fault_codes[10] __attribute__((persistent));
+    unsigned int     fault_codes[2][maxFCodes] __attribute__((persistent));
     unsigned int     fault_count __attribute__((persistent));
     // Other stuff.
     unsigned int     partial_chrg_cnt;           //How many times have we plugged in the charger since the last full charge?
