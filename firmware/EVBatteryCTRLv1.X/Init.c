@@ -38,7 +38,7 @@ void default_sets(void){
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
     sets.max_battery_voltage = 4.28;      //Max battery voltage before lockout.
     sets.battery_rated_voltage = 4.2;     //Target max charge voltage
-    sets.dischrg_voltage = 3;         //Minimum battery voltage
+    sets.dischrg_voltage = 3.2;         //Minimum battery voltage
     sets.low_voltage_shutdown = 2.4;    //Battery Low lockout voltage
     sets.dischrg_C_rating = 2;           //Discharge C rating
     sets.limp_current = 1;              //Limp mode current in amps. Minimum current to regulate to.
@@ -249,9 +249,9 @@ void configure_IO(void){
     ADCSSL = 0x01FF;
 
     //Configure IRQ Priorities
-    IPC0bits.INT0IP = 7;    //Over voltage IRQ, Most Important.
-    IPC4bits.INT1IP = 7;    //Over current IRQ, Most Important.
-    IPC2bits.ADIP = 6;      //Analog inputs and regulation routines, Important.
+    IPC2bits.ADIP = 7;      //Analog inputs and regulation routines, Important.
+    IPC0bits.INT0IP = 6;    //Over voltage IRQ.
+    IPC4bits.INT1IP = 6;    //Over current IRQ.
     IPC1bits.T2IP = 5;      //0.125 second IRQ for some math timing, Greater priority.
     IPC0bits.T1IP = 4;      //Heartbeat IRQ, eh, not terribly important.
     IPC3bits.MI2CIP = 4;    //I2C collision priority.

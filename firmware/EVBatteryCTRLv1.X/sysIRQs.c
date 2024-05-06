@@ -122,13 +122,25 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     OSC_Switch(fast);
     ADCON1bits.ADON = on;    // turn ADC on to get a sample.
+    //calculate target charge voltage
+    pack_target_voltage = sets.battery_rated_voltage*Cell_Count;
     //Check for how fast we are charging.
     if(dsky.battery_crnt_average > (sets.chrg_C_rating*sets.amp_hour_rating)*0.75)CONDbits.fastCharge = 1;
     else CONDbits.fastCharge = 1;
     //Check if a cell has reached it's ballance voltage.
     int bal_L = 0;
+    float lowest_cell = 100;
+    int lowest_c_num = 0;
+    //Do not run ballance resistor on the lowest cell.
     for(int i=0;i<Cell_Count;i++){
-        if(Cell_Voltage_Average[i]>=sets.battery_rated_voltage-0.02 && !CONDbits.V_Cal){
+        if(Cell_Voltage_Average[i]<lowest_cell){
+            lowest_c_num = i;
+            lowest_cell = Cell_Voltage_Average[i];
+        }
+    }
+    //Check which cell is equal to or above set voltage.
+    for(int i=0;i<Cell_Count;i++){
+        if(Cell_Voltage_Average[i]>=sets.battery_rated_voltage && !CONDbits.V_Cal && i!=lowest_c_num){
             switch(i){
                 case 0 : bal_L = bal_L | 0x01;
                 break;

@@ -26,15 +26,10 @@ SOFTWARE. */
 #include "Init.h"
 
 char Cell_HV_Check(){
-    char redux_level = 0;
     for(int i=0;i<Cell_Count;i++){
-        if(dsky.Cell_Voltage[i]>=dsky.chrg_voltage + 0.02) {
-            redux_level = 2;
-            break;
-        }
-        else if(dsky.Cell_Voltage[i]>=dsky.chrg_voltage) redux_level = 1;
+        if(dsky.Cell_Voltage[i]>sets.battery_rated_voltage+0.025) return 1;
     }
-    return redux_level;
+    return 0;
 }
 
 float Temperature_I_Calc(float lowTCutout, float lowBeginReduce, float highTCutout, float highBeginReduce){
@@ -108,7 +103,7 @@ inline void chargeReg(void){
 
         //Regulate the charger input.
         // Charge regulation routine.
-        if(charge_power > 0 && (dsky.battery_current > chrg_current || Cell_HV_Check()>0 || dsky.Cin_current > Max_Charger_Current || dsky.Cin_voltage < Charger_Target_Voltage - 0.05)){
+        if(charge_power > 0 && (dsky.battery_current > chrg_current || Cell_HV_Check()>0 || dsky.Cin_current > Max_Charger_Current || dsky.Cin_voltage < Charger_Target_Voltage - 0.05 || dsky.pack_voltage > pack_target_voltage+0.02)){
             if(ch_boost_power > 0){
                 ch_boost_power-=2; 
             }
@@ -116,7 +111,7 @@ inline void chargeReg(void){
                 charge_power-=2;
             }
         }
-        else if(ch_boost_power < PWM_MaxBoost && (dsky.battery_current < chrg_current && !Cell_HV_Check() && dsky.Cin_current < Max_Charger_Current && dsky.Cin_voltage > Charger_Target_Voltage + 0.05)){
+        else if(ch_boost_power < PWM_MaxBoost && (dsky.battery_current < chrg_current && !Cell_HV_Check() && dsky.Cin_current < Max_Charger_Current && dsky.Cin_voltage > Charger_Target_Voltage + 0.05 && dsky.pack_voltage < pack_target_voltage-0.02)){
             if(charge_power < PWM_MaxChrg)charge_power+=2;
             else ch_boost_power+=2;
         }

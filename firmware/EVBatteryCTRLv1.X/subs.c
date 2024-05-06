@@ -65,7 +65,7 @@ inline void calcAnalog(void){
             for(int i=0;i<4;i++)dsky.Cell_Voltage[i] = S_V[i];
         }
         else {
-            dsky.Cell_Voltage[0] = S_V[0]; //Safer to have the voltages read a little high than a little low.
+            dsky.Cell_Voltage[0] = S_V[0];
             dsky.Cell_Voltage[1] = (S_V[1] - S_V[0]);
             dsky.Cell_Voltage[2] = (S_V[2] - S_V[1]);
             dsky.Cell_Voltage[3] = (S_V[3] - S_V[2]);
@@ -73,8 +73,6 @@ inline void calcAnalog(void){
 
         //Calculate pack voltage. Why not just use S4 input? Because
         //S4 may not be used in smaller packs.
-        //Recalculating based on calibrated and calculated values should
-        //reduce that error amount.
         float PackVolts=0;
         for(int i=0;i<Cell_Count;i++){
             PackVolts+=dsky.Cell_Voltage[i];

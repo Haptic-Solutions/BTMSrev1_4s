@@ -185,6 +185,7 @@ volatile float   resistor_divide_const = 0;              //Value for calculating
 volatile float voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
 volatile float temp_Cell_Voltage_Average[4];
 volatile float Cell_Voltage_Average[4];
+volatile float pack_target_voltage = 0;
 volatile float Bcurrent_compensate = 0;     //Battery Current compensation.
 volatile float Ccurrent_compensate = 0;      //Charger Current compensation.
 volatile float CavgVolt = 0;     //averaged voltage from charger
