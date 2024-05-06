@@ -26,7 +26,7 @@ SOFTWARE. */
 #include "Init.h"
 
 char Cell_HV_Check(){
-    for(int i=0;i<Cell_Count;i++){
+    for(int i=0;i<sets.Cell_Count;i++){
         if(dsky.Cell_Voltage[i]>sets.battery_rated_voltage+0.025) return 1;
     }
     return 0;
@@ -54,6 +54,27 @@ inline void temperatureCalc(void){
     * Temperature_I_Calc(sets.chrg_min_temp, sets.chrg_reduce_low_temp, sets.chrg_max_temp, sets.chrg_reduce_high_temp);
 }
 
+inline void output_PWM(void){
+    if(CONDbits.Power_Out_EN && Run_Level != Cal_Mode){
+        if(Soft_PWM_Timer < Output_Software_PWM){
+            PowerOutEnable = on;
+        }
+        else {
+            PowerOutEnable = off;
+        }
+        if(Soft_PWM_Timer<0){
+            Soft_PWM_Timer=15;
+        }
+        else Soft_PWM_Timer--;
+    }   
+    else{
+        PowerOutEnable = off;
+        Output_Software_PWM = 0;
+        Soft_PWM_Timer=15;
+        precharge_timer = 0;
+    }
+}
+
 inline void outputReg(void){
     ////Check for key power or command power signal, but not soft power signal.
     if((CONDbits.Power_Out_EN && Run_Level != Cal_Mode)){
@@ -64,13 +85,18 @@ inline void outputReg(void){
             heat_control(sets.dischrg_target_temp);
         }
         dsky.max_current = dischrg_current;
-        if(precharge_timer==PreChargeTime)PowerOutEnable = on;
-
-            
+        if(precharge_timer==PreChargeTime){
+            if(Output_PWM_Delay>15){
+                Output_PWM_Delay=0;
+                if(Output_Software_PWM<16)Output_Software_PWM++;
+            }
+            else Output_PWM_Delay++;
+        }   
     }
     else{
         PowerOutEnable = off;
-        precharge_timer = 0;
+        Output_Software_PWM = 0;
+        Output_PWM_Delay = 0;
     }
 }
 

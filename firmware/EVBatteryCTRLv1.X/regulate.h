@@ -25,12 +25,16 @@ extern inline void temperatureCalc(void);
 extern inline void outputReg(void);
 extern inline void chargeReg(void);
 extern inline void heat_control(float);
+extern inline void output_PWM(void);
 
 
 float dischrg_current = 0;
 float chrg_current = 0;
 float percentOut = 0;
 float chrg_remaining = 0;
+int Output_Software_PWM = 0;
+int Output_PWM_Delay = 0;
+int Soft_PWM_Timer = 15;
 
 #endif	/* SUBS_H */
 

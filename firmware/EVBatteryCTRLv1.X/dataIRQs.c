@@ -109,6 +109,13 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
             else ram_err_count++;
         }
     }
+    //Determine how many cells the battery pack has if it hasn't been determined yet and we are in cal run_time.
+    if(Run_Level == Cal_Mode && sets.Cell_Count < 2 && !CONDbits.V_Cal && avg_rdy > 4){
+        if(Cell_Voltage_Average[1]>0.5)sets.Cell_Count=2;
+        if(Cell_Voltage_Average[2]>0.5)sets.Cell_Count=3;
+        if(Cell_Voltage_Average[3]>0.5)sets.Cell_Count=4;
+        save_sets();
+    }
     //End IRQ
     IFS1bits.T4IF = clear;
 }

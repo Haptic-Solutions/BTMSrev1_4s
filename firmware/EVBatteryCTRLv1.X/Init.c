@@ -68,10 +68,9 @@ void default_sets(void){
     sets.max_heat = 3;              //Heater watts that you want to use.
     sets.DeepSleepAfter = 1;    //Deep Sleep the system after this many minutes of not being plugged in or keyed on.
     sets.PowerOffAfter = 1;     //Power off the output after this many minutes when power off wattage is below set amount or 0. 
+    sets.Cell_Count = -1;       //Uninitialized cell count.
     sets.PWR_SW_MODE = push_and_hold;
     //page[2][5][6];              //Display page holder. (PORT)(Page#)(Variable to Display: A '0' at the start = Skip Page)
-    sets.PxVenable[PORT1] = off;         //Port 1 display out is disabled by default.
-    sets.PxVenable[PORT2] = off;         //Port 2 display out is disabled by default.
     vars.testBYTE = 0x46;
     vars.heat_cal_stage = disabled;
     for(int i=0;i<4;i++)OV_Timer[i]=0;
@@ -114,7 +113,7 @@ void configure_IO(void){
     dsky.battery_temp = 0;           //Battery Temperature
     dsky.my_temp = 0;                //Controller board Temperature
     dsky.pack_voltage = 0;        //Battery voltage
-    for(int i=0;i<Cell_Count;i++)voltage_percentage[i] = 0;     //Battery Voltage Percentage.
+    for(int i=0;i<sets.Cell_Count;i++)voltage_percentage[i] = 0;     //Battery Voltage Percentage.
     dsky.battery_current = 0;        //Battery charge/discharge current
 
     /**************************/
@@ -301,8 +300,8 @@ void Init(void){
     IEC0bits.U1TXIE = 1; //Enable interrupts for UART1 Tx.
     IEC1bits.U2RXIE = 1; //Enable interrupts for UART2 Rx.
     IEC1bits.U2TXIE = 1; //Enable interrupts for UART2 Tx.           //We use this space to store a unique ID to indicate if the EEPROM has been written to at least once.
-    IEC0bits.INT0IE = 1;    //Charge Detect IRQ
-    IEC1bits.INT1IE = 1;    //Wheel rotate IRQ
+    IEC0bits.INT0IE = 1;    //Battery Over Voltage IRQ
+    IEC1bits.INT1IE = 1;    //Current sense fault IRQ
     IEC1bits.INT2IE = 0;  //Disable irq for INT2, not used.
     IEC0bits.T2IE = 1;	// Enable interrupts for timer 2
     //IEC0bits.T3IE = 1;	// Enable interrupts for timer 3

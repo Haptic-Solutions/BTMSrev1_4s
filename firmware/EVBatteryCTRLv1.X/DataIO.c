@@ -25,7 +25,7 @@ SOFTWARE. */
 #include "DataIO.h"
 
 void USB_Power_Present_Check(void){
-    if(dsky.Cin_voltage>3.5){
+    if(dsky.Cin_voltage>3.5 || Run_Level < Heartbeat){
         U1MODEbits.UARTEN = 1;  //enable UART1
         U1STAbits.UTXEN = 1;    //enable UART1 TX
         I2CCONbits.I2CEN = 1;   //enable I2C interface

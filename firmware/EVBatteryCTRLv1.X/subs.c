@@ -53,8 +53,8 @@ inline void calcAnalog(void){
         //avgVolt *= 3.3;      //Converted to 0 - 3.3V voltage.
         //analog_cost = (8*65535)/3.3
         //Do it all at once to save time.
-        float S_V[4];
-        for(int i=0;i<4;i++){
+        float S_V[Max_Cell_Count];
+        for(int i=0;i<Max_Cell_Count;i++){
             BavgVolt[i] /= analog_const;
             if(CONDbits.V_Cal) S_V[i] = BavgVolt[i] / resistor_divide_const;
             else S_V[i] = (BavgVolt[i] / resistor_divide_const) + sets.S_vlt_adjst[i];    //Use resistor divider values to covert to actual voltage.
@@ -62,7 +62,7 @@ inline void calcAnalog(void){
         }
         
         if(CONDbits.V_Cal){
-            for(int i=0;i<4;i++)dsky.Cell_Voltage[i] = S_V[i];
+            for(int i=0;i<Max_Cell_Count;i++)dsky.Cell_Voltage[i] = S_V[i];
         }
         else {
             dsky.Cell_Voltage[0] = S_V[0];
@@ -74,7 +74,7 @@ inline void calcAnalog(void){
         //Calculate pack voltage. Why not just use S4 input? Because
         //S4 may not be used in smaller packs.
         float PackVolts=0;
-        for(int i=0;i<Cell_Count;i++){
+        for(int i=0;i<sets.Cell_Count;i++){
             PackVolts+=dsky.Cell_Voltage[i];
         }
         dsky.pack_voltage=PackVolts;
@@ -222,7 +222,7 @@ void CapacityCalc(void){
 //Use lowest cell.
     int lowestCell = 0;
     float previousCell = 100;
-    for(int i=0;i<Cell_Count;i++){
+    for(int i=0;i<sets.Cell_Count;i++){
         if(voltage_percentage[i]<previousCell){
             lowestCell = i;
             previousCell=voltage_percentage[i];
@@ -241,7 +241,7 @@ inline void open_volt_percent(void){
         dsky.open_voltage = dsky.pack_voltage;
         float VoltsFromDead = sets.battery_rated_voltage - sets.dischrg_voltage;
         if(VoltsFromDead==0)VoltsFromDead=1;    //Prevent divide by zero.
-        for(int i=0;i<Cell_Count;i++){
+        for(int i=0;i<sets.Cell_Count;i++){
             float NX = dsky.Cell_Voltage[i] - sets.dischrg_voltage;
             if(NX<0)NX=0;
             float BX = (NX / VoltsFromDead);

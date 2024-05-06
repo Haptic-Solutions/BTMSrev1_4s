@@ -454,7 +454,7 @@ inline void explody_preventy_check(void){
     if(BV_Fault)IFS0bits.INT0IF = 1;
     if(C_Fault)IFS1bits.INT1IF = 1;
     //Battery over voltage check
-    for(int i=0;i<Cell_Count;i++){
+    for(int i=0;i<sets.Cell_Count;i++){
         if(Cell_Voltage_Average[i] > sets.max_battery_voltage){
             if(OV_Timer[i]<100)OV_Timer[i]++;
             else {
@@ -466,7 +466,7 @@ inline void explody_preventy_check(void){
         else if(OV_Timer[i]>0)OV_Timer[i]-=2;
     }
     //Battery under voltage check.
-    for(int i=0;i<Cell_Count;i++){
+    for(int i=0;i<sets.Cell_Count;i++){
         if(dsky.Cell_Voltage[i] < sets.low_voltage_shutdown && !STINGbits.CH_Voltage_Present){
             fault_log(0x3B, i+1);    //Log a low battery shutdown event.
             Flags |= LowVLT;

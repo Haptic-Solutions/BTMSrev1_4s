@@ -70,6 +70,7 @@ struct Settings{
     float   absolute_max_current;       //Max regulating current.
     /******************************/
     float   auto_off_watts;
+    int     Cell_Count;    //Number of cells.
     int   settingsINT[1];
     int   cycles_to_80;               //Number of charge cycles to 80% capacity.
     //Charge temps.
@@ -241,6 +242,7 @@ volatile unsigned int     heat_power = 0;   //heater power
 volatile unsigned int COND = 0;
 typedef struct tagCONDBITS {
   unsigned Power_Out_EN:1;
+  unsigned output_ON:1;
   unsigned Power_Out_Lock:1;
   unsigned charger_detected:1; //Used for when the charger is plugged in.
   unsigned diagmode:1;

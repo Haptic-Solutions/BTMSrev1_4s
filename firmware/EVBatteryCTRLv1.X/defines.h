@@ -122,7 +122,7 @@ SOFTWARE. */
 #define maxFCodes 20
 
 //Constants
-#define Cell_Count 4    //Number of cells placeholder.
+#define Max_Cell_Count 4
 #define SOC_Cycles 8
 #define AuxFuse 5       //Aux charge port fuse rating placeholder.
 #define PreChargeTime 2 //Output pre-charge timer placeholder.

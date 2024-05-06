@@ -57,6 +57,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
 void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
     Cell_Volt=on; //enable cell voltage sense.
     OSC_Switch(fast);
+    output_PWM();
     //Get 8 samples for averaging.
     if (analog_avg_cnt < 8){
         //Force use of all 0's if we haven't burned the first ADC sample after a startup.
@@ -101,7 +102,7 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         if((Flags&syslock) && STINGbits.adc_sample_burn && !STINGbits.fault_shutdown) explody_preventy_check();
         //Check to see if the system is ready to run.
         if(Flags&syslock)IsSysReady(); //If there is a fault, keep system from running. Do this only if settings are LOCKED
-        //ADC sample burn check. Only burn once when main power is on. Otherwise burn every time heartbeat activates the ADC
+        //ADC sample burn check. Only burn once when main power iCell_Voltage_Average[i]s on. Otherwise burn every time heartbeat activates the ADC
         if (Run_Level < Cal_Mode && STINGbits.adc_sample_burn == yes && gas_gauge_timer == 0){
             ADCON1bits.ADON = off;                // turn ADC off to save power.
             Cell_Volt=off; //disable cell voltage sense.
@@ -123,7 +124,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     OSC_Switch(fast);
     ADCON1bits.ADON = on;    // turn ADC on to get a sample.
     //calculate target charge voltage
-    pack_target_voltage = sets.battery_rated_voltage*Cell_Count;
+    pack_target_voltage = sets.battery_rated_voltage*sets.Cell_Count;
     //Check for how fast we are charging.
     if(dsky.battery_crnt_average > (sets.chrg_C_rating*sets.amp_hour_rating)*0.75)CONDbits.fastCharge = 1;
     else CONDbits.fastCharge = 1;
@@ -132,14 +133,14 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     float lowest_cell = 100;
     int lowest_c_num = 0;
     //Do not run ballance resistor on the lowest cell.
-    for(int i=0;i<Cell_Count;i++){
+    for(int i=0;i<sets.Cell_Count;i++){
         if(Cell_Voltage_Average[i]<lowest_cell){
             lowest_c_num = i;
             lowest_cell = Cell_Voltage_Average[i];
         }
     }
     //Check which cell is equal to or above set voltage.
-    for(int i=0;i<Cell_Count;i++){
+    for(int i=0;i<sets.Cell_Count;i++){
         if(Cell_Voltage_Average[i]>=sets.battery_rated_voltage && !CONDbits.V_Cal && i!=lowest_c_num){
             switch(i){
                 case 0 : bal_L = bal_L | 0x01;
@@ -192,7 +193,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     if(CONDbits.got_open_voltage && first_cal == 3){
         float LOW_VP = 100;
         //Always use lowest cell.
-        for(int i=0;i<Cell_Count;i++){
+        for(int i=0;i<sets.Cell_Count;i++){
             if(voltage_percentage[i]<LOW_VP)LOW_VP=voltage_percentage[i];
         }
         //Estimate how much capacity the battery can hold.
@@ -299,7 +300,7 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
         else soft_OVC_Timer++;
     }
     //Low voltage monitoring and auto off.
-    for(int i=0;i<Cell_Count;i++){
+    for(int i=0;i<sets.Cell_Count;i++){
         if(dsky.Cell_Voltage[i] < sets.low_voltage_shutdown && (Flags&syslock)){
             CONDbits.Power_Out_EN = off;
             fault_log(0x04, i+1);
@@ -310,7 +311,7 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
 
     //Get average voltage and current.
     if(avg_cnt < 8){
-        for(int i=0;i<Cell_Count;i++){
+        for(int i=0;i<Max_Cell_Count;i++){
             temp_Cell_Voltage_Average[i] += dsky.Cell_Voltage[i];
         }
         CavgCurnt_temp += dsky.Cin_current;
@@ -319,7 +320,7 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
         avg_cnt++;
     }
     else{
-        for(int i=0;i<Cell_Count;i++){
+        for(int i=0;i<Max_Cell_Count;i++){
             temp_Cell_Voltage_Average[i] /= 8;
             Cell_Voltage_Average[i] = temp_Cell_Voltage_Average[i];
         }
@@ -329,7 +330,7 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
         dsky.battery_crnt_average = bt_crnt_avg_temp;
         bt_vltg_avg_temp /= 8;
         dsky.pack_vltg_average = bt_vltg_avg_temp;
-        for(int i=0;i<Cell_Count;i++){
+        for(int i=0;i<Max_Cell_Count;i++){
             temp_Cell_Voltage_Average[i] = 0;
         }
         CavgCurnt_temp = 0;

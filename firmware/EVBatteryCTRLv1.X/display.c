@@ -194,6 +194,8 @@ void all_info(int serial_port){
     send_string("\n\r", serial_port);
     send_string("5: |CM|      |AA|     |OCV|    |MC|\n\r", serial_port);
     send_Float_Array(dsky.dskyarrayFloat, 16, 19, serial_port);
+    send_string("\n\r Cell Config: ", serial_port);
+    load_float(sets.Cell_Count, serial_port);
     send_string("\n\r Ah Rating: ", serial_port);
     load_float(sets.amp_hour_rating, serial_port);
     send_string("\n\r Capacity: ", serial_port);

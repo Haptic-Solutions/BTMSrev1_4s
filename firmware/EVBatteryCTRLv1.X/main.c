@@ -83,7 +83,7 @@ int main(void){
     first_check();
     //Initialize Systems.
     Run_Level = Cal_Mode;
-    for(int i=0;i<Cell_Count;i++){
+    for(int i=0;i<sets.Cell_Count;i++){
         temp_Cell_Voltage_Average[i] = 0;
     }
     Init();
