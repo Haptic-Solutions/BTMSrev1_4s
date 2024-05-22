@@ -49,16 +49,16 @@ const char code19[] = "Sys Rst";
 const char code1A[] = "Inval serial port";
 const char code1B[] = "USB Chrg Fault";
 const char code1C[] = "PChg set > 100%: Clamping.";
-const char code1D[] = "VH ChV";
-const char code1E[] = "VL ChV";
-const char code1F[] = "VH ChC";
-const char code20[] = "VL ChC";
-const char code21[] = "VH BTmp";
-const char code22[] = "VL BTmp";
-const char code23[] = "VH BC";
-const char code24[] = "VL BC";
-const char code25[] = "VH SM";
-const char code26[] = "VL SM";
+const char code1D[] = "VH ChrgVlt";
+const char code1E[] = "VL ChrgVlt";
+const char code1F[] = "VH ChrgCrnt";
+const char code20[] = "VL ChrgCrnt";
+const char code21[] = "VH BtryTmp";
+const char code22[] = "VL BtryTmp";
+const char code23[] = "VH BtryCrnt";
+const char code24[] = "VL BtryCrnt";
+const char code25[] = "VH SysTmp";
+const char code26[] = "VL SysTmp";
 const char code27[] = "PORT1 BSY err";
 const char code28[] = "PORT2 BSY err";
 const char code29[] = "Pgm Chksum Err";
@@ -68,21 +68,26 @@ const char code2C[] = "NVS Chksum Err";
 const char code2D[] = "PORT1 ERR";
 const char code2E[] = "PORT2 ERR";
 const char code2F[] = "Soft Over Current";
-const char code30[] = "VH S1";
-const char code31[] = "VL S1";
-const char code32[] = "VH S2";
-const char code33[] = "VL S2";
-const char code34[] = "VH S3";
-const char code35[] = "VL S3";
-const char code36[] = "VH S4";
-const char code37[] = "VL S4";
+const char code30[] = "VH S1Vlt";
+const char code31[] = "VL S1Vlt";
+const char code32[] = "VH S2Vlt";
+const char code33[] = "VL S2Vlt";
+const char code34[] = "VH S3Vlt";
+const char code35[] = "VL S3Vlt";
+const char code36[] = "VH S4Vlt";
+const char code37[] = "VL S4Vlt";
 const char code38[] = "Charger input Over Volt";
-const char code39[] = "Hardware Over Current Shutdown: Unplug charger source and turn power off for 20 seconds to reset.";
-const char code3A[] = "Hardware Over Voltage Shutdown: Battery Safety Fuse Tripped. Unit must be serviced.";
+const char code39[] = "Hardware OverCrnt Shutdown: Unplug source, & turn power off for 20 seconds to reset.";
+const char code3A[] = "Hardware OverVolt Shutdown: Battery Safety Fuse Tripped. Unit must be serviced.";
 const char code3B[] = "Battery Under Voltage Lockout";
 const char code3C[] = "Charger power has cycled too many times. Aborting for now.";
 const char code3D[] = "Sys Safe Mode. Minimum Debug Functionality.";
 const char code3E[] = "Port Sanity Error";
+const char code3F[] = "I2C Sequence Error";
+const char code40[] = "I2C Timeout";
+const char code41[] = "I2C bus not idle";
+const char code42[] = "I2C bus collision";
+const char code43[] = "I2C ACK Error";
 const char codeDefault[] = "Unknown";
 
 const char * const errArray[] = {code01,code02,code03,code04,code05,code06,code07,code08,code09,code0A,code0B,code0C
@@ -90,7 +95,7 @@ const char * const errArray[] = {code01,code02,code03,code04,code05,code06,code0
                          ,code19,code1A,code1B,code1C,code1D,code1E,code1F,code20,code21,code22,code23,code24
                          ,code25,code26,code27,code28,code29,code2A,code2B,code2C,code2D,code2E,code2F,code30
                          ,code31,code32,code33,code34,code35,code36,code37,code38,code39,code3A,code3B,code3C
-                         ,code3D,code3E,codeDefault};
+                         ,code3D,code3E,code3F,code40,code41,code42,code43,codeDefault};
 
 #endif	/* ERRORCODES_H */
 

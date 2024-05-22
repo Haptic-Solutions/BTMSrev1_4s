@@ -40,6 +40,8 @@ extern void USB_Power_Present_Check(void);
 extern void portBusyIdle(int);
 extern void load_const_string(const char*, int);
 extern float Get_Float(int, int);
+extern void Send_I2C(unsigned int, unsigned int, unsigned char, unsigned char);
+extern void Receive_I2C(unsigned int, unsigned char, unsigned char);
 void load_hex(int, int);
 int port_Sanity(int);
 
@@ -56,6 +58,32 @@ char tx_temp[2] = {0,0};
 char portBSY[2] = {0,0};
 char writingbuff[2] = {0,0};
 char dynaSpace[2] = {0,0};
+
+//I2C stuff
+#define IC_PACK_SIZE 30
+unsigned char IC_Address = 0;     //address of the I2C device.
+unsigned char IC_Command = 0;     //sub address inside the device
+unsigned char IC_Packet[IC_PACK_SIZE];      //data buffer
+unsigned int IC_Pack_Index = 0;  //data buffer index
+unsigned int IC_Pack_Size = 0;   //Number of bytes to transmit or have been received.
+int IC_Timer = -1;       //Number of tries before erroring out.
+unsigned char IC_Seq = 0;         //I2C sequence status.
+
+#define MD_Send 0
+#define MD_Recieve 1
+
+#define IC_Stop_start 1 //send
+#define IC_start 2      //send
+#define slv_adr 3       //send
+#define slv_ack 4       //wait for ack
+#define cmd_adr 5       //send
+#define cmd_ack 6       //wait for ack
+#define rpt_strt 7      //send
+#define rpt_slv_adr 8   //send with or without read bit
+#define rpt_slv_ack 9   //wait for ack
+#define slv_data 10      //either send or receive
+#define data_ack 11     //either send ack or wait for ack
+#define IC_stop 12      //send
 
 #endif	/* DATAIO_H */
 

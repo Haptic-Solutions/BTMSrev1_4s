@@ -49,6 +49,8 @@ SOFTWARE. */
 #include "sysChecks.h"
 #include "regulate.c"
 #include "regulate.h"
+#include "poweroptions.c"
+#include "poweroptions.h"
 
 /* Program Start */
 /***********************************************************

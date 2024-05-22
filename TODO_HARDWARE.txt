@@ -2,49 +2,13 @@
 ##  Hardware features and bugs to be fixed and added ##
 ####################################
 
-Fix: Wrong footprints used for chip array resistors. <- Fully Done.
+Add: Small electrolytic decoupling capacitors to output of buck-boost converter. Might need some on input as well. Seems to trip USB-PD charges when average current isn't anywhere near it's set limit.
 
-Add: Missing I2C communication lines from USB3.1 PD chip and dsPIC. <- Done in schematic and board, but not tested, and not implemented in firmware.
-
-Fix: dsPIC30F3011 QFN package has different pinout than all other package variants. Can't use schematic symbol from any other pack variants either. Must use QFN symbol and footprint. <- Bodges tested working on prototype. <- Fixed schematic and board.
-
-Fix: Use 220 ohm resistors to drive LEDs. Not enough current going to opto-isolator to properly drive cell balancing system. <- Tested working on prototype. Used different driving system using MOSFET arrays. Done in schematic and board.
-
-Add: More decoupling capacitors around dsPIC for good measure, but don't be excessive. <- Comes with separating analog and digital 3.3v supplies.
-
-Add: Small electrolytic decoupling capacitors to output of buck-boost converter.
-
-Fix: Change any analog input filter capacitors from 100nF to 1uF capacitors. <- Fixed in schematic and board.
-
-Fix: Seems schottky diodes create their own RF when one side has a ripple voltage and the other side has a decoupling capacitor. <-Partly tested. Not satisfied. Need to test new buck converter supplies.
-Find rectifier diodes that are small with high enough current rating to replace input select diodes before the 3.3v regulator.
-Replace any other schottky diodes where possible. Add snubber networks.
-In revision, using switch mode power supplies for 3.3v digital, and 5v AUX rails. Using a smaller 3.3v linear regulator for analog stuff.
-
-Add: 10uF capacitor to input of 3.3v regulator(s). <- Moot.
-
-Upgrade: Current output rating is only 10 amps. Try to get it up to 15 amps.
+Upgrade: Current output rating is only 10 amps. Try to get it up to 15 amps. Not high priority.
 
 Fix: Lots of EMI coming from multiplexed LED drive circuit. <- Moved resistors as close to dsPIC as possible. Added resistor to multiplex selector.
 
-Fix: USB and AUX charge inputs will output power to one or the other. This is NOT safe for either device that may be plugged in. <- Added diode to USB input.
-
-Fix: Balance LEDs continually on when battery connected. Connections are wrong in schematic. <- Tested and working on prototype board. <-Fixed in schematic and board.
-
-Fix: 1k pull-up resistor is too much for cell hardware over voltage detect circuit. Use of 10K seems to work on prototype. <- Tested and working on prototype board. <- Fixed in schematic and board.
-
-Do better: Opto-isolator used for switching cell voltage detect is inaccurate and inefficient. Maybe an analog switch chip would be better and smaller? <- Added P-Channel MOSFET arrays to reduce voltage drop.
-
-Fix: voltage readings horribly wrong especially charger input voltage when one side of the board heats up more than the other. Place resistors closer together and use 0.1% or better resistors, preferably matched sets or arrays. <Done in schematic and board.
-
-Change: Replace all film capacitors with the board-flex 100nF capacitors. They aren't needed afaict and are more expensive. <- Fixed in schematic and board.
-
-Fix: Separate analog and digital 3.3v supplies. Digital needs a small switching buck converter, and analog needs a tiny linear regulator. <- Fixed in schematic and board. Need to test thin film inductors on some ready-made buck converters before finalizing this design. <- Tested thin film inductors and they seem to work fine with a 700khz buck converter. Current board design uses 1mhz buck converter.
-
-Fix: Buck-Boost converter is running pretty inefficient. Maybe less than 50%. Tested at 17V input and it works, but buck side low mosfet heats up to over 200F. Maybe the mosfets aren't turning off fast enough and there is shoot-through?
-Found that mosfets are turning on when they aren't supposed to due to Miller Effect. Need to add in schottky diode to half-bridge output to help clamp negative spikes from inductor. Maybe need to change drive circuit(s) to an asymmetric architecture,
-and can supply more current overall. <-Fixed in schematic and board. Bypassed gate resistors and tested. Efficiency is much better and current drops a lot more when raising voltages. Mosfets no longer heat up like they did, but driver chips heat up more.
-This should be fine with new board revision because it will run the mosfet drive circuit from the 5v AUX supply. Tested with old driver chip on REV (1)P, but need to test current draw of revised drive circuit. Will 5v AUX handle the increased current?
+Fix: USB and AUX charge inputs will output power to one or the other. This is NOT safe for either device that may be plugged in. <- Added diode to USB input. Need better solution that doesn't waste so much energy as heat.
 
 Fix: Capacitive loads cause inrush current that trips the over current protection circuit. A pre-charge circuit with resistors might work with some types of loads, but probably not when loads are both resistive and capacitive. <- Changed power source of
 current sense IC's to an IO pin of the micro controller so that they can be reset when a known inrush current is about to be switched on.

@@ -24,15 +24,19 @@ SOFTWARE. */
 #include "common.h"
 #include "DataIO.h"
 
+//This routine insures that no voltage is present on the AUX/VBUS bus when there isn't a charger connected.
+//Without this, IO lines and pullup resistors will back-drive through the PD chip.
 void USB_Power_Present_Check(void){
-    if(dsky.Cin_voltage>3.5 || Run_Level < Heartbeat){
+    if(dsky.Cin_voltage>3.5){
         U1MODEbits.UARTEN = 1;  //enable UART1
         U1STAbits.UTXEN = 1;    //enable UART1 TX
-        I2CCONbits.I2CEN = 1;   //enable I2C interface
+        GENERAL2_TRIS = GENERAL2_DIR | 0x0C;       //set I2C lines to inputs.
     }
     else {
         U1MODEbits.UARTEN = 0;  //disable UART1
         U1STAbits.UTXEN = 0;    //disable UART1 TX
+        I2CCONbits.I2CEN = 0;   //disable I2C interface
+        GENERAL2_TRIS = GENERAL2_DIR & 0xFFF3;           //set I2C lines to Outputs.
         I2CCONbits.I2CEN = 0;   //disable I2C interface
     }
 }
@@ -207,6 +211,7 @@ void load_float(float f_data, int serial_port){
         f_data *= -1;                       //Convert to absolute value.
         float_out[serial_port][0] = '-';    //Put a - in first char
     }
+    f_data += 0.00001;
     if (f_data > 9999.999){
         f_data = 9999.999;      //truncate it if it's too big of a number.
         float_out[serial_port][0] = '?';    //Put a ? in first char if truncated.

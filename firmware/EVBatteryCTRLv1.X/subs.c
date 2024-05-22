@@ -178,7 +178,7 @@ inline void IsSysReady(void){
                     else if(heat_power>PWM_MaxHeat)heat_power=PWM_MaxHeat;
                     
                     if(ch_boost_power<0)ch_boost_power=0;
-                    else if(ch_boost_power>PWM_MaxBoost)ch_boost_power=PWM_MaxBoost;
+                    else if(ch_boost_power>PWM_MaxBoost_HN)ch_boost_power=PWM_MaxBoost_HN;
                     
                     if(charge_power<0)charge_power=0;
                     else if(charge_power>PWM_MaxChrg)charge_power=PWM_MaxChrg;
@@ -237,7 +237,7 @@ void CapacityCalc(void){
 //Gets called by analog IRQ in file sysIRQs.c
 inline void open_volt_percent(void){
     //Use open circuit voltage only.
-    if (absFloat(dsky.battery_current) < 0.05 && STINGbits.adc_sample_burn){
+    if (absFloat(dsky.battery_current) < 0.05 && STINGbits.adc_sample_burn && !CONDbits.got_open_voltage){
         dsky.open_voltage = dsky.pack_voltage;
         float VoltsFromDead = sets.battery_rated_voltage - sets.dischrg_voltage;
         if(VoltsFromDead==0)VoltsFromDead=1;    //Prevent divide by zero.
@@ -247,7 +247,7 @@ inline void open_volt_percent(void){
             float BX = (NX / VoltsFromDead);
             voltage_percentage[i] = 100 * ((2*simpleCube(BX-0.5))+(0.5*(BX-0.5))+0.5); //Battery SOC curve approximation.
         }
-        CONDbits.got_open_voltage = yes;
+        CONDbits.got_open_voltage = set;
     }
 }
 

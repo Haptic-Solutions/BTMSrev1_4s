@@ -28,7 +28,11 @@ SOFTWARE. */
 #define PWM_Period 100
 #define PWM_MaxHeat (PWM_Period*2)*0.9
 #define PWM_MaxChrg (PWM_Period*2)*0.98
-#define PWM_MaxBoost (PWM_Period*2)*0.75
+#define PWM_MaxBoost_LO 0.53
+#define PWM_MaxBoost_HI 0.76
+#define PWM_MaxBoost_LN (PWM_Period*2)*PWM_MaxBoost_LO
+#define PWM_MaxBoost_HN (PWM_Period*2)*PWM_MaxBoost_HI
+#define char_Max_Level 0.85
 //#define IPS 7.37   //million instructions per second.
 #define BAUD1 9600  //Default BAUD rate for PORT 1
 #define BAUD2 9600  //Default BAUD rate for PORT 2
@@ -82,7 +86,7 @@ SOFTWARE. */
 #define GENERAL1_LAT LATC
 #define GENERAL1_PORT PORTC
 
-#define GENERAL2_DIR 0xFFB2
+#define GENERAL2_DIR 0xFFBE
 #define GENERAL2_TRIS TRISF
 #define GENERAL2_LAT LATF
 #define GENERAL2_PORT PORTF

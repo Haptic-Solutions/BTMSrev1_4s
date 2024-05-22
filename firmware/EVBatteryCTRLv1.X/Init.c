@@ -42,7 +42,7 @@ void default_sets(void){
     sets.low_voltage_shutdown = 2.4;    //Battery Low lockout voltage
     sets.dischrg_C_rating = 2;           //Discharge C rating
     sets.limp_current = 1;              //Limp mode current in amps. Minimum current to regulate to.
-    sets.chrg_C_rating = 0.5;          //Charge C rating.
+    sets.chrg_C_rating = 1;          //Charge C rating.
     sets.amp_hour_rating = 2.6;         //Battery amp hour rating.
     sets.over_current_shutdown = 8;        //Shutdown current. Sometimes the regulator isn't fast enough and this happens.
     sets.absolute_max_current = 8.5;      //Max regulating current.
@@ -52,18 +52,18 @@ void default_sets(void){
     //Charge temps.
     sets.chrg_min_temp = 10;          //Battery minimum charge temperature. Stop Charging at this temp.
     sets.chrg_reduce_low_temp = 15;      //Reduce charge current when lower than this temp.
-    sets.chrg_max_temp = 40;          //Battery max charge temp. Stop charging at this temp.
-    sets.chrg_reduce_high_temp = 35; //Reduce charge current when higher than this temp.
+    sets.chrg_max_temp = 50;          //Battery max charge temp. Stop charging at this temp.
+    sets.chrg_reduce_high_temp = 45; //Reduce charge current when higher than this temp.
     sets.chrg_target_temp = 25;      //Battery heater charge target temp. Keeps us nice and warm in the winter time.
     //Discharge temps.
     sets.dischrg_min_temp = 0;       //Battery minimum discharge temperature.
     sets.dischrg_reduce_low_temp = 10;    //Reduced current discharge low temperature.
-    sets.dischrg_max_temp = 55;       //Battery max discharge temperature.
-    sets.dischrg_reduce_high_temp = 50;       //Battery reduced discharge high temperature.
+    sets.dischrg_max_temp = 60;       //Battery max discharge temperature.
+    sets.dischrg_reduce_high_temp = 55;       //Battery reduced discharge high temperature.
     sets.dischrg_target_temp = 15;      //Battery heater discharge target temp. Keeps us nice and warm in the winter time.
     //Shutdown temps.
-    sets.battery_shutdown_temp = 60;      //Max battery temp before shutting down everything.
-    sets.ctrlr_shutdown_temp = 80;        //Max motor or motor controller temp shutdown.
+    sets.battery_shutdown_temp = 65;      //Max battery temp before shutting down everything.
+    sets.ctrlr_shutdown_temp = 80;        //Max BMS temp before shutdown.
     //Some other stuff.
     sets.max_heat = 3;              //Heater watts that you want to use.
     sets.DeepSleepAfter = 1;    //Deep Sleep the system after this many minutes of not being plugged in or keyed on.
@@ -181,7 +181,7 @@ void configure_IO(void){
 /* Configure I2C */
 /*****************************/
     I2CCON = 0;
-    I2CBRG = 0x0B5; //Speed not too critical. As long as it's within specs.
+    I2CBRG = 0x1FF; //Speed not too critical. As long as it's within specs.
 /*****************************/
     //Note: Timers are now all configured by the clock switch routine located in subs.c
 //Timer configs at 58,960,000 hz
@@ -251,10 +251,10 @@ void configure_IO(void){
     IPC2bits.ADIP = 7;      //Analog inputs and regulation routines, Important.
     IPC0bits.INT0IP = 6;    //Over voltage IRQ.
     IPC4bits.INT1IP = 6;    //Over current IRQ.
-    IPC1bits.T2IP = 5;      //0.125 second IRQ for some math timing, Greater priority.
+    IPC1bits.T2IP = 6;      //0.125 second IRQ for some math timing, Greater priority.
+    IPC3bits.MI2CIP = 5;    //I2C Master IRQ
     IPC0bits.T1IP = 4;      //Heartbeat IRQ, eh, not terribly important.
-    IPC3bits.MI2CIP = 4;    //I2C collision priority.
-    IPC3bits.SI2CIP = 4;    //I2C transfer complete priority.
+    IPC3bits.SI2CIP = 4;    //I2C Slave IRQ
     IPC2bits.U1TXIP = 3;    //TX 1 IRQ, Text can wait
     IPC6bits.U2TXIP = 3;    //TX 2 IRQ, Text can wait
     IPC2bits.U1RXIP = 2;    //RX 1 IRQ, Text can wait
@@ -293,8 +293,8 @@ void Init(void){
     IEC0 = 0;
     IEC1 = 0;
     IEC2 = 0;
-    IEC0bits.MI2CIE = 1;	// Enable interrupts for I2C collision
-    IEC0bits.SI2CIE = 1;	// Enable interrupts for I2C transfer complete
+    IEC0bits.MI2CIE = 1;	// Enable interrupts for I2C master
+    IEC0bits.SI2CIE = 1;	// Enable interrupts for I2C slave
 	IEC0bits.T1IE = 1;	// Enable interrupts for timer 1
     IEC0bits.U1RXIE = 1; //Enable interrupts for UART1 Rx.
     IEC0bits.U1TXIE = 1; //Enable interrupts for UART1 Tx.

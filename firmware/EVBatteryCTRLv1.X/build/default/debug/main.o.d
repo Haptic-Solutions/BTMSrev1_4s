@@ -1,7 +1,8 @@
 build/default/debug/main.o: main.c common.h defines.h chipconfig.h IRQs.h \
  sysIRQs.c DataIO.h Init.h display.h eeprom.h checksum.h sysChecks.h \
  regulate.h dataIRQs.c trapIRQs.c subs.c DataIO.c Init.c display.c \
- errorCodes.h eeprom.c checksum.c sysChecks.c regulate.c
+ errorCodes.h poweroptions.h eeprom.c checksum.c sysChecks.c regulate.c \
+ poweroptions.c
 
 common.h:
 
@@ -41,6 +42,8 @@ display.c:
 
 errorCodes.h:
 
+poweroptions.h:
+
 eeprom.c:
 
 checksum.c:
@@ -48,3 +51,5 @@ checksum.c:
 sysChecks.c:
 
 regulate.c:
+
+poweroptions.c:

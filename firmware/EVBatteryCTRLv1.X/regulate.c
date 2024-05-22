@@ -104,13 +104,8 @@ inline void chargeReg(void){
     //Charge current read and target calculation.
     //// Check for Charger.
     if(STINGbits.CH_Voltage_Present && CONDbits.charger_detected && Run_Level != Cal_Mode){
-        //Check to see if anything has happened with our USB_3 charging. && !V_Bus_Stat
-        if((charge_mode >= USB3_Wimp && charge_mode <= USB3_Fast)){
-            STINGbits.CH_Voltage_Present=0;
-            charge_mode = Stop;
-        }
         //Check to see if something has changed or was unplugged.
-        if(charge_mode > Assignment_Ready && charge_mode != Solar && dsky.Cin_voltage<Charger_Target_Voltage-1){
+        if(charge_mode > Assignment_Ready && charge_mode != Solar && dsky.Cin_voltage<4){
             STINGbits.CH_Voltage_Present=0;
             charge_mode = Stop;
         }
@@ -126,10 +121,9 @@ inline void chargeReg(void){
         //not supplying enough current to do both.
         if(dsky.battery_current >= 0.02) heat_control(sets.chrg_target_temp);
         else if(dsky.battery_current < 0 && heat_power > 0) heat_power--;
-
         //Regulate the charger input.
         // Charge regulation routine.
-        if(charge_power > 0 && (dsky.battery_current > chrg_current || Cell_HV_Check()>0 || dsky.Cin_current > Max_Charger_Current || dsky.Cin_voltage < Charger_Target_Voltage - 0.05 || dsky.pack_voltage > pack_target_voltage+0.02)){
+        if(charge_power > 0 && (dsky.battery_current > chrg_current || Cell_HV_Check()>0 || dsky.Cin_current >= Max_Charger_Current-0.05 || dsky.Cin_voltage < Charger_Target_Voltage - 0.05 || dsky.pack_voltage > pack_target_voltage+0.02)){
             if(ch_boost_power > 0){
                 ch_boost_power-=2; 
             }
@@ -137,7 +131,7 @@ inline void chargeReg(void){
                 charge_power-=2;
             }
         }
-        else if(ch_boost_power < PWM_MaxBoost && (dsky.battery_current < chrg_current && !Cell_HV_Check() && dsky.Cin_current < Max_Charger_Current && dsky.Cin_voltage > Charger_Target_Voltage + 0.05 && dsky.pack_voltage < pack_target_voltage-0.02)){
+        else if(ch_boost_power < PWM_MaxBoost && (dsky.battery_current+0.05 < chrg_current && !Cell_HV_Check() && dsky.Cin_current+0.05 < Max_Charger_Current && dsky.Cin_voltage > Charger_Target_Voltage + 0.05 && dsky.pack_voltage < pack_target_voltage-0.02)){
             if(charge_power < PWM_MaxChrg)charge_power+=2;
             else ch_boost_power+=2;
         }

@@ -27,6 +27,7 @@ SOFTWARE. */
 #include "errorCodes.h"
 #include "eeprom.h"
 #include "checksum.h"
+#include "poweroptions.h"
 
 
 
@@ -250,10 +251,46 @@ void Command_Interp(int serial_port){
             //Send fault alert "!"
             load_string(" ->CrE!<-", serial_port);
         }
+        int stat=0;
         switch(CMD_buff[serial_port][tempPoint[serial_port]]){
             case '\r':
             break;
             case '\n':
+            break;
+            case 'b':
+                List_PD_Options(serial_port);
+            break;
+            case 'V':
+                stat = Set_PD_Option(Get_Highest_PD());
+                if(stat==1){
+                    load_string("\n\r Set highest wattage PD success.\n\r", serial_port);
+                    Last_PD(serial_port);
+                    Max_Charger_Current=PD_Last_Current*char_Max_Level;   //Don't run charger more than this capacity.
+                    Charger_Target_Voltage = PD_Last_Voltage-(10/PD_Last_Current);  //Calculate max heat loss allowed through cable and connections.
+                    charge_mode = USB3;
+                }
+                else if(stat==2) {
+                    load_string("\n\r Set highest wattage PD FAILED. PD-Status: ", serial_port);
+                    load_hex(PD_Last_Status, serial_port);
+                    load_string("\n\r", serial_port);
+                }
+                else load_string("\n\r Can't talk with PD controller.", serial_port);
+            break;
+            case 'v':
+                stat = Set_PD_Option(Get_Lowest_PD_Voltage());
+                if(stat==1){
+                    load_string("\n\r Set lowest voltage PD success.\n\r", serial_port);
+                    Last_PD(serial_port);
+                    Max_Charger_Current=PD_Last_Current*char_Max_Level;   //Don't run charger more than this capacity.
+                    Charger_Target_Voltage = PD_Last_Voltage-(10/PD_Last_Current);  //Calculate max heat loss allowed through cable and connections.
+                    charge_mode = USB3_Wimp;
+                }
+                else if(stat==2) {
+                    load_string("\n\r Set lowest voltage PD FAILED. PD-Status: ", serial_port);
+                    load_hex(PD_Last_Status, serial_port);
+                    load_string("\n\r", serial_port);
+                }
+                else load_string("\n\r Can't talk with PD controller.", serial_port);
             break;
             case '#':   //Reset the CPU
                 if(Flags&syslock)setsLockedErr(serial_port);
@@ -382,11 +419,16 @@ void Command_Interp(int serial_port){
                 all_info(serial_port);
             break;
             case 'l':  //Unlock the system and allow variables to be modified.
-                Flags &= 0xFE;
-                CONDbits.Power_Out_EN = off;
-                STINGbits.CH_Voltage_Present = off;
-                save_vars();
-                load_string("Sets UnLKD.\n\r", serial_port);
+                if(CMD_buff[serial_port][2]=='Y'){
+                    Batt_IO_OFF();
+                    Flags &= 0xFE;
+                    CONDbits.Power_Out_EN = off;
+                    STINGbits.CH_Voltage_Present = off;
+                    save_vars();
+                    load_string("Sets UnLKD.\n\r", serial_port);
+                    CMD_buff[serial_port][2]='N';
+                }
+                else load_string("Usage: 'l Y' to unlock.\n\r", serial_port);
             break;
             case 'L':  //Lock the system and enable system functionality.
                 send_string("Wait...", serial_port);
@@ -479,8 +521,8 @@ void LED_Mult(char attributes){
             }
             //Charging level indication.
             else if(CONDbits.charger_detected){
-                if(BlinknLights&0x01 && (charge_mode == USB3_Fast || CONDbits.fastCharge))LED_ChrgLVL(dsky.chrg_percent+25); //Fast charging indication.
-                else if(BlinknLights&0x02 && charge_mode != USB3_Fast && !CONDbits.fastCharge)LED_ChrgLVL(dsky.chrg_percent+25);  //Normal charging indication.
+                if(BlinknLights&0x01 && (charge_mode == USB3 || CONDbits.fastCharge))LED_ChrgLVL(dsky.chrg_percent+25); //Fast charging indication.
+                else if(BlinknLights&0x02 && charge_mode != USB3 && !CONDbits.fastCharge)LED_ChrgLVL(dsky.chrg_percent+25);  //Normal charging indication.
                 else LED_ChrgLVL(dsky.chrg_percent);
             }
             //Power level indication.

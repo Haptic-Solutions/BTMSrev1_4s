@@ -2,20 +2,20 @@
 ##  Firmware features and bugs to be fixed and added ##
 ####################################
 
-Fix: Charging routine not fully charging the battery and then maintaining the voltage.
+Fix: Charging routine not fully charging the battery and then maintaining the voltage. Testing.
 
 Implement: MPPT for solar charging.
 
-Implement: I2C communication to USB3.1 PD chip
+Implement: I2C communication to USB3.1 PD chip. Mostly done. Bug where re-plugging in the charger does not initiate USB3 charging. Testing.
 
-Implement: Power button features.
+Implement: Power button features. Done.
 
-Fix: Stack overflow when too many processes are being run at once. May require upgrade to dsPIC30F4011 that has more memory.
+Fix: Stack overflow when too many processes are being run at once. May require upgrade to dsPIC30F4011 that has more memory. Done. Using 4011 chip now.
 
 Implement: Better CLI interface such as more info available at request, and easier to understand variable names.
 
-Implement: Change ALL settings from CLI.
+Implement: Be able to change ALL settings from CLI.
 
-Implement: Add attributes to error codes. This will help reduce the number of error codes.
+Implement: Add attributes to error codes. This will help reduce the number of error codes. Done.
 
 Fix: Fault light doesn't always turn on when an error is logged, especially when system shuts down, and doesn't always blink as it should.

@@ -55,6 +55,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
 
 /* Analog Input IRQ */
 void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
+    IFS0bits.ADIF = 0;
     Cell_Volt=on; //enable cell voltage sense.
     OSC_Switch(fast);
     output_PWM();
@@ -109,6 +110,7 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
             STINGbits.adc_sample_burn = no;     //Burn the first ADC sample on every power up of ADC.
         }
         else STINGbits.adc_sample_burn = yes;      //We have burned the first set.
+        USB_Power_Present_Check(); //Enable or Disable PORT1 depending if there is voltage present to FTDI chip.
     }
     //Run the LED routine
     if((Run_Level > Cal_Mode || (gas_gauge_timer > 0 && Run_Level != Cal_Mode)) && (Flags&syslock))LED_Mult(on);
@@ -116,18 +118,18 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
     else if(Run_Level != Crit_Err && Run_Level != Cal_Mode) LED_Mult(Ballance);
     else LED_Mult(off);
     //End IRQ
-    IFS0bits.ADIF = 0;
 }
 
 /* Heartbeat IRQ, Once every Second. Lots of stuff goes on here. */
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
+    IFS0bits.T1IF = 0;
     OSC_Switch(fast);
     ADCON1bits.ADON = on;    // turn ADC on to get a sample.
     //calculate target charge voltage
     pack_target_voltage = sets.battery_rated_voltage*sets.Cell_Count;
     //Check for how fast we are charging.
     if(dsky.battery_crnt_average > (sets.chrg_C_rating*sets.amp_hour_rating)*0.75)CONDbits.fastCharge = 1;
-    else CONDbits.fastCharge = 1;
+    else CONDbits.fastCharge = 0;
     //Check if a cell has reached it's ballance voltage.
     int bal_L = 0;
     float lowest_cell = 100;
@@ -217,7 +219,7 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
         //Don't let battery_remaining go above battery capacity.
         if(vars.battery_remaining > vars.battery_capacity) vars.battery_remaining = vars.battery_capacity;
         //Don't let 'battery_remaining' go above the partial charge percentage when partial charging.
-        CONDbits.got_open_voltage = 0;
+        //CONDbits.got_open_voltage = set;
     }
     //**************************************************
     //Calculate battery %
@@ -240,16 +242,23 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     initialCal();
     if(PORTS_DONE() && slowINHIBIT_Timer > 0 && !CONDbits.charger_detected)slowINHIBIT_Timer--;
     /* End the IRQ. */
-	IFS0bits.T1IF = 0;
 }
 
 /* 0.125 second IRQ */
 //Used for some critical math timing operations. Cycles through every 1/8 sec.
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
+    IFS0bits.T2IF = 0;
     OSC_Switch(fast);
     //Blink some LEDs
     BlinknLights++; //Count up all the time once every 1/8 second.
     //Check power switch or button.
+    if(IC_Timer>0)IC_Timer--;
+    else if(IC_Timer==0){
+        fault_log(0x40, IC_Seq);
+        IC_Timer=-1;
+        IC_Seq = clear;
+        I2CCONbits.I2CEN = 0;   //disable I2C interface
+    }
     if(PWR_SW)gas_gauge_timer = gauge_timer;
     else if(gas_gauge_timer>0 && Run_Level != Cal_Mode)gas_gauge_timer--;
     switch(sets.PWR_SW_MODE){
@@ -364,7 +373,6 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     }
     /****************************************/
     /* End the IRQ. */
-	IFS0bits.T2IF = 0;
 }
 /****************/
 /* END IRQs     */

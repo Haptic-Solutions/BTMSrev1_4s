@@ -41,6 +41,7 @@ void timer_reset(void){
 /* Non time-critical systems. Timer 4 IRQ. 1 Second.*/
 //For low priority CPU intensive processes and checks.
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
+    IFS1bits.T4IF = clear;
     OSC_Switch(fast);
     /* Deep Sleep TIMER stuff. Do this to save power.
      * This is so that this system doesn't drain your 1000wh battery over the
@@ -117,44 +118,44 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
         save_sets();
     }
     //End IRQ
-    IFS1bits.T4IF = clear;
 }
 
 //Another Heavy process IRQ
 //For low priority CPU intensive processes and checks, and 0.125 second non-critical timing.
 void __attribute__((interrupt, no_auto_psv)) _T5Interrupt (void){
+    IFS1bits.T5IF = clear;
     OSC_Switch(fast);
     //Do display stuff.
     displayOut(PORT1);
     displayOut(PORT2);
     //End IRQ
-    IFS1bits.T5IF = clear;
 }
 
 /* Data and Command input and processing IRQ for Port 1 */
 void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void){
+    IFS0bits.U1RXIF = clear;
     if(U1STAbits.URXDA)Command_Interp(PORT1);
         OSC_Switch(fast);
         slowINHIBIT_Timer = 10;
 /****************************************/
     if(Run_Level == Cal_Mode)timer_reset(); //if in cal mode, reset timer after every byte received via serial.
     /* End the IRQ. */
-    IFS0bits.U1RXIF = clear;
 }
 
 /* Data and Command input and processing IRQ for Port 2. */
 void __attribute__((interrupt, no_auto_psv)) _U2RXInterrupt (void){
+    IFS1bits.U2RXIF = clear;
     if(U2STAbits.URXDA)Command_Interp(PORT2);
         OSC_Switch(fast);
         slowINHIBIT_Timer = 10;
 /****************************************/
     if(Run_Level == Cal_Mode)timer_reset(); //if in cal mode, reset timer after every byte received via serial.
     /* End the IRQ. */
-    IFS1bits.U2RXIF = clear;
 }
 
 /* Output IRQ for Port 1 */
 void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt (void){
+    IFS0bits.U1TXIF = clear;
     OSC_Switch(fast);
     CONDbits.slowINHIBIT = 1;
     //Dispatch the buffer to the little 4 word Serial Port buffer as it empties.
@@ -166,11 +167,11 @@ void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt (void){
     Buffrst(PORT1);
     /****************************************/
     /* End the IRQ. */
-    IFS0bits.U1TXIF = clear;
 }
 
 /* Output IRQ for Port 2 */
 void __attribute__((interrupt, no_auto_psv)) _U2TXInterrupt (void){
+    IFS1bits.U2TXIF = clear;
     OSC_Switch(fast);
     CONDbits.slowINHIBIT = 1;
     //Dispatch the buffer to the little 4 word Serial Port buffer as it empties.
@@ -182,14 +183,205 @@ void __attribute__((interrupt, no_auto_psv)) _U2TXInterrupt (void){
     Buffrst(PORT2);
     /****************************************/
     /* End the IRQ. */
-    IFS1bits.U2TXIF = clear;
 }
 
 /* I2C stuff */
+/***************************************************************************/
+/*
+#define IC_Stop_start 1 //send
+#define IC_start 2      //send
+#define slv_adr 3       //send
+#define slv_ack 4       //wait for ack
+#define cmd_adr 5       //send
+#define cmd_ack 6       //wait for ack
+#define rpt_strt 7      //send
+#define rpt_slv_adr 8   //send with or without read bit
+#define rpt_slv_ack 9   //wait for ack
+#define slv_data 10      //either send or receive
+#define data_ack 11     //either send ack or wait for ack
+#define IC_stop 12      //send
+*/
+
+void clear_I2C_Buffer(void){
+    for(int i=0;i<IC_PACK_SIZE;i++)IC_Packet[i]=0;
+}
+
+void Send_I2C(unsigned int offset, unsigned int size, unsigned char address, unsigned char command){
+    if(IC_Seq==0){
+        int hi = I2CRCV;  //Reading this clears it out.
+        hi+=1;      //Force the compiler to not remove this variable.
+        I2CCON = 0;
+        I2CSTAT = 0;
+        I2CBRG = 0x1FF;
+        CONDbits.IC_RW = MD_Send;
+        IC_Seq=IC_start;        //Init sequence
+        I2CCONbits.I2CEN = 1;   //enable I2C interface
+        IC_Pack_Size = size+offset; //Load size of packet.
+        IC_Pack_Index=offset;   //Set buffer index.
+        IC_Address = address;   //Load address of chip we want to send to.
+        IC_Command = command;   //Load command we want to send.
+        IC_Timer = 16;  //2 seconds for timeout.
+        IFS0bits.MI2CIF = set;  //Kick off the IRQ
+        while(IC_Seq!=0){
+            if(dsky.Cin_voltage<3)break;
+            Idle(); //Wait for completion.
+        }
+        clear_I2C_Buffer();     //Clear buffer.
+    }
+}
+
+void Receive_I2C(unsigned int size, unsigned char address, unsigned char command){
+    if(IC_Seq==0){
+        IC_Packet[0] = I2CRCV;  //Reading this clears it out.
+        I2CCON = 0;
+        I2CSTAT = 0;
+        I2CBRG = 0x1FF;
+        clear_I2C_Buffer();     //Clear buffer.
+        CONDbits.IC_RW = MD_Recieve;
+        IC_Seq=IC_start;        //Init sequence
+        I2CCONbits.I2CEN = 1;   //enable I2C interface
+        IC_Pack_Size = size;    //Load size of packet expected.
+        IC_Pack_Index=0;        //Reset buffer index.
+        IC_Address = address;   //Load address of chip we want to send to.
+        IC_Command = command;   //Load command we want to send.
+        IC_Timer = 16;  //2 seconds for timeout.
+        IFS0bits.MI2CIF = set;  //Kick off the IRQ
+        while(IC_Seq!=0){
+            if(dsky.Cin_voltage<3)break;
+            Idle(); //Wait for completion.
+        }
+    }
+}
+
+
+
 void __attribute__((interrupt, no_auto_psv)) _MI2CInterrupt (void){
-    /****************************************/
-    /* End the IRQ. */
     IFS0bits.MI2CIF = clear;
+    /****************************************/
+    for(int i=0;i<10;i++)Idle();
+    if(I2CSTATbits.IWCOL){
+        fault_log(0x41, IC_Seq);   //Log a write collision error.
+        I2CSTATbits.IWCOL = 0;
+        IC_Seq = clear;
+         I2CCONbits.PEN = set;
+    }
+    else {
+        switch(IC_Seq){
+            //Send start bit
+            case IC_start:  //2
+                if(!I2CCONbits.SEN)I2CCONbits.SEN = set;
+                //else if(I2CSTATbits.S && !I2CSTATbits.P){fault_log(0x3F, 0xF0); IC_Seq=clear; break;}
+                else if(I2CSTATbits.S){fault_log(0x3F, 0xF1); IC_Seq=clear; break;}
+                //else if(!I2CSTATbits.P){fault_log(0x3F, 0xF2); IC_Seq=clear; break;}
+                else {fault_log(0x3F, IC_Seq); IC_Seq=clear; break;}
+                //Check if writing, if so then skip to rpt_slv_adr on next IRQ.
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            break;
+            //Send slave address
+            case slv_adr: //3
+                I2CTRN = (IC_Address*2);//Send address with write bit
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            break;
+            //Check ACK from slave
+            case slv_ack: //4
+                if(I2CSTATbits.ACKSTAT){fault_log(0x43, IC_Seq); IC_Seq=clear; IC_Timer = -1; break;}
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            //break; //Do not break. Receiving an ACK does not generate an IRQ.
+            //Send command
+            case cmd_adr: //5
+                I2CTRN = IC_Command;
+                IC_Timer = 16;  //2 seconds for timeout.
+                if(CONDbits.IC_RW == MD_Send)IC_Seq = rpt_slv_ack;
+                else IC_Seq++;
+            break;
+            //Check ACK from slave
+            case cmd_ack: //6
+                if(I2CSTATbits.ACKSTAT){fault_log(0x43, IC_Seq); IC_Seq=clear; IC_Timer = -1; break;}
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            //break; //Do not break. Receiving an ACK does not generate an IRQ.
+            //Send repeat start sequence
+            case rpt_strt: //7
+                //if(CONDbits.IC_RW == MD_Send)load_string("F",PORT2);
+                I2CCONbits.RSEN = set;
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            break;
+            //Send slave address
+            case rpt_slv_adr: //8
+                if(CONDbits.IC_RW == MD_Send)I2CTRN = (IC_Address*2);  //Write, last bit is 0
+                else I2CTRN = (IC_Address*2)|0x01;          //Read, last bit is 1
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            break;
+            //Check ACK from slave
+            case rpt_slv_ack: //9
+                if(I2CSTATbits.ACKSTAT){fault_log(0x43, IC_Seq); IC_Seq=clear; IC_Timer = -1; break;}
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+                if(CONDbits.IC_RW == MD_Recieve){
+                    I2CCONbits.RCEN = MD_Recieve;
+                    CONDbits.IC_ACK=set;
+                    break; //Only break if receiving.
+                }
+            //Setting I2CCONbits.RCEN to read mode will cause an IRQ when read data is ready.
+            //Send/receive data to/from slave
+            case slv_data: //10 0x0A
+                //Read
+                if(CONDbits.IC_RW == MD_Recieve && IC_Pack_Index < IC_Pack_Size && IC_Pack_Index < IC_PACK_SIZE){
+                    if(CONDbits.IC_ACK==set){
+                        IC_Packet[IC_Pack_Index] = I2CRCV;
+                        //Do ACK thing.
+                        if(IC_Pack_Index == IC_Pack_Size-1){
+                            I2CCONbits.ACKDT = set;                                //Send NACK to signal end of data to slave.
+                            IC_Seq=IC_stop;                                        //After a NACK we go straight to stop sequence on next IRQ.
+                        }
+                        else I2CCONbits.ACKDT = clear;                             //Send ACK to signal we are still expecting more data from slave.
+                        I2CCONbits.ACKEN = set;                                    //Now actually send that info.
+                        CONDbits.IC_ACK=clear;                                     //Do read sequence on next IRQ.
+                        IC_Pack_Index++;
+                    }
+                    else if(IC_Pack_Index < IC_Pack_Size) {
+                        CONDbits.IC_ACK=set;                                       //Do ACK sequence on next IRQ.
+                        I2CCONbits.RCEN = MD_Recieve;
+                    }
+                    break;
+                }
+                //write
+                else if(CONDbits.IC_RW == MD_Send && IC_Pack_Index < IC_Pack_Size && IC_Pack_Index < IC_PACK_SIZE){
+                    I2CTRN = IC_Packet[IC_Pack_Index];
+                    //I2CTRN = 0x5F;
+                    IC_Seq--;
+                    IC_Pack_Index++;
+                    break;
+                }
+                else IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            //Do not break here.
+            //Check for ACK
+            case data_ack: //11 0x0B
+                if(I2CSTATbits.ACKSTAT){fault_log(0x43, IC_Seq); IC_Seq=clear; IC_Timer = -1; break;}
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            //Do not break here.
+            //Send stop sequence
+            case IC_stop: //12 0x0C
+                I2CCONbits.ACKDT = clear;
+                I2CCONbits.PEN = set;
+                IC_Seq++;
+                IC_Timer = 16;  //2 seconds for timeout.
+            //break;    //eh, who cares
+            default:
+                IC_Seq = clear;
+                IC_Timer = -1;  //Set to idle.
+                I2CCONbits.I2CEN = 0;   //disable I2C interface
+            break;
+        }
+    }
+    /* End the IRQ. */
 }
 
 void __attribute__((interrupt, no_auto_psv)) _SI2CInterrupt (void){

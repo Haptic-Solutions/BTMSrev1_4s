@@ -31,53 +31,20 @@ inline void chargeDetect(void){
         //Check for various charging standards.
         if(charge_mode == Assignment_Ready){
             if(dsky.Cin_voltage<6){
-                if(0){
-                    //Mom! Can we get USB 3.1 charging?
-                    //No sweetie, we have USB 3.1 charging at home.
-                    //*USB 3.1 charging at home*
-                    Max_Charger_Current=2.5; //USB_3.1 up to 25v. Probably a cheap wimpy charger if it can only do 5v, don't overload it.
-                    Charger_Target_Voltage = 4.5; //Don't pull so much current that the charger voltage goes below this.
-                    charge_mode = USB3_Wimp;
+                if(Set_PD_Option(Get_Highest_PD())==1){
+                    Max_Charger_Current=PD_Last_Current*char_Max_Level;   //Don't run charger more than this capacity.
+                    Charger_Target_Voltage = PD_Last_Voltage-(10/PD_Last_Current);  //Calculate max heat loss allowed through cable and connections.
+                    charge_mode = USB3;
                 }
                 else{ 
                     Max_Charger_Current=1.4; //USB_2.0 and down. Likely USB_2.0 charger.
-                    Charger_Target_Voltage = 4.5; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
+                    Charger_Target_Voltage = 5-(0.5/Max_Charger_Current); //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
                     charge_mode = USB2;
                 }
             }
-            else if(dsky.Cin_voltage<19){
-                if(1){
-                    Max_Charger_Current=3; //USB_3.1 up to 25v.
-                    Charger_Target_Voltage = dsky.Cin_voltage-0.5; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
-                    charge_mode = USB3;
-                }
-                else {
-                    Max_Charger_Current=AuxFuse; //Assume solar or some other input. Target voltage will be determined by MPPT.
-                    charge_mode = Solar;
-                }
-            }
-            else if(dsky.Cin_voltage<21){
-                if(1){
-                    Max_Charger_Current=5; //USB_3.1 up to 25v.
-                    Charger_Target_Voltage = 19.5; //Don't pull so much current that the charger voltage goes below this. Could be a cheap charger or bad cable.
-                    charge_mode = USB3_Fast;
-                }
-                else {
-                    Max_Charger_Current=AuxFuse; //Assume solar or some other input. Target voltage will be determined by MPPT.
-                    charge_mode = Solar;
-                }
-            }
-            else if(dsky.Cin_voltage<26){
-                if(1){
-                    Max_Charger_Current=0; //USB_3.1 error? Voltage should not be this high from any supported USB chargers.
-                    charge_mode = Stop;
-                    fault_log(0x1B, 0x00);
-                    ALL_shutdown();
-                }
-                else {
-                    Max_Charger_Current=AuxFuse; //Assume solar or some other input. Target voltage will be determined by MPPT.
-                    charge_mode = Solar;
-                }
+            else if(dsky.Cin_voltage<25.1){
+                Max_Charger_Current=AuxFuse; //Assume solar or some other input. Target voltage will be determined by MPPT.
+                charge_mode = Solar;
             }
             else {
                 //Overvoltage condition.
@@ -85,6 +52,7 @@ inline void chargeDetect(void){
                 fault_log(0x38, 0x00);
                 ALL_shutdown();
             }
+            if(STINGbits.Force_Max_Cnt_Limit)Max_Charger_Current=0.2;
         }
         else if(CHwaitTimer < 2 && charge_mode == Wait)CHwaitTimer++;
         else if(charge_mode == Wait){
@@ -96,12 +64,12 @@ inline void chargeDetect(void){
         STINGbits.CH_Voltage_Present = set;     //Charger is detected
     }
     //Wait for voltage to stabilize, or reset from a stop condition unless the charging system has cycled too many times.
-    else if(dsky.Cin_voltage<2.5){
+    else if(dsky.Cin_voltage<3){
         U1MODEbits.UARTEN = 0;  //enable UART1
         U1STAbits.UTXEN = 0;    //enable UART1 TX
         STINGbits.CH_Voltage_Present = clear;
-        if((charge_mode == CHError || Run_Level == Heartbeat) && ch_cycle>0)ch_cycle--; //Cool down the timer when power is disconnected.
-        else if(ch_cycle > cycleLimit){
+        //if((charge_mode == CHError || Run_Level == Heartbeat) && ch_cycle>0)ch_cycle--; //Cool down the timer when power is disconnected.
+        if(ch_cycle > cycleLimit){
             charge_mode = CHError;
             fault_log(0x3C, 0x00);
         }
@@ -109,6 +77,7 @@ inline void chargeDetect(void){
             ch_cycle++;
             charge_mode = Wait;
             CHwaitTimer=0;
+            if(ch_cycle>3)STINGbits.Force_Max_Cnt_Limit=set;    //If the charger cycles 3 times, try a low current.
         }
         else if (charge_mode == CHError && ch_cycle == 0)charge_mode = Wait;
     }
@@ -165,7 +134,14 @@ inline void chargeDetect(void){
     else if(!STINGbits.CH_Voltage_Present){
         CONDbits.charger_detected = 0;  //If charger has been unplugged, clear this.
     }
-    USB_Power_Present_Check(); //Enable or Disable PORT1 depending if there is voltage present to FTDI chip.
+    //Calculate PWM Boost hard limit. Helps prevent current spikes that would otherwise trip the charger into shutting down.
+    float C_of_B=0;
+    if(charge_mode==USB2||charge_mode==USB3)C_of_B = (dsky.pack_vltg_average-Charger_Target_Voltage)/11.8;  //Get percent of charger voltage vs battery voltage.
+    else C_of_B = (dsky.pack_vltg_average-CavgVolt)/11.8;  //Get percent of charger voltage vs battery voltage.
+    float PBoost = PWM_MaxBoost_HI-((PWM_MaxBoost_HI-PWM_MaxBoost_LO)*C_of_B);  //Convert that percent to a PWM limit withing a range.
+    float MaxBoost = (PWM_Period*2)*PBoost;
+    if(avg_rdy>4)PWM_MaxBoost=MaxBoost;
+    else PWM_MaxBoost=PWM_MaxBoost_LN;
 }
 
 //Initiate current calibration, heater calibration, and try to get battery capacity from NVmem upon cold and dead startup.
@@ -179,7 +155,7 @@ inline void initialCal(void){
     }
     //Wait until current calibration is complete
     else if(Bcurnt_cal_stage == 3 && first_cal < fCalTimer)first_cal++; //delay, wait about 1 second for other services to complete.
-    //Once current calibration is done, check battery current and get open ciruit voltage for inital soc
+    //Once current calibration is done, check battery current and get open circuit voltage for inital soc
     else if (first_cal == 2 && CONDbits.got_open_voltage){
 
         if (eeprom_read((cfg_space) + 1) != 0x7654)

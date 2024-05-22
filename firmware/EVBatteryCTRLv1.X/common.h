@@ -204,6 +204,7 @@ volatile float Half_ref = 0;
 volatile float analog_const = 0;
 volatile int   OV_Timer[4];
 volatile int  gas_gauge_timer = gauge_timer;
+volatile unsigned int PWM_MaxBoost = 0;
 volatile char soft_OVC_Timer = 0;
 volatile char precharge_timer = 0;
 volatile char charge_mode = Wait;
@@ -254,6 +255,8 @@ typedef struct tagCONDBITS {
   unsigned IRQ_RESTART:1;
   unsigned clockSpeed:1;
   unsigned slowINHIBIT:1;
+  unsigned IC_RW:1;
+  unsigned IC_ACK:1;
   //unsigned MemInUse:1;
 } CONDBITS;
 volatile CONDBITS CONDbits;
@@ -274,6 +277,7 @@ typedef struct tagSTINGBITS {
   unsigned errLight:1;
   unsigned CH_Voltage_Present:1;
   unsigned OverCRNT_Fault:1;
+  unsigned Force_Max_Cnt_Limit:1;
 } STINGBITS;
 volatile STINGBITS STINGbits;
 
