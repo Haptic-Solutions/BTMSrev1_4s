@@ -19,3 +19,5 @@ Implement: Be able to change ALL settings from CLI.
 Implement: Add attributes to error codes. This will help reduce the number of error codes. Done.
 
 Fix: Fault light doesn't always turn on when an error is logged, especially when system shuts down, and doesn't always blink as it should.
+
+Fix: Settings checksum doesn't seem to always update or gets corrupted. System recovers, but generates an error code anyways.

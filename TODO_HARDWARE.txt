@@ -2,7 +2,7 @@
 ##  Hardware features and bugs to be fixed and added ##
 ####################################
 
-Add: Small electrolytic decoupling capacitors to output of buck-boost converter. Might need some on input as well. Seems to trip USB-PD charges when average current isn't anywhere near it's set limit.
+Add: Small electrolytic decoupling capacitors to output of buck-boost converter. Might need some on input as well. Seems to trip USB-PD charges when average current isn't anywhere near it's set limit. Done some. Need to test more.
 
 Upgrade: Current output rating is only 10 amps. Try to get it up to 15 amps. Not high priority.
 
@@ -11,4 +11,6 @@ Fix: Lots of EMI coming from multiplexed LED drive circuit. <- Moved resistors a
 Fix: USB and AUX charge inputs will output power to one or the other. This is NOT safe for either device that may be plugged in. <- Added diode to USB input. Need better solution that doesn't waste so much energy as heat.
 
 Fix: Capacitive loads cause inrush current that trips the over current protection circuit. A pre-charge circuit with resistors might work with some types of loads, but probably not when loads are both resistive and capacitive. <- Changed power source of
-current sense IC's to an IO pin of the micro controller so that they can be reset when a known inrush current is about to be switched on.
+current sense IC's to an IO pin of the micro controller so that they can be reset when a known inrush current is about to be switched on. This did not work. Reverted back to powering current sense IC's from 3.3V analog supply.
+
+Fix: USB-PD chip senses wrong current with current schematic. Removed diode causing problems. Need better solution for powering PD chip from USB-C or Aux as it is also our 3.3V regulator to power the FTDI chip. Use separate regulator?

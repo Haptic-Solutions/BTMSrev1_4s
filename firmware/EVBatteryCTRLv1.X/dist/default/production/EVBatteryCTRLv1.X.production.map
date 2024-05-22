@@ -144,8 +144,8 @@ section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
 .nbss                        0x800                   0           0x400  (1024)
 .ndata                       0xc00                   0             0xc  (12)
-_0x7f175e8d4000664e2877      0xc0c                   0             0x2  (2)
-_0x7f175e6fa3c0664e2877      0xc0e                   0             0x2  (2)
+_0x7facb43d1000664e36e5      0xc0c                   0             0x2  (2)
+_0x7facb41f73c0664e36e5      0xc0e                   0             0x2  (2)
 .nbss                        0xc10                   0             0x2  (2)
 
                  Total "data" memory used (bytes):          0x412  (1042) 50%
@@ -1108,7 +1108,7 @@ __RESERVED2
 
 __FGS             0xf8000a          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf8000a          0x2 /CW/_FGShä—	V
+ __FGS.sec        0xf8000a          0x2 /CW/_FGShTý[#V
                   0xf8000a                  __FGS.sec
 
 __FICD
@@ -1982,7 +1982,7 @@ LOAD /opt/microchip/xc16/v2.10/bin/bin/../../lib/libm-elf.a
 LOAD /opt/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a
 END GROUP
 OUTPUT(dist/default/production/EVBatteryCTRLv1.X.production.elf elf32-pic30)
-LOAD /CW/_FGShä—	V
+LOAD /CW/_FGShTý[#V
 LOAD data_init
 
 .debug_pubtypes
@@ -2154,15 +2154,15 @@ __c30_signature
                     0x0c08                  _IC_Timer
                     0x0c0a                  _Soft_PWM_Timer
 
-_0x7f175e8d4000664e2877
+_0x7facb43d1000664e36e5
                     0x0c0c          0x2
- _0x7f175e8d4000664e2877
+ _0x7facb43d1000664e36e5
                     0x0c0c          0x2 build/default/production/main.o
                     0x0c0c                  _reset_chk
 
-_0x7f175e6fa3c0664e2877
+_0x7facb41f73c0664e36e5
                     0x0c0e          0x2
- _0x7f175e6fa3c0664e2877
+ _0x7facb41f73c0664e36e5
                     0x0c0e          0x2 build/default/production/main.o
                     0x0c0e                  _Tfaults
 

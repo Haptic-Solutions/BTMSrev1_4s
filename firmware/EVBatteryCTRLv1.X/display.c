@@ -490,7 +490,7 @@ void LED_Out(char LEDS){
 
 
 void LED_ChrgLVL(float LEVEL){
-    if((LEVEL > 90 && !CONDbits.charger_detected) || (LEVEL > 100 && CONDbits.charger_detected))LED_Out(0x0F);
+    if((LEVEL > 90 && !CONDbits.charger_detected) || (LEVEL > 99 && CONDbits.charger_detected))LED_Out(0x0F);
     else if(LEVEL > 75)LED_Out(0x07);
     else if(LEVEL > 50)LED_Out(0x03);
     else if(LEVEL >= 25)LED_Out(0x01);
