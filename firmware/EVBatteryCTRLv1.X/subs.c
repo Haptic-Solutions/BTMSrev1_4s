@@ -198,9 +198,9 @@ inline void IsSysReady(void){
 inline void Deep_Sleep(void){
     LED_Mult(off);      //Make sure LEDs get turned off.
     for(int i=0;i<4;i++)vars.voltage_percentage_old[i] = voltage_percentage[i];    //Save a copy of voltage percentage before we shut down.
-
-    // Enough time should have passed by now that the open circuit voltage should be stabilized enough to get an accurate reading.
     save_vars();      //Save variables before power off.
+    dsky.Cin_voltage=0; //Cheating but okay.
+    USB_Power_Present_Check();  //Make sure IO lines get pulled low.
     KeepAlive = 0; //Disable Keep Alive signal.
 }
 

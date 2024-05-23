@@ -383,9 +383,6 @@ void Command_Interp(int serial_port){
                 load_float(DeepSleepTimerSec, serial_port);
                 load_string(" seconds.\n\r", serial_port);
             break;
-            case 'T':
-                timer_reset();
-            break;
             case 'C':
                 vars.fault_count = clear;
                 STINGbits.errLight = clear;
@@ -399,7 +396,7 @@ void Command_Interp(int serial_port){
             break;
             case '&':
                 if(Run_Level == Crit_Err && !(Flags&syslock))Run_Level = Heartbeat; //Attempt to bring back from critical error.
-                else if(Flags&syslock)
+                else if(Flags&syslock)setsLockedErr(serial_port);
             break;
             case 'Z':
                 STINGbits.p_charge = no;

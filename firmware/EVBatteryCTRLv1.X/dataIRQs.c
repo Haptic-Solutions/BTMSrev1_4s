@@ -92,7 +92,6 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
         PowerOffTimerSec = 59;
     }
     //Runtime program memory check. Checks every half hour except on startup it will run after 10 seconds.
-    //This seems to cause a stack error sometimes? Maybe too much as getting nested causing the stack to grow too large.
     if(check_timer == 1800 && Run_Level > Crit_Err){
         if(check_prog() == 1) Run_Level=Crit_Err;  //Program memory is corrupted and cannot be trusted.
         check_timer = clear;
@@ -100,10 +99,9 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
     else if(Run_Level > Crit_Err) check_timer++;
     //Check settings ram in background. (lowest priority IRQ))
     //Don't check if in Calibration mode because some setting might be changing on the fly.
-    //Don't check right after a PGM memory check as it takes too much time and could crash the system.
     if(Run_Level != Cal_Mode && Run_Level > Crit_Err && check_timer){
         if(check_ramSets()){
-            //If failed, shutdown and attempt to recover.
+            //If failed, attempt to recover.
             get_settings();
             //Make no more than 5 attempts to recover before going into debug mode.
             if(ram_err_count >= 5) Run_Level=Crit_Err; //Settings memory is corrupted and cannot be trusted.
@@ -138,7 +136,7 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void){
         OSC_Switch(fast);
         slowINHIBIT_Timer = 10;
 /****************************************/
-    if(Run_Level == Cal_Mode)timer_reset(); //if in cal mode, reset timer after every byte received via serial.
+    timer_reset(); //if in cal mode, reset timer after every byte received via serial.
     /* End the IRQ. */
 }
 
@@ -149,7 +147,7 @@ void __attribute__((interrupt, no_auto_psv)) _U2RXInterrupt (void){
         OSC_Switch(fast);
         slowINHIBIT_Timer = 10;
 /****************************************/
-    if(Run_Level == Cal_Mode)timer_reset(); //if in cal mode, reset timer after every byte received via serial.
+    timer_reset(); //if in cal mode, reset timer after every byte received via serial.
     /* End the IRQ. */
 }
 

@@ -38,7 +38,7 @@ void default_sets(void){
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
     sets.max_battery_voltage = 4.28;      //Max battery voltage before lockout.
     sets.battery_rated_voltage = 4.2;     //Target max charge voltage
-    sets.dischrg_voltage = 3.2;         //Minimum battery voltage
+    sets.dischrg_voltage = 3.5;         //Minimum battery voltage
     sets.low_voltage_shutdown = 2.4;    //Battery Low lockout voltage
     sets.dischrg_C_rating = 2;           //Discharge C rating
     sets.limp_current = 1;              //Limp mode current in amps. Minimum current to regulate to.
@@ -242,7 +242,8 @@ void configure_IO(void){
     ADCON1 = 0x02E4;
     //ADCON2 = 0x0410;
     ADCON2 = 0x0424;
-    ADCON3 = 0x0980;
+    ADCON3 = 0x0980;    //A/D internal RC clock
+    //ADCON3 = 0x0900;    //A/D system clock
     ADCHS = 0x0000;
     ADPCFG = 0xFE00;
     ADCSSL = 0x01FF;

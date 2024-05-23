@@ -78,7 +78,6 @@ int main(void){
     Exception_Check();
     //Get either default or custom settings.
     get_settings();
-    vars.battery_capacity = sets.amp_hour_rating; //Set capacity based on AH rating.
     //Get variable data if it exists.
     get_variables();
     //Do an initial reset and warm start check.

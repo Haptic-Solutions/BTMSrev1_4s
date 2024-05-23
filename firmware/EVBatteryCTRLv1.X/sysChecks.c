@@ -138,7 +138,8 @@ inline void chargeDetect(void){
     float C_of_B=0;
     if(charge_mode==USB2||charge_mode==USB3)C_of_B = (dsky.pack_vltg_average-Charger_Target_Voltage)/11.8;  //Get percent of charger voltage vs battery voltage.
     else C_of_B = (dsky.pack_vltg_average-CavgVolt)/11.8;  //Get percent of charger voltage vs battery voltage.
-    float PBoost = PWM_MaxBoost_HI-((PWM_MaxBoost_HI-PWM_MaxBoost_LO)*C_of_B);  //Convert that percent to a PWM limit withing a range.
+    if(C_of_B<0)C_of_B=0;
+    float PBoost = PWM_MaxBoost_LO+((PWM_MaxBoost_HI-PWM_MaxBoost_LO)*C_of_B);  //Convert that percent to a PWM limit withing a range.
     float MaxBoost = (PWM_Period*2)*PBoost;
     if(avg_rdy>4)PWM_MaxBoost=MaxBoost;
     else PWM_MaxBoost=PWM_MaxBoost_LN;

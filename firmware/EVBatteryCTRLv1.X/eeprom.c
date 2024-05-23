@@ -29,6 +29,7 @@ void get_variables(void){
     if(eeprom_read(cfg_space) == 0x7654) {
         read_vars();
     }
+    else vars.battery_capacity = sets.amp_hour_rating; //Set programmed capacity based on AH rating.
 }
 //Only to be used at start of system
 void get_settings(void){
@@ -58,6 +59,7 @@ void save_sets(void){
     }
     //Write this in memory so we know we have written data at least once before.
     eeprom_write(0x0000, 0x4567);
+    ram_chksum_update();
     nvm_chksum_update();
 }
 //Read settings from EEPROM
@@ -176,7 +178,7 @@ int eeprom_write(int addrs, int data){
 int memread(char Moffset, int Maddress){
     offset = Moffset; //Save to memory instead of W register.
     address = Maddress; //This is really bad, but the compiler sometimes reuses WREG's while I'm using them manually (which is bad enough).
-    __asm__ volatile ("DISI #0x3FFF");   //Disable all IRQs.
+    //__asm__ volatile ("DISI #0x3FFF");   //Disable all IRQs.
     __asm__ volatile ("PUSH w4");
     __asm__ volatile ("PUSH w0");
     TBLPAG = offset;    //Offset in memory
@@ -193,7 +195,7 @@ int memread(char Moffset, int Maddress){
     eRead = WREG4;
     __asm__ volatile ("POP w0");
     __asm__ volatile ("POP w4");
-    if(CONDbits.IRQ_RESTART)DISICNT = 0;        //ReEnable all non-critical IRQs.
+    //if(CONDbits.IRQ_RESTART)DISICNT = 0;        //ReEnable all IRQs.
     return eRead; //WREG4 will contain data read from NVmem
 }
 
