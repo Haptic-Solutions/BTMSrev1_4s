@@ -18,20 +18,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#ifndef SYSCHKS_H
-#define	SYSCHKS_H
+#ifndef SAFECHKS_H
+#define	SAFECHKS_H
 
-#define fCalReady 3
-#define fCalTimer fCalReady - 1
+extern inline void explody_preventy_check(void);
+extern inline void currentCheck(void);
+extern void fault_log(int, int);
+extern inline void ALL_shutdown(void);
+extern inline void Batt_IO_OFF(void);
+extern inline void reset_check(void);
+extern inline void analog_sanity(void);
+extern inline void death_loop(void);
+extern inline int D_Flag_Check();
+extern void Exception_Check(void);
+extern void rst_flag_rst(void);
 
-extern void heater_calibration(void);
-extern void main_power_check(void);
-extern void first_check(void);
-extern void initialCal(void);
-extern void chargeDetect(void);
-
-/*****************************/
-int heat_set = 0;               //Calculated heater output for wattage chosen by user.
+/******************************/
+int oc_shutdown_timer = 0;
+int shutdown_timer = 0;
+char CHwaitTimer = 0;
 
 #endif	/* SUBS_H */
 

@@ -32,9 +32,11 @@ char Cell_HV_Check(){
     return 0;
 }
 
+
+//Calculates a current percentage limit based on temperature limits.
 float Temperature_I_Calc(float lowTCutout, float lowBeginReduce, float highTCutout, float highBeginReduce){
     if(dsky.battery_temp < lowBeginReduce) percentOut = (dsky.battery_temp - lowTCutout) / (lowBeginReduce - lowTCutout);
-    else if (dsky.battery_temp > highBeginReduce) percentOut = 1 + (-1 * (dsky.battery_temp - highTCutout) / (highBeginReduce - highTCutout));
+    else if (dsky.battery_temp > highBeginReduce) percentOut = ((highTCutout - dsky.battery_temp) / (highTCutout - highBeginReduce));
     else return 1;
     //Clamp the result 0 - 1
     if(percentOut > 1) return 1;
@@ -42,6 +44,7 @@ float Temperature_I_Calc(float lowTCutout, float lowBeginReduce, float highTCuto
     else return percentOut;
 }
 
+//Uses calculated current limit and applies it to the battery capacity, state of charge, and C ratings.
 inline void temperatureCalc(void){
     //Calculate max discharge current based off battery temp and battery remaining.
     dischrg_current = (sets.dischrg_C_rating * vars.battery_remaining)
@@ -105,7 +108,7 @@ inline void chargeReg(void){
     //// Check for Charger.
     if(STINGbits.CH_Voltage_Present && CONDbits.charger_detected && Run_Level != Cal_Mode){
         //Check to see if something has changed or was unplugged.
-        if(charge_mode > Assignment_Ready && charge_mode != Solar && dsky.Cin_voltage<4){
+        if(charge_mode > Assignment_Ready && dsky.Cin_voltage<C_Min_Voltage){
             STINGbits.CH_Voltage_Present=0;
             charge_mode = Stop;
         }

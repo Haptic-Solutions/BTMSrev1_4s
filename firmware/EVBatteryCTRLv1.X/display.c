@@ -195,6 +195,12 @@ void all_info(int serial_port){
     send_string("\n\r", serial_port);
     send_string("5: |CM|      |AA|     |OCV|    |MC|\n\r", serial_port);
     send_Float_Array(dsky.dskyarrayFloat, 16, 19, serial_port);
+    
+    send_string("\n\r Battery Current Compensation: ", serial_port);
+    load_float(Bcurrent_compensate, serial_port);
+    send_string("\n\r Charger Current Compensation: ", serial_port);
+    load_float(Ccurrent_compensate, serial_port);
+    
     send_string("\n\r Cell Config: ", serial_port);
     load_float(sets.Cell_Count, serial_port);
     send_string("\n\r Ah Rating: ", serial_port);
@@ -265,7 +271,7 @@ void Command_Interp(int serial_port){
                 if(stat==1){
                     load_string("\n\r Set highest wattage PD success.\n\r", serial_port);
                     Last_PD(serial_port);
-                    Max_Charger_Current=PD_Last_Current*char_Max_Level;   //Don't run charger more than this capacity.
+                    Max_Charger_Current=PD_Last_Current*charge_Max_Level;   //Don't run charger more than this capacity.
                     Charger_Target_Voltage = PD_Last_Voltage-(10/PD_Last_Current);  //Calculate max heat loss allowed through cable and connections.
                     charge_mode = USB3;
                 }
@@ -281,7 +287,7 @@ void Command_Interp(int serial_port){
                 if(stat==1){
                     load_string("\n\r Set lowest voltage PD success.\n\r", serial_port);
                     Last_PD(serial_port);
-                    Max_Charger_Current=PD_Last_Current*char_Max_Level;   //Don't run charger more than this capacity.
+                    Max_Charger_Current=PD_Last_Current*charge_Max_Level;   //Don't run charger more than this capacity.
                     Charger_Target_Voltage = PD_Last_Voltage-(10/PD_Last_Current);  //Calculate max heat loss allowed through cable and connections.
                     charge_mode = USB3_Wimp;
                 }
@@ -418,6 +424,7 @@ void Command_Interp(int serial_port){
             case 'l':  //Unlock the system and allow variables to be modified.
                 if(CMD_buff[serial_port][2]=='Y'){
                     Batt_IO_OFF();
+                    charge_mode = Wait;
                     Flags &= 0xFE;
                     CONDbits.Power_Out_EN = off;
                     STINGbits.CH_Voltage_Present = off;
@@ -488,10 +495,10 @@ void LED_Out(char LEDS){
 
 void LED_ChrgLVL(float LEVEL){
     if((LEVEL > 90 && !CONDbits.charger_detected) || (LEVEL > 99 && CONDbits.charger_detected))LED_Out(0x0F);
-    else if(LEVEL > 75)LED_Out(0x07);
-    else if(LEVEL > 50)LED_Out(0x03);
-    else if(LEVEL >= 25)LED_Out(0x01);
-    else if(LEVEL < 25 && !STINGbits.CH_Voltage_Present){
+    else if(LEVEL > 74)LED_Out(0x07);
+    else if(LEVEL > 49)LED_Out(0x03);
+    else if(LEVEL >= 24)LED_Out(0x01);
+    else if(LEVEL < 24 && !STINGbits.CH_Voltage_Present){
         if(BlinknLights&0x04)LED_Out(0x01);      //Low battery indication.
         else LED_Out(0x00);
     }
@@ -518,8 +525,8 @@ void LED_Mult(char attributes){
             }
             //Charging level indication.
             else if(CONDbits.charger_detected){
-                if(BlinknLights&0x01 && (charge_mode == USB3 || CONDbits.fastCharge))LED_ChrgLVL(dsky.chrg_percent+25); //Fast charging indication.
-                else if(BlinknLights&0x02 && charge_mode != USB3 && !CONDbits.fastCharge)LED_ChrgLVL(dsky.chrg_percent+25);  //Normal charging indication.
+                if(BlinknLights&0x01 && (charge_mode > USB3_Wimp || CONDbits.fastCharge))LED_ChrgLVL(dsky.chrg_percent+25); //Fast charging indication.
+                else if(BlinknLights&0x02 && charge_mode < USB3 && !CONDbits.fastCharge)LED_ChrgLVL(dsky.chrg_percent+25);  //Normal charging indication.
                 else LED_ChrgLVL(dsky.chrg_percent);
             }
             //Power level indication.

@@ -24,6 +24,8 @@ SOFTWARE. */
 // Tm = 32767 * (1 / (((clkSpeedmhz * PLL) / 4) / tiksPerIRQ))
 //#define IPS 29.48;   //million instructions per second.
 #define IPS 14.74   //million instructions per second.
+//Analog
+#define sample_Average 2
 //PWM period
 #define PWM_Period 100
 #define PWM_MaxHeat (PWM_Period*2)*0.9
@@ -32,7 +34,9 @@ SOFTWARE. */
 #define PWM_MaxBoost_HI 0.76
 #define PWM_MaxBoost_LN (PWM_Period*2)*PWM_MaxBoost_LO
 #define PWM_MaxBoost_HN (PWM_Period*2)*PWM_MaxBoost_HI
-#define char_Max_Level 0.85
+//Charger
+#define charge_Max_Level 0.65
+#define C_Min_Voltage 3
 //#define IPS 7.37   //million instructions per second.
 #define BAUD1 9600  //Default BAUD rate for PORT 1
 #define BAUD2 9600  //Default BAUD rate for PORT 2
@@ -56,7 +60,7 @@ SOFTWARE. */
 //IO outputs
 #define KeepAlive LATFbits.LATF0 //Enables power to self and system.
 #define Cell_Volt LATEbits.LATE4 //Cell voltage sense enable.
-#define C_Switched LATFbits.LATF6 //Power controll for current sense IC's
+#define PowerOutPreCharge LATFbits.LATF6 //Power output pre-charge control
 #define PowerOutEnable LATCbits.LATC15 //Power output enable.
 //LED outputs
 #define Mult_SEL LATEbits.LATE2 //LED and Cell ballance multiplexed select.
@@ -165,7 +169,7 @@ SOFTWARE. */
 #define USB3_Fast 7
 #define Solar 8
 //Charger limits
-#define cycleLimit 3
+#define cycleLimit 4
 
 //OSC modes
 #define slow 0

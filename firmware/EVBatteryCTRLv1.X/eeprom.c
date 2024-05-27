@@ -29,7 +29,10 @@ void get_variables(void){
     if(eeprom_read(cfg_space) == 0x7654) {
         read_vars();
     }
-    else vars.battery_capacity = sets.amp_hour_rating; //Set programmed capacity based on AH rating.
+    else { 
+        vars.battery_capacity = sets.amp_hour_rating; //Set programmed capacity based on AH rating.
+        vars.battery_remaining = sets.amp_hour_rating; //Set remaining capacity to full based on AH rating. This should force a recalculation on startup.
+    }
 }
 //Only to be used at start of system
 void get_settings(void){

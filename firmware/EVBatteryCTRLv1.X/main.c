@@ -34,7 +34,8 @@ SOFTWARE. */
 #include "dataIRQs.c"
 #include "trapIRQs.c"
 #include "common.h"
-#include "subs.c"
+#include "SysCalculations.c"
+#include "SysCalculations.h"
 #include "DataIO.h"
 #include "DataIO.c"
 #include "Init.h"
@@ -47,6 +48,8 @@ SOFTWARE. */
 #include "checksum.h"
 #include "sysChecks.c"
 #include "sysChecks.h"
+#include "safetyChecks.c"
+#include "safetyChecks.h"
 #include "regulate.c"
 #include "regulate.h"
 #include "poweroptions.c"
@@ -56,21 +59,21 @@ SOFTWARE. */
 /***********************************************************
 ***********************************************************/
 int main(void){
+    /* General 2 IO This IO needs to be configured first so that keepalive signal can be enabled as soon as possible. */
+    GENERAL2_TRIS = GENERAL2_DIR;
+    GENERAL2_LAT = 0;
+    GENERAL2_PORT = 0;
+    //Enable Keep Alive signal. System keeps itself on while main_power is enabled.
+    for(unsigned int i=0;i<65534;i++){KeepAlive = 1;} //Do nothing loop. Waste some time.
     CONDbits.clockSpeed = slow; //Force a switchover to fast clock. It will not switch if this bool is == to fast
     OSC_Switch(fast);
     slowINHIBIT_Timer = 10;
-    /* General 3 IO. */
-    GENERAL3_TRIS = GENERAL3_DIR;
-    GENERAL3_LAT = 0;
-    GENERAL3_PORT = 0;
     /* Analog inputs */
     //Initialize PORTB first.
     ANALOG_TRIS = ANALOG_DIR;          //set portb to analog inputs.
     ANALOG_LAT = 0;
     ANALOG_PORT = 0; //clear portb
     configure_IO();
-    KeepAlive = 1; //Enable Keep Alive signal. System keeps itself on while main_power is enabled.
-    //CPUact = 1;             //Turn on CPU ACT light.
     //Calculate space required for eeprom storage.
     cfg_space = sizeof(sets) / 2;
     vr_space = sizeof(vars) / 2;

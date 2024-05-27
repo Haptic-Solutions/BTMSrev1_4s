@@ -22,17 +22,8 @@ SOFTWARE. */
 #define	COMMON_H
 #include "defines.h"
 
-extern inline void current_cal(void);
-extern inline void open_volt_percent(void);
+extern inline void initial_comp(void);
 extern inline void reset_check(void);
-extern inline void Deep_Sleep(void);
-extern inline float absFloat(float);
-extern inline void IsSysReady(void);
-extern inline void calcAnalog(void);
-extern inline void Volt_Cal(int);
-extern void CapacityCalc(void);
-extern void OSC_Switch(int);
-extern int PORTS_DONE(void);
 extern void timer_reset(void);
 
 /* NOTE: Try to keep memory usage below about 75% for the dsPIC30F3011 as the stack can use as much as 15% */
@@ -109,7 +100,6 @@ struct Variables{
 // Calculated Battery Ratings
     float   battery_capacity;           //Calculated total battery capacity in ah
     float   absolute_battery_usage;     //Max total power used from battery since last power cycle.
-    float   voltage_percentage_old[4];     //Voltage percentage from the last time we where on.
     float   battery_usage;              //Calculated Ah usage in/out of battery
     float   battery_remaining;          //Calculated remaining capacity in battery.
     float   chargeCycleLevel;           //% of a charge cycle completed. Rolls over to 0 once it reaches capacity of battery (for 100%) and increments 'TotalChargeCycles' by 1.
@@ -183,7 +173,7 @@ volatile float   resistor_divide_const = 0;              //Value for calculating
 
 /*****************************/
 /* General Vars */
-volatile float voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
+volatile float open_voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
 volatile float temp_Cell_Voltage_Average[4];
 volatile float Cell_Voltage_Average[4];
 volatile float pack_target_voltage = 0;
@@ -202,16 +192,18 @@ volatile float Max_Charger_Current = 0;
 volatile float Charger_Target_Voltage = 0;
 volatile float Half_ref = 0;
 volatile float analog_const = 0;
+volatile float ch_dynamic_crnt_limit = 0;
 volatile int   OV_Timer[4];
 volatile int  gas_gauge_timer = gauge_timer;
 volatile unsigned int PWM_MaxBoost = 0;
+volatile char ch_reset_timer = 0;
 volatile char soft_OVC_Timer = 0;
 volatile char precharge_timer = 0;
 volatile char charge_mode = Wait;
 volatile char avg_cnt = 0;
 volatile char avg_rdy = 0;
 volatile char analog_avg_cnt = 0;
-volatile char Bcurnt_cal_stage = 0;
+volatile char curnt_cal_stage = 0;
 volatile char Ccurnt_cal_stage = 0;
 volatile char LED_Test = 1;
 /* 0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error.
@@ -310,5 +302,5 @@ volatile unsigned char BlinknLights = 0;
 volatile char mult_timer = 0;
 volatile char Ballance_LEDS = 0;
 
-#endif	/* SUBS_H */
+#endif	/* COMMON_H */
 

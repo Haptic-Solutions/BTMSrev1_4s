@@ -124,7 +124,7 @@ int Set_PD_Option(unsigned char opt_num){
     Send_I2C(opt_index, 4, USBPD_Addr, PD_ReqDO); //Dispatch the data.
     Receive_I2C(1, USBPD_Addr, PD_Status); //Get status
     PD_Last_Status = IC_Packet[0];
-    if(PD_Last_Status&0x03==0x03)return 1;  //Success
+    if((PD_Last_Status&0x03)==0x03)return 1;  //Success
     return 2;   //Fail
 }
 

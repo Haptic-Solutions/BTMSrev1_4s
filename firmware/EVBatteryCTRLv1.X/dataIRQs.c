@@ -109,7 +109,7 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
         }
     }
     //Determine how many cells the battery pack has if it hasn't been determined yet and we are in cal run_time.
-    if(Run_Level == Cal_Mode && sets.Cell_Count < 2 && !CONDbits.V_Cal && avg_rdy > 4){
+    if(Run_Level == Cal_Mode && sets.Cell_Count < 2 && !CONDbits.V_Cal && avg_rdy > 0){
         if(Cell_Voltage_Average[1]>0.5)sets.Cell_Count=2;
         if(Cell_Voltage_Average[2]>0.5)sets.Cell_Count=3;
         if(Cell_Voltage_Average[3]>0.5)sets.Cell_Count=4;
@@ -205,7 +205,7 @@ void clear_I2C_Buffer(void){
 }
 
 void Send_I2C(unsigned int offset, unsigned int size, unsigned char address, unsigned char command){
-    if(IC_Seq==0){
+    if(IC_Seq==0 && Run_Level>Crit_Err){
         int hi = I2CRCV;  //Reading this clears it out.
         hi+=1;      //Force the compiler to not remove this variable.
         I2CCON = 0;
@@ -229,7 +229,7 @@ void Send_I2C(unsigned int offset, unsigned int size, unsigned char address, uns
 }
 
 void Receive_I2C(unsigned int size, unsigned char address, unsigned char command){
-    if(IC_Seq==0){
+    if(IC_Seq==0 && Run_Level>Crit_Err){
         IC_Packet[0] = I2CRCV;  //Reading this clears it out.
         I2CCON = 0;
         I2CSTAT = 0;

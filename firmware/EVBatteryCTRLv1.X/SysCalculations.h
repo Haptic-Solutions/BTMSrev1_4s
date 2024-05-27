@@ -18,20 +18,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#ifndef SYSCHKS_H
-#define	SYSCHKS_H
+#ifndef SysCalc_H
+#define	SysCalc_H
 
-#define fCalReady 3
-#define fCalTimer fCalReady - 1
+extern void get_volt_percent(void);
+extern void Deep_Sleep(void);
+extern float absFloat(float);
+extern void IsSysReady(void);
+extern void calcAnalog(void);
+extern void Volt_Cal(int);
+extern void Get_lowest_cell_percent(void);
+extern void OSC_Switch(int);
 
-extern void heater_calibration(void);
-extern void main_power_check(void);
-extern void first_check(void);
-extern void initialCal(void);
-extern void chargeDetect(void);
-
-/*****************************/
-int heat_set = 0;               //Calculated heater output for wattage chosen by user.
-
-#endif	/* SUBS_H */
+#endif	/* SysCalc_H */
 

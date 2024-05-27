@@ -42,8 +42,10 @@ extern void load_const_string(const char*, int);
 extern float Get_Float(int, int);
 extern void Send_I2C(unsigned int, unsigned int, unsigned char, unsigned char);
 extern void Receive_I2C(unsigned int, unsigned char, unsigned char);
-void load_hex(int, int);
-int port_Sanity(int);
+extern int PORTS_DONE(void);
+extern void load_hex(int, int);
+extern int port_Sanity(int);
+
 
 //Serial port stuff
 float tx_float[2] = {0,0};

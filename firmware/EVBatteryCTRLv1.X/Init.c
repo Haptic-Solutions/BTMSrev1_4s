@@ -66,7 +66,7 @@ void default_sets(void){
     sets.ctrlr_shutdown_temp = 80;        //Max BMS temp before shutdown.
     //Some other stuff.
     sets.max_heat = 3;              //Heater watts that you want to use.
-    sets.DeepSleepAfter = 1;    //Deep Sleep the system after this many minutes of not being plugged in or keyed on.
+    sets.DeepSleepAfter = 60;    //Deep Sleep the system after this many minutes of not being plugged in or keyed on.
     sets.PowerOffAfter = 1;     //Power off the output after this many minutes when power off wattage is below set amount or 0. 
     sets.Cell_Count = -1;       //Uninitialized cell count.
     sets.PWR_SW_MODE = push_and_hold;
@@ -113,7 +113,7 @@ void configure_IO(void){
     dsky.battery_temp = 0;           //Battery Temperature
     dsky.my_temp = 0;                //Controller board Temperature
     dsky.pack_voltage = 0;        //Battery voltage
-    for(int i=0;i<sets.Cell_Count;i++)voltage_percentage[i] = 0;     //Battery Voltage Percentage.
+    for(int i=0;i<sets.Cell_Count;i++)open_voltage_percentage[i] = 0;     //Battery Voltage Percentage.
     dsky.battery_current = 0;        //Battery charge/discharge current
 
     /**************************/
@@ -132,11 +132,12 @@ void configure_IO(void){
     GENERAL1_LAT = 0;
     GENERAL1_PORT = 0;
     /**************************/
-    /* General 2 IO */
-    GENERAL2_TRIS = GENERAL2_DIR;
-    GENERAL2_LAT = 0;
-    GENERAL2_PORT = 0;
+    
     /**************************/
+    /* General 3 IO. */
+    GENERAL3_TRIS = GENERAL3_DIR;
+    GENERAL3_LAT = 0;
+    GENERAL3_PORT = 0;
     /* PWM outputs. */
     PWM_TRIS = PWM_TRIS_DIR;
     PWM_LAT = 0;
@@ -275,7 +276,7 @@ void Init(void){
     resistor_divide_const = sets.R2_resistance / (sets.R1_resistance + sets.R2_resistance);
     //Calculate reference values
     Half_ref = V_REF/2;
-    analog_const = 524280/V_REF;
+    analog_const = (65535*sample_Average)/V_REF;
     //We aren't in low power mode
     STINGbits.lw_pwr_init_done = 0;
 /*****************************/

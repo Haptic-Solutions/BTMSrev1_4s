@@ -76,6 +76,16 @@ void portBusyIdle(int serial_port){
     //CPUact = 1;      //Turn CPU ACT light on.
 }
 
+int PORTS_DONE(void){
+    if(!U2STAbits.RIDLE ||
+            !U1STAbits.RIDLE ||
+            !U2STAbits.TRMT ||
+            !U1STAbits.TRMT ||
+            U2STAbits.URXDA ||
+            U1STAbits.URXDA) return no;
+    else return yes;
+}
+
 //*************************************************************************************************
 //Converts four bit hex numbers to ASCII
 char four_bit_hex_cnvt(int numb){
