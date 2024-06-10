@@ -36,7 +36,6 @@ SOFTWARE. */
 
 /* Batter OV fault IRQ. */
 void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
-    OSC_Switch(fast);
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
     fault_log(0x3A, 0x00);
@@ -47,7 +46,6 @@ void __attribute__((interrupt, no_auto_psv)) _INT0Interrupt (void){
 
 /* Current sensor Fault IRQ. */
 void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
-    OSC_Switch(fast);
     Batt_IO_OFF();
     STINGbits.fault_shutdown = 1;
     fault_log(0x39, 0x00);
@@ -59,7 +57,6 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void){
 void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
     IFS0bits.ADIF = 0;
     Cell_Volt=on; //enable cell voltage sense.
-    OSC_Switch(fast);
     output_PWM();
     //Get 8 samples for averaging.
     if (analog_avg_cnt < sample_Average){
@@ -97,7 +94,7 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         analog_avg_cnt = clear;
         //Check to see if the system is ready to run.
         if(Flags&syslock)IsSysReady(); //If there is a fault, keep system from running. Do this only if settings are LOCKED
-        //ADC sample burn check. Only burn once when main power iCell_Voltage_Average[i]s on. Otherwise burn every time heartbeat activates the ADC
+        //ADC sample burn check. Only burn once when main power Cell_Voltage_Average[i]s on. Otherwise burn every time heartbeat activates the ADC
         if (Run_Level < Cal_Mode && STINGbits.adc_sample_burn == yes && gas_gauge_timer == 0){
             ADCON1bits.ADON = off;                // turn ADC off to save power.
             Cell_Volt=off; //disable cell voltage sense.
@@ -117,9 +114,6 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
 /* Heartbeat IRQ, Once every Second. Lots of stuff goes on here. */
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     IFS0bits.T1IF = 0;
-    OSC_Switch(fast);
-    //calculate target charge voltage
-    pack_target_voltage = sets.battery_rated_voltage*sets.Cell_Count;
     //Check for how fast we are charging.
     if(dsky.battery_crnt_average > (sets.chrg_C_rating*sets.amp_hour_rating)*0.75)CONDbits.fastCharge = 1;
     else CONDbits.fastCharge = 0;
@@ -134,9 +128,9 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
             lowest_cell = Cell_Voltage_Average[i];
         }
     }
-    //Check which cell is equal to or above set voltage.
+    //Check which cell is equal to or above set voltage. Do not activate the lowest cell ballance resistor.
     for(int i=0;i<sets.Cell_Count;i++){
-        if(Cell_Voltage_Average[i]>=sets.battery_rated_voltage && !CONDbits.V_Cal && i!=lowest_c_num){
+        if(Cell_Voltage_Average[i]>=sets.battery_rated_voltage + 0.005 && !CONDbits.V_Cal && i!=lowest_c_num){
             switch(i){
                 case 0 : bal_L = bal_L | 0x01;
                 break;
@@ -178,10 +172,44 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
 
     //Clear fault_shutdown if all power modes are turned off.
     if(Run_Level < Cal_Mode){
-        shutdown_timer = 1;     //Acts like a resettable circuit breaker.
+        shutdown_timer = 1;     //Acts like a resettable fuse.
         STINGbits.fault_shutdown = no;
     }
-
+    //Get highest cell
+    float highest_cell = 100;
+    //Do not run ballance resistor on the lowest cell.
+    for(int i=0;i<sets.Cell_Count;i++){
+        if(Cell_Voltage_Average[i]<highest_cell){
+            highest_cell = Cell_Voltage_Average[i];
+        }
+    }
+    //Measure battery capacity from less than 25% charge to 100% charge based on open circuit voltage.
+    float Pk_Diff = absFloat((sets.battery_rated_voltage*4)-dsky.pack_vltg_average);
+    float Abs_C_Rate = absFloat(dsky.battery_crnt_average)/(sets.chrg_C_rating*sets.amp_hour_rating);
+    float Temp_Diff = absFloat(dsky.battery_temp - 25);     //Battery temperature must be between 15C and 35C
+    //Check if below 25% to initiate evaluation sequence.
+    if(power_session != EmptyStart && CONDbits.charger_detected && dsky.chrg_percent < 25 && Temp_Diff < 10){
+        power_session = EmptyStart;
+        vars.battery_usage = 0;
+        ch_eval_start_percent = dsky.chrg_percent;
+    }
+    //Check if at full charge to complete evaluation sequence.
+    else if(power_session == EmptyStart && STINGbits.Pack_Is_Ballanced && Pk_Diff < 0.05 && Abs_C_Rate<0.01 && Temp_Diff < 10){
+        power_session = FullStart;
+        float percent_diff = 100/(100-ch_eval_start_percent);
+        float calculated_capacity = vars.battery_usage*percent_diff;
+        if(calculated_capacity<vars.battery_capacity)vars.battery_capacity=calculated_capacity; //Capacity can only go down.
+    }
+    //Check if cells are balanced enough for evaluation.
+    if(Pk_Diff < 0.05 && Abs_C_Rate<0.01 && Temp_Diff < 10){
+        if((highest_cell-lowest_cell)<0.05)STINGbits.Pack_Is_Ballanced=1;
+        else if((highest_cell-lowest_cell)>0.1){
+            STINGbits.Pack_Is_Ballanced=0;
+            power_session = FullStart;
+        }
+        vars.battery_remaining = vars.battery_capacity;
+    }
+    
     //Get the absolute value of battery_usage and store it in absolute_battery_usage.
     vars.absolute_battery_usage = absFloat(vars.battery_usage);
     //Calculate the max capacity of the battery once the battery has been fully charged and fully discharged.
@@ -208,7 +236,6 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
             vars.battery_capacity *= 1-(1/capDec);
         }
     }
-    if(PORTS_DONE() && slowINHIBIT_Timer > 0 && !CONDbits.charger_detected)slowINHIBIT_Timer--;
     /* End the IRQ. */
 }
 
@@ -216,11 +243,8 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
 //Used for some critical math timing operations. Cycles through every 1/8 sec.
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     IFS0bits.T2IF = 0;
-    OSC_Switch(fast);
     // turn ADC on to get a sample.
     ADCON1bits.ADON = on;
-    //Blink some LEDs
-    BlinknLights++; //Count up all the time once every 1/8 second.
     //I2C timeout counter and error logger.
     if(IC_Timer>0)IC_Timer--;
     else if(IC_Timer==0){
@@ -281,10 +305,8 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     }
     //Low voltage monitoring and auto off.
     for(int i=0;i<sets.Cell_Count;i++){
-        if(dsky.Cell_Voltage[i] < sets.low_voltage_shutdown && (Flags&syslock)){
+        if(dsky.Cell_Voltage[i] < sets.dischrg_voltage && (Flags&syslock)){
             CONDbits.Power_Out_EN = off;
-            fault_log(0x04, i+1);
-            STINGbits.fault_shutdown = yes;
         }
     }
     dsky.watts = dsky.battery_crnt_average * dsky.pack_vltg_average;
@@ -339,8 +361,8 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     }
     //*****************************
     //Calculate and Log AH usage for battery remaining and total usage.
-    //Do not track current usage if below +-0.002 amps due to error in current sensing. We need a lower pass filter then what we already have.
-    if(absFloat(dsky.battery_current) > 0.002){
+    //Do not track current usage if below +-0.0002 amps due to error in current sensing. We need a lower pass filter then what we already have.
+    if(absFloat(dsky.battery_current) > 0.0002){
         //Calculate how much current has gone in/out of the battery.
         vars.battery_usage += (calc_125 * dsky.battery_current);
         vars.battery_remaining += (calc_125 * dsky.battery_current);

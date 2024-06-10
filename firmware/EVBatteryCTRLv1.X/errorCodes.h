@@ -38,7 +38,7 @@ const char code0E[] = "Addr excep";
 const char code0F[] = "STK excep";
 const char code10[] = "MTH excep";
 const char code11[] = "Res7 excep";
-const char code12[] = "Error Code Not Used.";
+const char code12[] = "Disp Buffer Err";
 const char code13[] = "MCU BrownOut";
 const char code14[] = "WDT rst";
 const char code15[] = "un-handled exception rst";
@@ -88,6 +88,8 @@ const char code40[] = "I2C Timeout";
 const char code41[] = "I2C bus not idle";
 const char code42[] = "I2C bus collision";
 const char code43[] = "I2C ACK Error";
+const char code44[] = "Load shutdown before cycle complete. Aborting Evaluation.";
+const char code45[] = "Parameters not right for auto evaluation. Aborting Evaluation.";
 const char codeDefault[] = "Unknown";
 
 const char * const errArray[] = {code01,code02,code03,code04,code05,code06,code07,code08,code09,code0A,code0B,code0C
@@ -95,7 +97,7 @@ const char * const errArray[] = {code01,code02,code03,code04,code05,code06,code0
                          ,code19,code1A,code1B,code1C,code1D,code1E,code1F,code20,code21,code22,code23,code24
                          ,code25,code26,code27,code28,code29,code2A,code2B,code2C,code2D,code2E,code2F,code30
                          ,code31,code32,code33,code34,code35,code36,code37,code38,code39,code3A,code3B,code3C
-                         ,code3D,code3E,code3F,code40,code41,code42,code43,codeDefault};
+                         ,code3D,code3E,code3F,code40,code41,code42,code43,code44,code45,codeDefault};
 
 #endif	/* ERRORCODES_H */
 

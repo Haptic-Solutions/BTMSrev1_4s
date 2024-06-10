@@ -27,32 +27,27 @@ SOFTWARE. */
 #define full 0
 #define bfsize 100
 
-extern unsigned int BaudCalc(float, float);
-extern void load_float(float, int);
-extern void load_string(char*, int);
-extern void send_string(char*, int);
-extern void copy_string(char*, int);
-extern void dispatch_Serial(int);
-extern char four_bit_hex_cnvt(int);
-extern void Buffrst(int);
-extern void BuffNull(int);
 extern void USB_Power_Present_Check(void);
-extern void portBusyIdle(int);
-extern void load_const_string(const char*, int);
+extern char four_bit_hex_cnvt(int);
+extern void load_hex(int, int, int);
+extern void dispatch_Serial(int);
+extern void load_string(int, char*, int);
+extern void load_const_string(int, const char*, int);
+extern void send_string(int, char*, int);
+extern void load_float(int, float, int);
 extern float Get_Float(int, int);
+extern unsigned int BaudCalc(float, float);
+
 extern void Send_I2C(unsigned int, unsigned int, unsigned char, unsigned char);
 extern void Receive_I2C(unsigned int, unsigned char, unsigned char);
-extern int PORTS_DONE(void);
-extern void load_hex(int, int);
-extern int port_Sanity(int);
-
 
 //Serial port stuff
 float tx_float[2] = {0,0};
 int Buff_index[2] = {0,0};
+int B_Out_index[2] = {0,0};
 int StempIndex[2] = {0,0};
 int FtempIndex[2] = {0,0};
-char nibble[2][4] = {{0,0,0,0},{0,0,0,0}};
+int nibble[2][4] = {{0,0,0,0},{0,0,0,0}};
 char float_out[2][8] = {{0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0}};
 char Buffer[2][bfsize];
 char config_space[2] = {0,0};

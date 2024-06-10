@@ -24,7 +24,7 @@ SOFTWARE. */
 
 extern inline void initial_comp(void);
 extern inline void reset_check(void);
-extern void timer_reset(void);
+extern void Deep_Sleep_timer_reset(void);
 
 /* NOTE: Try to keep memory usage below about 75% for the dsPIC30F3011 as the stack can use as much as 15% */
 /*****************************/
@@ -61,8 +61,8 @@ struct Settings{
     float   absolute_max_current;       //Max regulating current.
     /******************************/
     float   auto_off_watts;
-    int     Cell_Count;    //Number of cells.
     int   settingsINT[1];
+    int     Cell_Count;               //Number of cells.
     int   cycles_to_80;               //Number of charge cycles to 80% capacity.
     //Charge temps.
     int   chrg_min_temp;              //Battery minimum charge temperature. Stop Charging at this temp.
@@ -82,9 +82,9 @@ struct Settings{
     //Some other stuff.
     int   max_heat;           //Heater watts that you want to use.
     int     DeepSleepAfter;      //Power off the system after this many minutes of not being plugged in or keyed on. 120 minutes is 2 hours. -1 disables timer.
-    int     PowerOffAfter;
+    int     PowerOffAfter;      //#52
     unsigned int     flash_chksum_old;   //System Flash Checksum as stored in NV-mem
-    char    PWR_SW_MODE;
+    int    PWR_SW_MODE;
     char    PxVenable[2];
     char    custom_data1[6];    //4 blocks of 6 chars of custom user text or data, can be terminated by a NULL char. (0xFC - 0xFF)
     char    custom_data2[6];
@@ -176,7 +176,6 @@ volatile float   resistor_divide_const = 0;              //Value for calculating
 volatile float open_voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
 volatile float temp_Cell_Voltage_Average[4];
 volatile float Cell_Voltage_Average[4];
-volatile float pack_target_voltage = 0;
 volatile float Bcurrent_compensate = 0;     //Battery Current compensation.
 volatile float Ccurrent_compensate = 0;      //Charger Current compensation.
 volatile float CavgVolt = 0;     //averaged voltage from charger
@@ -193,6 +192,7 @@ volatile float Charger_Target_Voltage = 0;
 volatile float Half_ref = 0;
 volatile float analog_const = 0;
 volatile float ch_dynamic_crnt_limit = 0;
+volatile float ch_eval_start_percent = 0;
 volatile int   OV_Timer[4];
 volatile int  gas_gauge_timer = gauge_timer;
 volatile unsigned int PWM_MaxBoost = 0;
@@ -208,7 +208,7 @@ volatile char Ccurnt_cal_stage = 0;
 volatile char LED_Test = 1;
 /* 0 - 4, stage 0 = not run, set 1 to start, stage 2 = in progress, stage 3 = completed, 4 is Error.
  */
-volatile char power_session = 1;
+volatile char power_session = UnknownStart;
 volatile char DeepSleepTimer = 0;
 volatile char DeepSleepTimerSec = 59;      //default state.
 volatile char PowerOffTimer = 0;
@@ -220,8 +220,8 @@ volatile char v_test = 0;
 volatile char first_cal = 0;
 volatile char Run_Level = 0;
 volatile char ch_cycle = 0;
-volatile char slowINHIBIT_Timer = 0;
 volatile char button_timer = 0;
+volatile char Auto_Eval = 0;
 /*****************************/
 //Control Output
 volatile unsigned int     charge_power = 0; //charge rate
@@ -245,10 +245,9 @@ typedef struct tagCONDBITS {
   unsigned V_Cal:1;
   unsigned LED_test_ch:1;
   unsigned IRQ_RESTART:1;
-  unsigned clockSpeed:1;
-  unsigned slowINHIBIT:1;
   unsigned IC_RW:1;
   unsigned IC_ACK:1;
+  unsigned Chrg_Inhibit:1;
   //unsigned MemInUse:1;
 } CONDBITS;
 volatile CONDBITS CONDbits;
@@ -270,6 +269,7 @@ typedef struct tagSTINGBITS {
   unsigned CH_Voltage_Present:1;
   unsigned OverCRNT_Fault:1;
   unsigned Force_Max_Cnt_Limit:1;
+  unsigned Pack_Is_Ballanced:1;
 } STINGBITS;
 volatile STINGBITS STINGbits;
 

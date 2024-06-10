@@ -65,9 +65,6 @@ int main(void){
     GENERAL2_PORT = 0;
     //Enable Keep Alive signal. System keeps itself on while main_power is enabled.
     for(unsigned int i=0;i<65534;i++){KeepAlive = 1;} //Do nothing loop. Waste some time.
-    CONDbits.clockSpeed = slow; //Force a switchover to fast clock. It will not switch if this bool is == to fast
-    OSC_Switch(fast);
-    slowINHIBIT_Timer = 10;
     /* Analog inputs */
     //Initialize PORTB first.
     ANALOG_TRIS = ANALOG_DIR;          //set portb to analog inputs.
@@ -91,10 +88,10 @@ int main(void){
         temp_Cell_Voltage_Average[i] = 0;
     }
     Init();
-    timer_reset();
+    Deep_Sleep_timer_reset();   //Located in dataIRQs.c
     PowerOffTimer = sets.PowerOffAfter-1;
-    send_string("Init. \n\r", PORT1);
-    send_string("Init. \n\r", PORT2);
+    //send_string("Init. \n\r", PORT1);
+    send_string(I_Auto, "Init. \n\r", PORT2);
 
 /*****************************/
     // Main Loop.
@@ -120,19 +117,11 @@ int main(void){
              * It's what I had on hand when I first started developing this.
              * Oh well, we have ways of getting around it so it works for now.
              */
-            //Heat_CTRL = 50;
-            //OSC_Switch(slow);
             Sleep();
-            OSC_Switch(fast);
-            //Sleep();
             STINGbits.deep_sleep = 0;
         }
         else {
-            //CPUact = 0;      //Turn CPU ACT light off.
-            //Heat_CTRL = 50;
-            //OSC_Switch(slow);
             Idle();                 //Idle Loop, saves power.
-            OSC_Switch(fast);
         }
     }
     return 0;

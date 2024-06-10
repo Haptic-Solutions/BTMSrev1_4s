@@ -85,22 +85,22 @@ int Get_Lowest_PD_Voltage(void){
 }
 
 void Last_PD(int serial_port){
-    load_float(PD_Last_Voltage, serial_port);
-    load_string("V :: ", serial_port);
-    load_float(PD_Last_Current, serial_port);
-    load_string("A", serial_port);
-    send_string("\n\r", serial_port);
+    load_float(I_Auto, PD_Last_Voltage, serial_port);
+    load_string(I_Auto, "V :: ", serial_port);
+    load_float(I_Auto, PD_Last_Current, serial_port);
+    load_string(I_Auto, "A", serial_port);
+    send_string(I_Auto, "\n\r", serial_port);
 }
 
 void List_PD_Options(int serial_port){
-    load_string("\n\rUSB-PD modes available with this charger: \n\r", serial_port);
+    load_string(I_Auto, "\n\rUSB-PD modes available with this charger: \n\r", serial_port);
     if(!Get_PD_Sources() || dsky.Cin_voltage<3){
-        load_string("\n\rNo PD sources.", serial_port);
+        load_string(I_Auto, "\n\rNo PD sources.", serial_port);
         return;
     }
     for(int i=0;i<PD_Src_Count;i++){
         if(!Calc_PD_Option(i)){
-            load_string("\n\rPD source error.", serial_port);
+            load_string(I_Auto, "\n\rPD source error.", serial_port);
             break;
         }
         Last_PD(serial_port);

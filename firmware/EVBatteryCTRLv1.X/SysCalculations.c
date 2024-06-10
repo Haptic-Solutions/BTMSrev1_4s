@@ -121,41 +121,41 @@ void Volt_Cal(int serial_port){
     STINGbits.adc_valid_data = 0;//Get fresh analog data
     ADCON1bits.ADON = on;    // turn ADC on to get a sample.
     avg_rdy=0;  //reset the averaging system.
-    while(avg_rdy<2){
+    while(avg_rdy<1){
         Idle();
     }
     int param = Get_Float(2, serial_port) - 1;
     float tollarance = param + 2;
     float set_Volt = Get_Float(4, serial_port);
     char anyCal=0;
-    load_string("Checking: ",serial_port);
-    load_float(param+1, serial_port);
-    load_string("\n\r", serial_port);
+    load_string(I_Auto, "Checking: ",serial_port);
+    load_float(I_Auto, param+1, serial_port);
+    load_string(I_Auto, "\n\r", serial_port);
     if(param>=0 && param<=3){
         //float Fi = i;
         //float testV = 2*(Fi+1);  //Calculate a test value. 2V for S1, S2, S3, and S4.
         //Calibrate the voltage only if it's within +-1V. We may be doing one at a time.
         if((Cell_Voltage_Average[param]>set_Volt-tollarance) && (Cell_Voltage_Average[param]<set_Volt+tollarance)){
             sets.S_vlt_adjst[param] = set_Volt-Cell_Voltage_Average[param];
-            if(param==0)load_string("S1: ", serial_port);
-            else if(param==1)load_string("S2: ", serial_port);
-            else if(param==2)load_string("S3: ", serial_port);
-            else if(param==3)load_string("S4: ", serial_port);
+            if(param==0)load_string(I_Auto, "S1: ", serial_port);
+            else if(param==1)load_string(I_Auto, "S2: ", serial_port);
+            else if(param==2)load_string(I_Auto, "S3: ", serial_port);
+            else if(param==3)load_string(I_Auto, "S4: ", serial_port);
             anyCal = 1;
         }
     }
     //Now do charger input voltage
     if(param==4 && (dsky.Cin_voltage>set_Volt-2) && (dsky.Cin_voltage<set_Volt+2)){
             sets.Ch_vlt_adjst = set_Volt-dsky.Cin_voltage;
-            load_string("CH: ", serial_port);
+            load_string(I_Auto, "CH: ", serial_port);
             anyCal = 1;
     }
     save_sets();
     if(Run_Level != Crit_Err)Run_Level = RL_Temp; //Return back to whatever run level we were in before.
     CONDbits.V_Cal = 0;
-    if(anyCal)send_string("voltage input(s) cal.\n\r", serial_port);
-    else if(param>=0 || param<=4) send_string("Nothing cal! Voltage out of range.\n\r", serial_port);
-    else send_string("Nothing cal! Input number out of range. \n\r", serial_port);
+    if(anyCal)send_string(I_Auto, "voltage input(s) cal.\n\r", serial_port);
+    else if(param>=0 || param<=4) send_string(I_Auto, "Nothing cal! Voltage out of range.\n\r", serial_port);
+    else send_string(I_Auto, "Nothing cal! Input number out of range. \n\r", serial_port);
 }
 //Gets ran by analog IRQ in sysIRQs.cBatt_IO_OFF();
 //Runs on every 8th IRQ.
@@ -218,18 +218,18 @@ float simpleCube(float NumInput){
 
 //Battery SOC Curve Calculation. y=2(X-0.5)^3+0.5(X-0.5)+0.5 <- Equation used as an approximate SOC
 //V_ratio is a 0-1 value based on discharge to charge voltages of cell type. Function returns a 0-1 value;
-float calc_lithium(float V_level){
+float Vcurve_calc(float V_level){
     return (2*simpleCube(V_level-0.5))+(0.5*(V_level-0.5))+0.5;
 }
 void get_volt_percent(void){
-    dsky.open_voltage = dsky.pack_voltage;
+    dsky.open_voltage = dsky.pack_vltg_average;
     float VoltsFromDead = sets.battery_rated_voltage - sets.dischrg_voltage;
     if(VoltsFromDead==0)VoltsFromDead=0.00001;    //Prevent divide by zero.
     for(int i=0;i<sets.Cell_Count;i++){
         float V_level = Cell_Voltage_Average[i] - sets.dischrg_voltage;
         if(V_level<0)V_level=0;
         V_level /= VoltsFromDead;
-        open_voltage_percentage[i] = 100 * calc_lithium(V_level);
+        open_voltage_percentage[i] = 100 * Vcurve_calc(V_level);
     }
 }
 
@@ -273,68 +273,5 @@ void initial_comp(void){
     }
 }
 
-
-void OSC_Switch(int speed){
-    int new_Clock = 0;
-    if(!CONDbits.slowINHIBIT && !slowINHIBIT_Timer && !CONDbits.charger_detected &&
-    speed == slow && CONDbits.clockSpeed == fast && PORTS_DONE()){
-        __asm__ volatile ("DISI #0x3FFF");
-        __builtin_write_OSCCONH(0x78);
-        __builtin_write_OSCCONH(0x9A);
-        __builtin_write_OSCCONH(0x07);
-        __builtin_write_OSCCONL(0x46);
-        __builtin_write_OSCCONL(0x57);
-        __builtin_write_OSCCONL(0x81); //Postscale 64
-        CONDbits.clockSpeed = slow;
-        new_Clock = 1;
-            T1CONbits.TCKPS = 0x02;           //1:64 prescale HS is 1:256
-            PR1 = 0x383A;                     //1/4 Count for a total scale down of 1:64
-            TMR1 = 0x0000;
-            
-            T2CONbits.TCKPS = 0x01;           //1:1 prescale HS is 1:64
-            PR2 = 0x7074;                     //Double count
-            TMR2 = 0x0000;
-            
-            //T3CONbits.TCKPS = 0x02;           //1:64 prescale HS is 1:256
-            //TMR3 = 0x0000;
-            //PR3 = 0x383A;                     //1/4 Count for a total scale down of 1:64
-            
-            T4CONbits.TCKPS = 0x02;           //1:64 prescale HS is 1:256
-            TMR4 = 0x0000;
-            PR4 = 0x383A;                     //1/4 Count for a total scale down of 1:64
-            
-            T5CONbits.TCKPS = 0x01;           //1:1 prescale HS is 1:64
-            PR5 = 0x7074;                     //Double count
-            TMR5 = 0x0000;
-    }
-    else if(speed == fast && CONDbits.clockSpeed == slow){
-        CONDbits.clockSpeed = fast;
-        __asm__ volatile ("DISI #0x3FFF");
-        T1CONbits.TCKPS = 0x03;          //1:256 prescale
-        PR1 = 0xE0EA;                    //Full Count
-        T2CONbits.TCKPS = 0x02;          //1:64 prescale
-        PR2 = 0x383A;
-        //T3CONbits.TCKPS = 3;             //1:256 prescale
-        //PR3 = 0xE0EA;                    //Half Count
-        T4CONbits.TCKPS = 0x03;          //1:256 prescale
-        PR4 = 0xE0EA;                    //Half Count
-        T5CONbits.TCKPS = 0x02;          //1:64 prescale
-        PR5 = 0x383A;
-        __builtin_write_OSCCONH(0x78);
-        __builtin_write_OSCCONH(0x9A);
-        __builtin_write_OSCCONH(0x07);
-        __builtin_write_OSCCONL(0x46);
-        __builtin_write_OSCCONL(0x57);
-        __builtin_write_OSCCONL(0x01); //No postscale
-        new_Clock = 1;
-    }
-    if(new_Clock){
-        while(OSCCONbits.OSWEN){
-        __asm__ volatile ("NOP");
-        __asm__ volatile ("NOP");
-        } //Wait for clock switch to finish.
-        if(CONDbits.IRQ_RESTART)DISICNT = 0;
-    }
-}
 
 #endif

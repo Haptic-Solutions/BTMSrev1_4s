@@ -20,7 +20,7 @@ SOFTWARE. */
 
 #ifndef DEFINES_H
 #define	DEFINES_H
-//########################################################################70054e######
+//##############################################################################
 // Tm = 32767 * (1 / (((clkSpeedmhz * PLL) / 4) / tiksPerIRQ))
 //#define IPS 29.48;   //million instructions per second.
 #define IPS 14.74   //million instructions per second.
@@ -31,7 +31,7 @@ SOFTWARE. */
 #define PWM_MaxHeat (PWM_Period*2)*0.9
 #define PWM_MaxChrg (PWM_Period*2)*0.98
 #define PWM_MaxBoost_LO 0.53
-#define PWM_MaxBoost_HI 0.76
+#define PWM_MaxBoost_HI 0.74
 #define PWM_MaxBoost_LN (PWM_Period*2)*PWM_MaxBoost_LO
 #define PWM_MaxBoost_HN (PWM_Period*2)*PWM_MaxBoost_HI
 //Charger
@@ -42,7 +42,7 @@ SOFTWARE. */
 #define BAUD2 9600  //Default BAUD rate for PORT 2
 #define calc_125 0.00003472 //Value for calculating the total current in and out of battery every second.
 //Firmware Version String
-#define version "\n\rV1.0_2S-4S\n\r"
+#define version "\n\rFirmware: V0.1\n\r2S-4S Compatible Cell Configs.\n\r(C) Haptic Solutions Inc. (2024)\n\r"
 //IO inputs
 #define PWR_SW !PORTFbits.RF1 //Power on/off switch, button, or key. Active low input.
 #define BV_Fault PORTEbits.RE8  //Battery Voltage Fault.
@@ -128,6 +128,7 @@ SOFTWARE. */
 #define input 1
 #define output 0
 #define maxFCodes 20
+#define I_Auto -1
 
 //Constants
 #define Max_Cell_Count 4

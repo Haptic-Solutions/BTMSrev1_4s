@@ -28,7 +28,6 @@ extern void IsSysReady(void);
 extern void calcAnalog(void);
 extern void Volt_Cal(int);
 extern void Get_lowest_cell_percent(void);
-extern void OSC_Switch(int);
 
 #endif	/* SysCalc_H */
 

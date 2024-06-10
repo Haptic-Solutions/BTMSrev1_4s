@@ -28,7 +28,7 @@ SOFTWARE. */
 //System debug safemode
 inline void death_loop(void){
     ALL_shutdown();     //Turn everything off.
-    init_sys_debug();    //Disable everything that is not needed. Only Serial Ports and Timer 1 Active.
+    init_sys_debug();    //Disable everything that is not needed. Only Serial Ports and some system timers active.
     LED_Mult(Debug);  //Turn debug lights solid on to show fatal error.
     fault_log(0x3D, 0x00);
     for(;;){

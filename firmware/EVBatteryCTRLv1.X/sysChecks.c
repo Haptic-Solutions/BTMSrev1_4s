@@ -26,9 +26,20 @@ SOFTWARE. */
 #include "common.h"
 #include "eeprom.h"
 
+void chargeInhibit(char inhibit){
+    if(inhibit){
+        CONDbits.Chrg_Inhibit = 1;
+        charge_mode > Wait;
+        CONDbits.charger_detected = no;
+        STINGbits.CH_Voltage_Present = no;
+        CH_Boost = off;           //set charge boost control off.
+        CHctrl = off;             //set charge control off.
+    }
+    else CONDbits.Chrg_Inhibit = 0;
+}
+
 void chargeDetect(void){
-    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage != calibrating && !D_Flag_Check() && charge_mode > Stop && first_cal == fCalReady){
-        slowINHIBIT_Timer = 10;
+    if(dsky.Cin_voltage>4.8 && vars.heat_cal_stage != calibrating && !D_Flag_Check() && charge_mode > Stop && first_cal == fCalReady && !CONDbits.Chrg_Inhibit){
         //Check for various charging standards.
         if(charge_mode == Assignment_Ready){
             if(dsky.Cin_voltage<6){
@@ -94,40 +105,41 @@ void chargeDetect(void){
         if(sets.partial_charge > 1){
             TMR4 = 0;   //Reset timer 4 to prevent a check between writes.
             sets.partial_charge = 1;
-            ram_chksum_update();     //Update the checksum after a write.
+            save_sets();
             fault_log(0x1C, 0x00);         // Log Partial charge was set higher than 100% event.
         }
         //If partial_charge is set to 0% then we disable and charge the battery up to full every time.
+        float packChargeVoltage = sets.battery_rated_voltage * sets.Cell_Count;
+        float packDischrgVoltage = sets.dischrg_voltage * sets.Cell_Count;
         if(sets.partial_charge == 0){
-            dsky.chrg_voltage = sets.battery_rated_voltage;
+            dsky.chrg_voltage = packChargeVoltage;
             STINGbits.p_charge = 0;
         }
         //Do a full charge every 10 cycles so that we can ballance the cells.
-        //Need to make this configure-able by the user at runtime.
         if(vars.partial_chrg_cnt < 10){
             vars.partial_chrg_cnt++;
             STINGbits.p_charge = 1;
-            dsky.chrg_voltage = ((sets.battery_rated_voltage - sets.dischrg_voltage) * sets.partial_charge) + sets.dischrg_voltage;
+            dsky.chrg_voltage = ((packChargeVoltage - packDischrgVoltage) * Vcurve_calc(sets.partial_charge)) + packDischrgVoltage;
             //If partial charge is less than the open circuit voltage of the battery
             //then set partial charge voltage to just above the open circuit voltage
             //so that we don't discharge the battery any while a charger is plugged in.
-            if(dsky.chrg_voltage < dsky.open_voltage && CONDbits.got_open_voltage) dsky.chrg_voltage = dsky.open_voltage + 0.01;
+            if(dsky.chrg_voltage < dsky.open_voltage) dsky.chrg_voltage = dsky.open_voltage + 0.01;
             //If it ends up being higher than battery rated voltage then clamp it.
-            if(dsky.chrg_voltage > sets.battery_rated_voltage) dsky.chrg_voltage = sets.battery_rated_voltage;
+            if(dsky.chrg_voltage > packChargeVoltage) dsky.chrg_voltage = packChargeVoltage;
         }
         //Do full charge.
         else if(vars.partial_chrg_cnt >= 10){
             vars.partial_chrg_cnt = 0;
             STINGbits.p_charge = 0;
-            dsky.chrg_voltage = sets.battery_rated_voltage;
+            dsky.chrg_voltage = packChargeVoltage;
         }
 
         //Reset battery usage session when charger is plugged in and power is turned off.
         if(!CONDbits.Power_Out_EN){
-            vars.battery_usage = 0;
+            vars.battery_usage = 0;        //Need to make this configure-able by the user at runtime.
         }
         CONDbits.charger_detected = 1;  //Set this variable to 1 so that we only run this routine once per charger plugin.
-        power_session = UnknownStart; //Reset ;capacity meter routine if a charge is plugged in.
+        power_session = UnknownStart; //Reset capacity meter routine if a charger is plugged in.
     }
     else if(!STINGbits.CH_Voltage_Present){
         CONDbits.charger_detected = 0;  //If charger has been unplugged, clear this.
@@ -141,6 +153,14 @@ void chargeDetect(void){
     float MaxBoost = (PWM_Period*2)*PBoost;
     if(avg_rdy>0)PWM_MaxBoost=MaxBoost;
     else PWM_MaxBoost=PWM_MaxBoost_LN;
+}
+
+//Force a full charge.
+void Full_Charge(void){
+    STINGbits.p_charge = no;
+    dsky.chrg_voltage = sets.battery_rated_voltage*sets.Cell_Count;
+    if(CONDbits.charger_detected)vars.partial_chrg_cnt = clear;
+    else vars.partial_chrg_cnt = 10;
 }
 
 //Initiate current calibration, heater calibration, and try to get battery capacity from NVmem upon cold startup.

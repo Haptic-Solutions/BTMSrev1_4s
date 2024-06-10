@@ -33,7 +33,7 @@ SOFTWARE. */
 /* IRQs go here. */
 /*****************/
 
-void timer_reset(void){
+void Deep_Sleep_timer_reset(void){
     DeepSleepTimer = sets.DeepSleepAfter-1;      //reset the timer when main_power is on.
     DeepSleepTimerSec = 59;                   //60 seconds.
 }
@@ -42,7 +42,47 @@ void timer_reset(void){
 //For low priority CPU intensive processes and checks.
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
     IFS1bits.T4IF = clear;
-    OSC_Switch(fast);
+    //Check for and perform automatic battery evaluation.
+    if(Auto_Eval > 0){
+        if(dsky.chrg_percent>99.8 && !CONDbits.Chrg_Inhibit){
+            chargeInhibit(yes);
+            send_string(I_Auto, Eval_Discharging, PORT1);
+            send_string(I_Auto, Eval_Discharging, PORT2);
+            CONDbits.Power_Out_EN = on;
+        }
+        else if(dsky.chrg_percent<24 && CONDbits.Chrg_Inhibit && !CONDbits.Power_Out_EN){
+            chargeInhibit(no);
+            send_string(I_Auto, Eval_Charging, PORT1);
+            send_string(I_Auto, Eval_Charging, PORT2);
+            CONDbits.Power_Out_EN = off;
+            Auto_Eval--;
+            if(Auto_Eval==0){
+                send_string(I_Auto, Eval_Finished, PORT1);
+                send_string(I_Auto, Eval_Finished, PORT2);
+            }
+            Full_Charge();
+        }
+        //Load used has shutdown before auto evaluation could complete. Aborted.
+        else if((dsky.chrg_percent>25 && CONDbits.Chrg_Inhibit && !CONDbits.Power_Out_EN)){
+            chargeInhibit(no);
+            send_string(I_Auto, Eval_Error, PORT1);
+            send_string(I_Auto, Eval_Error, PORT2);
+            CONDbits.Power_Out_EN = off;
+            fault_log(0x44, 0x00);
+            Auto_Eval = 0;
+        }
+        //Charger or power parameters don't line up for Evaluation. Aborting.
+        else if((!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN) ||
+                (dsky.Cin_voltage<C_Min_Voltage)){
+            chargeInhibit(no);
+            send_string(I_Auto, Eval_Error, PORT1);
+            send_string(I_Auto, Eval_Error, PORT2);
+            CONDbits.Power_Out_EN = off;
+            if(!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN)fault_log(0x45, 0x01);
+            else if((dsky.Cin_voltage<C_Min_Voltage))fault_log(0x45, 0x02);
+            Auto_Eval = 0;
+        }
+    }
     /* Deep Sleep TIMER stuff. Do this to save power.
      * This is so that this system doesn't drain your 1000wh battery over the
      * course of a couple weeks while being unplugged from a charger.
@@ -57,7 +97,7 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
             DeepSleepTimerSec = 5;
         }
         else {
-            timer_reset();
+            Deep_Sleep_timer_reset();
         }
     }
     //Run_Level is at Heartbeat or below. Start counting down.
@@ -119,24 +159,25 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
 }
 
 //Another Heavy process IRQ
-//For low priority CPU intensive processes and checks, and 0.125 second non-critical timing.
+//For low priority CPU intensive processes and checks, and 1/16th second non-critical timing.
 void __attribute__((interrupt, no_auto_psv)) _T5Interrupt (void){
     IFS1bits.T5IF = clear;
-    OSC_Switch(fast);
+    //Blink some LEDs
+    BlinknLights++; //Count up all the time once every 1/8 second.
     //Do display stuff.
     displayOut(PORT1);
     displayOut(PORT2);
     //End IRQ
 }
 
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
 /* Data and Command input and processing IRQ for Port 1 */
 void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void){
     IFS0bits.U1RXIF = clear;
     if(U1STAbits.URXDA)Command_Interp(PORT1);
-        OSC_Switch(fast);
-        slowINHIBIT_Timer = 10;
 /****************************************/
-    timer_reset(); //if in cal mode, reset timer after every byte received via serial.
+    Deep_Sleep_timer_reset(); //if in cal mode, reset timer after every byte received via serial.
     /* End the IRQ. */
 }
 
@@ -144,22 +185,27 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void){
 void __attribute__((interrupt, no_auto_psv)) _U2RXInterrupt (void){
     IFS1bits.U2RXIF = clear;
     if(U2STAbits.URXDA)Command_Interp(PORT2);
-        OSC_Switch(fast);
-        slowINHIBIT_Timer = 10;
 /****************************************/
-    timer_reset(); //if in cal mode, reset timer after every byte received via serial.
+    Deep_Sleep_timer_reset(); //if in cal mode, reset timer after every byte received via serial.
     /* End the IRQ. */
+}
+
+/**********************************************************************************************************************/
+//Data dispatch complete, reset everything.
+void Buffrst(int serial_port){
+    if (Buffer[serial_port][B_Out_index[serial_port]] == NULL){
+        B_Out_index[serial_port] = clear;    //Reset the buffer index.
+        portBSY[serial_port] = clear;  //Inhibits writing to buffer while the serial port is transmitting.
+    }
 }
 
 /* Output IRQ for Port 1 */
 void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt (void){
     IFS0bits.U1TXIF = clear;
-    OSC_Switch(fast);
-    CONDbits.slowINHIBIT = 1;
     //Dispatch the buffer to the little 4 word Serial Port buffer as it empties.
-    while(!U1STAbits.UTXBF && (Buffer[PORT1][Buff_index[PORT1]] != NULL) && portBSY[PORT1]){
-        U1TXREG = Buffer[PORT1][Buff_index[PORT1]];
-        Buff_index[PORT1]++;
+    while(!U1STAbits.UTXBF && (Buffer[PORT1][B_Out_index[PORT1]] != NULL) && portBSY[PORT1]){
+        U1TXREG = Buffer[PORT1][B_Out_index[PORT1]];
+        B_Out_index[PORT1]++;
     }
     //Reset the buffer index and count when done sending.
     Buffrst(PORT1);
@@ -170,12 +216,10 @@ void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt (void){
 /* Output IRQ for Port 2 */
 void __attribute__((interrupt, no_auto_psv)) _U2TXInterrupt (void){
     IFS1bits.U2TXIF = clear;
-    OSC_Switch(fast);
-    CONDbits.slowINHIBIT = 1;
     //Dispatch the buffer to the little 4 word Serial Port buffer as it empties.
-    while(!U2STAbits.UTXBF && (Buffer[PORT2][Buff_index[PORT2]] != NULL) && portBSY[PORT2]){
-        U2TXREG = Buffer[PORT2][Buff_index[PORT2]];
-        Buff_index[PORT2]++;
+    while(!U2STAbits.UTXBF && (Buffer[PORT2][B_Out_index[PORT2]] != NULL) && portBSY[PORT2]){
+        U2TXREG = Buffer[PORT2][B_Out_index[PORT2]];
+        B_Out_index[PORT2]++;
     }
     //Reset the buffer index and count when done sending.
     Buffrst(PORT2);

@@ -27,7 +27,9 @@ SOFTWARE. */
 extern void heater_calibration(void);
 extern void main_power_check(void);
 extern void first_check(void);
+extern void Full_Charge(void);
 extern void initialCal(void);
+extern void chargeInhibit(char);
 extern void chargeDetect(void);
 
 /*****************************/

@@ -126,15 +126,11 @@ inline void chargeReg(void){
         else if(dsky.battery_current < 0 && heat_power > 0) heat_power--;
         //Regulate the charger input.
         // Charge regulation routine.
-        if(charge_power > 0 && (dsky.battery_current > chrg_current || Cell_HV_Check()>0 || dsky.Cin_current >= Max_Charger_Current-0.05 || dsky.Cin_voltage < Charger_Target_Voltage - 0.05 || dsky.pack_voltage > pack_target_voltage+0.02)){
-            if(ch_boost_power > 0){
-                ch_boost_power-=2; 
-            }
-            else {
-                charge_power-=2;
-            }
+        if(charge_power > 0 && (dsky.battery_current > chrg_current || Cell_HV_Check()>0 || dsky.Cin_current >= Max_Charger_Current|| dsky.Cin_voltage < Charger_Target_Voltage - 0.05 || dsky.pack_voltage >= dsky.chrg_voltage)){
+            if(ch_boost_power > 0)ch_boost_power-=2;
+            else charge_power-=2;
         }
-        else if(ch_boost_power < PWM_MaxBoost && (dsky.battery_current+0.05 < chrg_current && !Cell_HV_Check() && dsky.Cin_current+0.05 < Max_Charger_Current && dsky.Cin_voltage > Charger_Target_Voltage + 0.05 && dsky.pack_voltage < pack_target_voltage-0.02)){
+        else if(ch_boost_power < PWM_MaxBoost && (dsky.battery_current+0.05 < chrg_current && !Cell_HV_Check() && dsky.Cin_current+0.05 < Max_Charger_Current && dsky.Cin_voltage > Charger_Target_Voltage + 0.05 && dsky.pack_voltage < dsky.chrg_voltage-0.02)){
             if(charge_power < PWM_MaxChrg)charge_power+=2;
             else ch_boost_power+=2;
         }

@@ -40,53 +40,60 @@ void USB_Power_Present_Check(void){
         I2CCONbits.I2CEN = 0;   //disable I2C interface
     }
 }
-
-//Check to make sure serial_port is either 1 or 2, if it's not then default to port 1
-int port_Sanity(int serial_port){
-    if(serial_port != PORT1 && serial_port != PORT2){
-        fault_log(0x3E, 0x00);
-        return PORT2;   //default to port2 because it's always on.
+/******************************************************************************/
+/* Pre-check port status's, wait or break if something isn't right. */
+//Check for valid port selection.
+void port_valid_check(int serial_port){
+    //Check if valid port has been selected.
+    if (serial_port > 0x01 || serial_port < 0x00){
+        fault_log(0x1A, 1+serial_port);        //Log invalid port error.
+        return;
     }
-    else return serial_port;
 }
-
-void Buffrst(int serial_port){
-    serial_port = port_Sanity(serial_port);
-    if (Buffer[serial_port][Buff_index[serial_port]] == NULL){
-        Buff_index[serial_port] = clear;
-        portBSY[serial_port] = clear;  //Inhibits writing to buffer while the serial port is transmitting buffer.
+//Check if buffer index is out of range.
+void Buffer_Index_Sanity_CHK(int serial_port){
+    if(Buff_index[serial_port]<0){
+        Buff_index[serial_port]=0;
+        fault_log(0x12, (1+serial_port)|0x10);
     }
-    if(Buff_index[PORT1] == clear && Buff_index[PORT2] == clear)CONDbits.slowINHIBIT = 0;
+    if(Buff_index[serial_port]>=bfsize){
+        Buff_index[serial_port]=0;
+        fault_log(0x12, (1+serial_port)|0x20);
+    }
 }
-
-void B_Sanity_CHK(int serial_port){
-    serial_port = port_Sanity(serial_port);
-    if(Buff_index[serial_port]<0)Buff_index[serial_port]=0;
-    if(Buff_index[serial_port]>=bfsize)Buff_index[serial_port]=0;
+//Check for if another process is writing to buffer. Wait for it to finish.
+void buffer_write_Idle(int serial_port){
+    while(writingbuff[serial_port]==yes){
+        Idle();
+    }
 }
-
 //Check if serial port is busy.
 //If used, ensure that it is used by an IRQ priority that is lower than TX IRQs.
-void portBusyIdle(int serial_port){
-    serial_port = port_Sanity(serial_port);
-    while(portBSY[serial_port]){
-        //CPUact = 0;      //Turn CPU ACT light off.
+void port_Busy_Idle(int serial_port){
+    while(portBSY[serial_port]==yes){
         Idle();                 //Idle Loop, saves power.
     }
-    //CPUact = 1;      //Turn CPU ACT light on.
+}
+/* Do it all at once. */
+void write_check(int serial_port){
+    port_valid_check(serial_port);
+    Buffer_Index_Sanity_CHK(serial_port);
+    buffer_write_Idle(serial_port);
+    port_Busy_Idle(serial_port);
+}
+/******************************************************************************/
+
+//Start the data transfer from one of the buffers to the selected serial port
+//Dispatch the data in the buffers to the display by creating a TX IRQ
+void dispatch_Serial(int serial_port){
+    portBSY[serial_port] = yes;                 //Tell everyone else that port is now busy.
+    Buffer[serial_port][Buff_index[serial_port]] = NULL;   //Put NULL char at end of string.
+    Buff_index[serial_port] = clear;              //Start Index at 0.
+    if(serial_port==PORT2) IFS1bits.U2TXIF = set;        //Start transmitting by manually sending an IRQ.
+    else IFS0bits.U1TXIF = set;                   //Start transmitting by manually sending an IRQ.
+    port_Busy_Idle(serial_port);
 }
 
-int PORTS_DONE(void){
-    if(!U2STAbits.RIDLE ||
-            !U1STAbits.RIDLE ||
-            !U2STAbits.TRMT ||
-            !U1STAbits.TRMT ||
-            U2STAbits.URXDA ||
-            U1STAbits.URXDA) return no;
-    else return yes;
-}
-
-//*************************************************************************************************
 //Converts four bit hex numbers to ASCII
 char four_bit_hex_cnvt(int numb){
     char asci_hex = 0;
@@ -102,69 +109,73 @@ char four_bit_hex_cnvt(int numb){
     return asci_hex;
 }
 
-void port_check(int serial_port){
-    serial_port = port_Sanity(serial_port);
-    //Check if valid port has been selected.
-    if (serial_port > 0x01){
-        fault_log(0x1A, 0x00);        //Log invalid port error.
-        FtempIndex[serial_port] = clear;
-        return;
-    }
-    //check if port is busy sending data.
-/*    if(portBSY[serial_port]){
-        if(serial_port)
-            //fault_log(0x28);       //Log Port2 Busy Error.
-        else
-            //fault_log(0x27);       //Log Port1 Busy Error.
-        return;
-    }*/
-    //check if another process is currently writing to buffer.
-    if(writingbuff[serial_port]){
-        return;
-    }
-}
-
 //Loads ascii HEX into buffer.
-void load_hex(int numb, int serial_port){
-    serial_port = port_Sanity(serial_port);
-    B_Sanity_CHK(serial_port);
-    port_check(serial_port);
+void load_hex(int index, int numb, int serial_port){
+    write_check(serial_port);
+    writingbuff[serial_port] = yes;
     nibble[serial_port][0] = (numb & 0xF000)/4096;
     nibble[serial_port][1] = (numb & 0x0F00)/256;
     nibble[serial_port][2] = (numb & 0x00F0)/16;
     nibble[serial_port][3] = (numb & 0x000F);
-    writingbuff[serial_port] = yes;
+    if(index>I_Auto)Buff_index[serial_port]=index;
     Buffer[serial_port][Buff_index[serial_port]] = '0';
     if (Buff_index[serial_port] < bfsize-1)Buff_index[serial_port]++;
     Buffer[serial_port][Buff_index[serial_port]] = 'x';
     if (Buff_index[serial_port] < bfsize-1)Buff_index[serial_port]++;
-    int x;
-    for(x=0;x<4;x++){
+    for(int x=0;x<4;x++){
         Buffer[serial_port][Buff_index[serial_port]] = four_bit_hex_cnvt(nibble[serial_port][x]);
-        if (Buff_index[serial_port] < bfsize-1)
-            Buff_index[serial_port]++;
+        if (Buff_index[serial_port] < bfsize-1)Buff_index[serial_port]++;
     }
     writingbuff[serial_port] = no;
 }
-//Start the data transfer from one of the buffers to the selected serial port
-//Dispatch the data in the buffers to the display by creating a TX IRQ
-void dispatch_Serial(int serial_port){
-    serial_port = port_Sanity(serial_port);
-    B_Sanity_CHK(serial_port);
-    if(portBSY[serial_port])return;             //If port is busy, don't dispatch a second time.
-    portBSY[serial_port] = yes;                 //Tell everyone else that port is now busy.
-    Buffer[serial_port][Buff_index[serial_port]] = NULL;   //Put NULL char at end of string.
-    Buff_index[serial_port] = clear;               //Start Index at 0.
-    if(serial_port) IFS1bits.U2TXIF = set;        //Start transmitting by manually sending an IRQ.
-    else IFS0bits.U1TXIF = set;                   //Start transmitting by manually sending an IRQ.
+//Converts int numbers to ASCII
+char int_cnvt(int numb){
+    char asci_int = 0;
+    int temp = 0;
+    temp = 0x0F & numb;
+    if(temp < 10){
+        asci_int = temp + 48;
+    }
+    return asci_int;
+}
+//Loads ascii int into buffer.
+void load_int(int index, int numb, int serial_port){
+    write_check(serial_port);
+    writingbuff[serial_port] = yes;
+    if(index>I_Auto)Buff_index[serial_port]=index;
+    Buffer[serial_port][Buff_index[serial_port]] = ' ';
+    if(numb<0){
+        Buffer[serial_port][Buff_index[serial_port]] = '-';
+        numb*=-1;
+    }
+    if(numb>9999){
+        numb=9999;
+        Buffer[serial_port][Buff_index[serial_port]] = '>';
+    }
+    if (Buff_index[serial_port] < bfsize-1)Buff_index[serial_port]++;
+    if(numb>999)nibble[serial_port][0] = numb/1000;
+    else nibble[serial_port][0] = 0;
+    numb -= nibble[serial_port][0]*1000;
+    if(numb>99)nibble[serial_port][1] = numb/100;
+    else nibble[serial_port][1] = 0;
+    numb -= nibble[serial_port][1]*100;
+    if(numb>9)nibble[serial_port][2] = numb/10;
+    else nibble[serial_port][2] = 0;
+    numb -= nibble[serial_port][2]*10;
+    if(numb>0)nibble[serial_port][3] = numb;
+    else nibble[serial_port][3] = 0;
+    for(int x=0;x<4;x++){
+        Buffer[serial_port][Buff_index[serial_port]] = int_cnvt(nibble[serial_port][x]);
+        if (Buff_index[serial_port] < bfsize-1)Buff_index[serial_port]++;
+    }
+    writingbuff[serial_port] = no;
 }
 
 //Send a string of text to a buffer that can then be dispatched to a serial port.
-void load_string(char *string_point, int serial_port){
-    serial_port = port_Sanity(serial_port);
-    B_Sanity_CHK(serial_port);
-    port_check(serial_port);
+void load_string(int index, char *string_point, int serial_port){
+    write_check(serial_port);
     writingbuff[serial_port] = yes;
+    if(index>I_Auto)Buff_index[serial_port]=index;
     StempIndex[serial_port] = clear;
     while (string_point[StempIndex[serial_port]]){
         Buffer[serial_port][Buff_index[serial_port]] = string_point[StempIndex[serial_port]];
@@ -177,11 +188,10 @@ void load_string(char *string_point, int serial_port){
 }
 
 //Send a string of text to a buffer that can then be dispatched to a serial port.
-void load_const_string(const char *string_point, int serial_port){
-    serial_port = port_Sanity(serial_port);
-    B_Sanity_CHK(serial_port);
-    port_check(serial_port);
+void load_const_string(int index, const char *string_point, int serial_port){
+    write_check(serial_port);
     writingbuff[serial_port] = yes;
+    if(index>I_Auto)Buff_index[serial_port]=index;
     StempIndex[serial_port] = clear;
     while (string_point[StempIndex[serial_port]]){
         Buffer[serial_port][Buff_index[serial_port]] = string_point[StempIndex[serial_port]];
@@ -194,24 +204,23 @@ void load_const_string(const char *string_point, int serial_port){
 }
 
 //Send text to buffer and auto dispatch the serial port.
-void send_string(char *string_point, int serial_port){
-    serial_port = port_Sanity(serial_port);
-    load_string(string_point, serial_port);
+void send_string(int index, char *string_point, int serial_port){
+    write_check(serial_port);
+    load_string(index, string_point, serial_port);
     dispatch_Serial(serial_port);
-    portBusyIdle(serial_port);  //Check to see if port is ready.
 }
 
 //Copy float data to buffer.
 void cpyFLT(int serial_port){
-    serial_port = port_Sanity(serial_port);
-    B_Sanity_CHK(serial_port);
     Buffer[serial_port][Buff_index[serial_port]] = float_out[serial_port][FtempIndex[serial_port]];
     //Do not overrun the buffer.
     if (Buff_index[serial_port] < bfsize-1)Buff_index[serial_port]++;
 }
 /* Sends a float to buffer as plane text. */
-void load_float(float f_data, int serial_port){
-    serial_port = port_Sanity(serial_port);
+void load_float(int index, float f_data, int serial_port){
+    write_check(serial_port);
+    writingbuff[serial_port] = yes;   //Tell other processes we are busy with the buffer.
+    if(index>I_Auto)Buff_index[serial_port]=index;
     FtempIndex[serial_port] = 0;
     tx_float[serial_port] = 0;
     tx_temp[serial_port] = 0;
@@ -246,8 +255,6 @@ void load_float(float f_data, int serial_port){
 
 /* Write to buffer */
     FtempIndex[serial_port] = 0;
-    port_check(serial_port);        //Check serial port to see if it's busy before writing to buffer.
-    writingbuff[serial_port] = 1;   //Tell other processes we are busy with the buffer.
     while (FtempIndex[serial_port] < 9){
         //If 0, do not copy unless it's 00.000 or a '-' or greater than 999 && config_space is 1
         while(float_out[serial_port][FtempIndex[serial_port]] == '0' &&
@@ -277,7 +284,7 @@ void load_float(float f_data, int serial_port){
         }
     }
     config_space[serial_port] = 0;
-    writingbuff[serial_port] = 0;
+    writingbuff[serial_port] = no;
 }
 
 //get floating point number from text input
@@ -315,7 +322,6 @@ float Get_Float(int index, int serial_port){
 
 unsigned int BaudCalc(float BD, float mlt){
     /* Calculate baud rate. */
-    if(CONDbits.clockSpeed == slow)mlt /= 16;
     if(BD==0)BD=9600; //Prevent divide by zero, default to 9600 baud.
     float INS = mlt * 1000000;
     float OutPut = ((INS/BD)/16)-1;

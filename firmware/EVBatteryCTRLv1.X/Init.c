@@ -26,13 +26,16 @@ SOFTWARE. */
 #include "Init.h"
 
 void default_sets(void){
+    /* Each analog voltage input uses a 10K resistor over a 1K resistor.
+     * Both rated for 0.1% tolerance and are physically close to each other
+     * to minimize thermal drift. */
     sets.R1_resistance = 10;            //R1 resistance in Kohms
     sets.R2_resistance = 1;             //R2 resistance in Kohms
-    sets.S_vlt_adjst[0] = 0.221;
-    sets.S_vlt_adjst[1] = 0.182;
-    sets.S_vlt_adjst[2] = 0.137;
-    sets.S_vlt_adjst[3] = 0.084;
-    sets.Ch_vlt_adjst = 0.192;
+    sets.S_vlt_adjst[0] = 0.204;        //These values are added to each analog input BEFORE individual cell voltages are calculated.
+    sets.S_vlt_adjst[1] = 0.152;
+    sets.S_vlt_adjst[2] = 0.111;
+    sets.S_vlt_adjst[3] = 0.014;
+    sets.Ch_vlt_adjst = 0.177;          //Gets added to charge input voltage.
     /*****************************/
     //Battery Ratings and setpoints
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
@@ -118,7 +121,10 @@ void configure_IO(void){
 
     /**************************/
     /* Osc Config*/
-    //OSC_Switch(fast, no);
+    OSCCONbits.NOSC = 1;
+    OSCCONbits.POST = 0;
+    OSCCONbits.LPOSCEN = 0;
+    OSCCONbits.OSWEN = 1;
     /**************************/
     //Disable IRQ on port change.
     CNEN1 = 0;
@@ -184,27 +190,24 @@ void configure_IO(void){
     I2CCON = 0;
     I2CBRG = 0x1FF; //Speed not too critical. As long as it's within specs.
 /*****************************/
-    //Note: Timers are now all configured by the clock switch routine located in subs.c
 //Timer configs at 58,960,000 hz
 /* Configure Timer 1 */
 /* Scan IO every second when KeySwitch is off. */
 /*****************************/
 /* Timer one CTRL. */
-    //PR1 = 0xE0EA;
-    //TMR1 = 0x0000;
-    //T1CON = 0x0000;
-    //T1CONbits.TCKPS = 3;        //1:256 prescale
+    PR1 = 0xE0EA;
+    TMR1 = 0x0000;
+    T1CON = 0x0000;
+    T1CONbits.TCKPS = 3;        //1:256 prescale
 
 /*****************************/
 /* Configure Timer 2 */
 /*****************************/
 /* For 0.125 second timing operations. */
-    //PR2 = 0xE4E2;   //58,594
-    //PR2 = 0x7075;     //28,789
-    //PR2 = 0x383A;     //14,394
-    //TMR2 = 0x0000;
-    //T2CON = 0x0000;
-    //T2CONbits.TCKPS = 2;  //1:64 prescale
+    PR2 = 0x7074;     //28788
+    TMR2 = 0x0000;
+    T2CON = 0x0000;
+    T2CONbits.TCKPS = 2;  //1:64 prescale
 
 /*****************************/
 /* Configure Timer 3 */
@@ -212,7 +215,7 @@ void configure_IO(void){
 /*****************************/
 /* For exactly 1 second timing operations. */
 //    PR3 = 0xE0EA;   //57,578
-    //PR3 = 0x7271;     //29,297
+//    PR3 = 0x7271;     //29,297
 //    TMR3 = 0x0000;
 //    T3CON = 0x0000;
 //    T3CONbits.TCKPS = 3;        //1:256 prescale
@@ -222,20 +225,19 @@ void configure_IO(void){
 /* Non-Critical 1S Timing. */
 /*****************************/
 /* For low priority 1 second timing operations. */
-    //PR4 = 0xE0EA;   //57,578
-    //PR3 = 0x7271;     //29,297
-    //TMR4 = 0x0000;
-    //T4CON = 0x0000;
-    //T4CONbits.TCKPS = 3;        //1:256 prescale
+    PR4 = 0xE0EA;   //57,578
+    TMR4 = 0x0000;
+    T4CON = 0x0000;
+    T4CONbits.TCKPS = 3;        //1:256 prescale
 
 /*****************************/
 /* Configure Timer 5 */
 /*****************************/
-/* For low priority 0.125 second timing operations. */
-    //PR5 = 0x383A;     //14,394
-    //TMR5 = 0x0000;
-    //T5CON = 0x0000;
-    //T5CONbits.TCKPS = 2;        //1:64 prescale
+/* For low priority 1/16th second timing operations. */
+    PR5 = 0x383A;     //14398
+    TMR5 = 0x0000;
+    T5CON = 0x0000;
+    T5CONbits.TCKPS = 2;        //1:64 prescale
 
 /*****************************/
 /* Configure and Enable analog inputs */
@@ -266,10 +268,14 @@ void configure_IO(void){
     IPC5bits.T4IP = 1;      //1 Sec Checksum timer IRQ and power off timer.
     IPC5bits.INT2IP = 1;    //Not used.
 }
+
 void Init(void){
 /*******************************
  * initialization values setup.
 *******************************/
+    //Clear command buffer(s)
+    for(int i=0;i<Clength;i++)CMD_buff[PORT1][i]=' ';
+    for(int i=0;i<Clength;i++)CMD_buff[PORT2][i]=' ';
     //Configure stack overflow catch address.
     SPLIM = ramFree;
     //Calculate our voltage divider value(s).
@@ -290,7 +296,7 @@ void Init(void){
     IFS1 = 0;
     IFS2 = 0;
 
-	// enable selectinterrupts
+	// enable select interrupts
 	__asm__ volatile ("DISI #0x3FFF");  //First disable IRQs via instruction.
     IEC0 = 0;
     IEC1 = 0;
@@ -367,16 +373,10 @@ void init_sys_debug(void){
 //Go in to low power mode when not in use.
 void low_power_mode(void){
     Batt_IO_OFF();
-    //ADCON1bits.ADON = 0;    // turn ADC off
-    //if(!PWR_SW && !CONDbits.Power_Out_Lock)T2CONbits.TON = 0;      // Stop Timer 2 only if power switch is released.
     T3CONbits.TON = 0;      // Stop Timer 3
-    //T4CONbits.TON = 0;      // Stop Timer 4
     T5CONbits.TON = 0;      // Stop Timer 5
     // disable interrupts
-    IEC1bits.INT1IE = 0;    //disable Wheel rotate IRQ
-    //IEC0bits.T2IE = 0;      //disable interrupts for timer 2
     IEC0bits.T3IE = 0;	// Disable interrupts for timer 3
-    //IEC1bits.T4IE = 1;	// Disable interrupts for timer 4
     IEC1bits.T5IE = 0;	// Disable interrupts for timer 5
     INTCON2bits.INT1EP = 0;
     INTCON2bits.INT2EP = 0;
@@ -392,15 +392,9 @@ void low_power_mode(void){
  * Only plugging in the charge will restart the CPU, or yaknow, just restart the CPU... */
 void low_battery_shutdown(void){
     Run_Level = Shutdown;
+    ADCON1bits.ADON = 0;    // turn ADC off
     PTCONbits.PTEN = 0;     // Turn off PWM
-    T1CONbits.TON = 0;      // Stop Timer 1
     // Clear all interrupts flags
-    IFS0 = 0;
-    IFS1 = 0;
-    IFS2 = 0;
-    	// disable interrupts
-	__asm__ volatile ("DISI #0x3FFF");
-	IEC0bits.T1IE = 0;	// disable interrupts for timer 1
     IEC0bits.ADIE = 0;  //disable ADC IRQs.
     INTCON2bits.INT1EP = 0;
     INTCON2bits.INT2EP = 0;
