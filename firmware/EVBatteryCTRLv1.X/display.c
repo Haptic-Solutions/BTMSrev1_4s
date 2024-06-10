@@ -238,8 +238,8 @@ void Command_Interp(int serial_port){
         if ((CMD_buff[serial_port][CMD_Point[serial_port]] != 0x0D) &&
             (CMD_buff[serial_port][CMD_Point[serial_port]] != 0x0A) &&
             (CMD_buff[serial_port][CMD_Point[serial_port]] != 0x08)){
-            if(serial_port)U2TXREG = CMD_buff[serial_port][CMD_Point[serial_port]];
-            else U1TXREG = CMD_buff[serial_port][CMD_Point[serial_port]];
+            if(serial_port==PORT2 && CONDbits.Port2_Echo)U2TXREG = CMD_buff[serial_port][CMD_Point[serial_port]];
+            else if(CONDbits.Port1_Echo) U1TXREG = CMD_buff[serial_port][CMD_Point[serial_port]];
         }
         //Check for a RETURN
         char cmdinput = CMD_buff[serial_port][CMD_Point[serial_port]];
@@ -254,7 +254,7 @@ void Command_Interp(int serial_port){
                 CMD_buff[serial_port][CMD_Point[serial_port]] = ' ';    //Actually erase it from the input buffer.
                 CMD_Point[serial_port]--;
                 //Erase last character and move back by one.
-                send_string(0, "\b \b", serial_port);
+                if((serial_port==PORT1 && CONDbits.Port1_Echo)||(serial_port==PORT2 && CONDbits.Port2_Echo))send_string(0, "\b \b", serial_port);
             }
             else send_string(0, "\a", serial_port);
         }
@@ -313,6 +313,7 @@ void Command_Interp(int serial_port){
             break;
             case '$':
                 //Generate flash and chip config checksum and compare it to the old one.
+                send_string(I_Auto, "\n\rCalculating program checksum, please wait...", serial_port);
                 load_string(I_Auto, "\n\rPRG:\n\rStored:", serial_port);
                 load_hex(I_Auto, sets.flash_chksum_old, serial_port);
                 load_string(I_Auto, "\n\rCalc:  ", serial_port);
@@ -408,7 +409,7 @@ void Command_Interp(int serial_port){
                 chargeInhibit(no);
                 v_test = clear;
                 CONDbits.Power_Out_EN = off;
-                Auto_Eval = 5;
+                Auto_Eval = 0;
             break;
             case 'A':   //Start Automatic battery evaluation.
                 if(!(Flags&syslock)){setsUnlockedErr(serial_port);break;}
@@ -474,6 +475,16 @@ void Command_Interp(int serial_port){
                 load_float(I_Auto, charge_mode, serial_port);
                 load_string(I_Auto, "\n\r", serial_port);
 
+            break;
+            case '+':
+                if(serial_port==PORT1)CONDbits.Port1_Echo=on;
+                else CONDbits.Port2_Echo=on;
+                load_string(I_Auto, "\n\rEcho ON.", serial_port);
+            break;
+            case '=':
+                if(serial_port==PORT1)CONDbits.Port1_Echo=off;
+                else CONDbits.Port2_Echo=off;
+                load_string(I_Auto, "\n\rEcho OFF.", serial_port);
             break;
             default:
                 load_string(I_Auto, "Unknown Command.", serial_port);

@@ -27,7 +27,7 @@ SOFTWARE. */
 
 char Cell_HV_Check(){
     for(int i=0;i<sets.Cell_Count;i++){
-        if(dsky.Cell_Voltage[i]>sets.battery_rated_voltage+0.025) return 1;
+        if(dsky.Cell_Voltage[i]>sets.cell_rated_voltage+0.025) return 1;
     }
     return 0;
 }
@@ -109,6 +109,7 @@ inline void chargeReg(void){
     if(STINGbits.CH_Voltage_Present && CONDbits.charger_detected && Run_Level != Cal_Mode){
         //Check to see if something has changed or was unplugged.
         if(charge_mode > Assignment_Ready && dsky.Cin_voltage<C_Min_Voltage){
+            Ch_Err_Attrib = 0x01;
             STINGbits.CH_Voltage_Present=0;
             charge_mode = Stop;
         }

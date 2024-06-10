@@ -42,15 +42,18 @@ void Deep_Sleep_timer_reset(void){
 //For low priority CPU intensive processes and checks.
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
     IFS1bits.T4IF = clear;
-    //Check for and perform automatic battery evaluation.
     if(Auto_Eval > 0){
         if(dsky.chrg_percent>99.8 && !CONDbits.Chrg_Inhibit){
+            print_info(no, -1, PORT1);
+            print_info(no, -1, PORT2);
             chargeInhibit(yes);
             send_string(I_Auto, Eval_Discharging, PORT1);
             send_string(I_Auto, Eval_Discharging, PORT2);
             CONDbits.Power_Out_EN = on;
         }
-        else if(dsky.chrg_percent<24 && CONDbits.Chrg_Inhibit && !CONDbits.Power_Out_EN){
+        else if(dsky.chrg_percent<25 && CONDbits.Chrg_Inhibit && !CONDbits.Power_Out_EN){
+            print_info(no, -1, PORT1);
+            print_info(no, -1, PORT2);
             chargeInhibit(no);
             send_string(I_Auto, Eval_Charging, PORT1);
             send_string(I_Auto, Eval_Charging, PORT2);
@@ -64,6 +67,8 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
         }
         //Load used has shutdown before auto evaluation could complete. Aborted.
         else if((dsky.chrg_percent>25 && CONDbits.Chrg_Inhibit && !CONDbits.Power_Out_EN)){
+            print_info(no, -1, PORT1);
+            print_info(no, -1, PORT2);
             chargeInhibit(no);
             send_string(I_Auto, Eval_Error, PORT1);
             send_string(I_Auto, Eval_Error, PORT2);
@@ -74,6 +79,8 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
         //Charger or power parameters don't line up for Evaluation. Aborting.
         else if((!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN) ||
                 (dsky.Cin_voltage<C_Min_Voltage)){
+            print_info(no, -1, PORT1);
+            print_info(no, -1, PORT2);
             chargeInhibit(no);
             send_string(I_Auto, Eval_Error, PORT1);
             send_string(I_Auto, Eval_Error, PORT2);

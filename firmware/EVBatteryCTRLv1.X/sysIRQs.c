@@ -63,28 +63,28 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
         //Force use of all 0's if we haven't burned the first ADC sample after a startup.
         //The ADC takes a moment to get correct values but it still sends the IRQs anyways.
         if (STINGbits.adc_sample_burn){
-            CavgVolt += ChargeVoltage; //Charger Voltage
-            BavgCurnt += BCsense; //Battery Current
+            input_CavgVolt += ChargeVoltage; //Charger Voltage
+            input_CavgCurnt += CCsense; //Charger Current
+            input_BavgCurnt += BCsense; //Battery Current
             //avgBTemp += Btemp; //Batt Temp
-            avgSTemp += Mtemp; //Self Temp
-            avgBTemp = avgSTemp;
-            BavgVolt[0] += LithCell_V1;
-            BavgVolt[1] += LithCell_V2;
-            BavgVolt[2] += LithCell_V3;
-            BavgVolt[3] += LithCell_V4;
-            CavgCurnt += CCsense; //Charger Current
+            input_avgSTemp += Mtemp; //Self Temp
+            input_avgBTemp = input_avgSTemp;
+            input_BavgVolt[0] += LithCell_V1;
+            input_BavgVolt[1] += LithCell_V2;
+            input_BavgVolt[2] += LithCell_V3;
+            input_BavgVolt[3] += LithCell_V4;
         }
         else{
             //Burn the first average.
-            CavgVolt = 0;
-            BavgCurnt = 0;
-            avgBTemp = 0;
-            avgSTemp = 0;
-            BavgVolt[0] = 0;
-            BavgVolt[1] = 0;
-            BavgVolt[2] = 0;
-            BavgVolt[3] = 0;
-            CavgCurnt = 0;
+            input_CavgVolt = 0;
+            input_CavgCurnt = 0;
+            input_BavgCurnt = 0;
+            input_avgBTemp = 0;
+            input_avgSTemp = 0;
+            input_BavgVolt[0] = 0;
+            input_BavgVolt[1] = 0;
+            input_BavgVolt[2] = 0;
+            input_BavgVolt[3] = 0;
         }
         analog_avg_cnt++;
     }
@@ -114,38 +114,105 @@ void __attribute__((interrupt, no_auto_psv)) _ADCInterrupt (void){
 /* Heartbeat IRQ, Once every Second. Lots of stuff goes on here. */
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     IFS0bits.T1IF = 0;
-    //Check for how fast we are charging.
-    if(dsky.battery_crnt_average > (sets.chrg_C_rating*sets.amp_hour_rating)*0.75)CONDbits.fastCharge = 1;
-    else CONDbits.fastCharge = 0;
-    //Check if a cell has reached it's ballance voltage.
-    int bal_L = 0;
-    float lowest_cell = 100;
-    int lowest_c_num = 0;
-    //Do not run ballance resistor on the lowest cell.
-    for(int i=0;i<sets.Cell_Count;i++){
-        if(Cell_Voltage_Average[i]<lowest_cell){
-            lowest_c_num = i;
-            lowest_cell = Cell_Voltage_Average[i];
+    //Run these routines only if there is a valid average.
+    if(avg_rdy>0){
+        //Check for how fast we are charging.
+        if(dsky.battery_crnt_average > (sets.chrg_C_rating*sets.amp_hour_rating)*0.75)CONDbits.fastCharge = 1;
+        else CONDbits.fastCharge = 0;
+        //Check if a cell has reached it's ballance voltage.
+        int bal_L = 0;
+        float lowest_cell = 100;
+        int lowest_c_num = 0;
+        //Do not run ballance resistor on the lowest cell.
+        for(int i=0;i<sets.Cell_Count;i++){
+            if(Cell_Voltage_Average[i]<lowest_cell){
+                lowest_c_num = i;
+                lowest_cell = Cell_Voltage_Average[i];
+            }
         }
-    }
-    //Check which cell is equal to or above set voltage. Do not activate the lowest cell ballance resistor.
-    for(int i=0;i<sets.Cell_Count;i++){
-        if(Cell_Voltage_Average[i]>=sets.battery_rated_voltage + 0.005 && !CONDbits.V_Cal && i!=lowest_c_num){
-            switch(i){
-                case 0 : bal_L = bal_L | 0x01;
-                break;
-                case 1 : bal_L = bal_L | 0x02;
-                break;
-                case 2 : bal_L = bal_L | 0x04;
-                break;
-                case 3 : bal_L = bal_L | 0x08;
-                break;
-                default:
-                break;
+        //Check which cell is equal to or above set voltage. Do not activate the lowest cell ballance resistor.
+        for(int i=0;i<sets.Cell_Count;i++){
+            if(Cell_Voltage_Average[i]>=sets.cell_rated_voltage + 0.005 && !CONDbits.V_Cal && i!=lowest_c_num){
+                switch(i){
+                    case 0 : bal_L = bal_L | 0x01;
+                    break;
+                    case 1 : bal_L = bal_L | 0x02;
+                    break;
+                    case 2 : bal_L = bal_L | 0x04;
+                    break;
+                    case 3 : bal_L = bal_L | 0x08;
+                    break;
+                    default:
+                    break;
+                }
+            }
+        }
+        Ballance_LEDS = bal_L;
+            //Get highest cell
+        float highest_cell = 100;
+        for(int i=0;i<sets.Cell_Count;i++){
+            if(Cell_Voltage_Average[i]<highest_cell){
+                highest_cell = Cell_Voltage_Average[i];
+            }
+        }
+        //Measure battery capacity from less than 25% charge to 100% charge based on open circuit voltage.
+        float Pk_Diff = absFloat((sets.cell_rated_voltage*4)-dsky.pack_vltg_average);
+        float Abs_C_Rate = absFloat(dsky.battery_crnt_average)/(sets.chrg_C_rating*sets.amp_hour_rating);
+        float Temp_Diff = absFloat(dsky.battery_temp - 25);     //Battery temperature must be between 15C and 35C
+        //Check if below 25% to initiate evaluation sequence.
+        if(power_session != EmptyStart && CONDbits.charger_detected && dsky.chrg_percent < 25 && Temp_Diff < 10){
+            power_session = EmptyStart;
+            vars.battery_usage = 0;
+            ch_eval_start_percent = dsky.chrg_percent;
+        }
+        //Check if at full charge to complete evaluation sequence.
+        else if(power_session == EmptyStart && STINGbits.Pack_Is_Ballanced && Pk_Diff < 0.05 && Abs_C_Rate<0.01 && Temp_Diff < 10){
+            power_session = FullStart;
+            float percent_diff = 100/(100-ch_eval_start_percent);
+            float calculated_capacity = vars.battery_usage*percent_diff;
+            if(calculated_capacity<vars.battery_capacity)vars.battery_capacity=calculated_capacity; //Capacity can only go down.
+        }
+        //**************************************************************************
+        //Check if cells are balanced enough for evaluation.
+        if(Pk_Diff < 0.05 && Abs_C_Rate<0.01 && Temp_Diff < 10){
+            if((highest_cell-lowest_cell)<0.05)STINGbits.Pack_Is_Ballanced=yes;
+            else if((highest_cell-lowest_cell)>0.1){
+                STINGbits.Pack_Is_Ballanced=no;
+                power_session = FullStart;
+            }
+            //Reached full charge voltage with little current, set to full charge.
+            if(highest_cell >= sets.cell_rated_voltage-0.05)vars.battery_remaining = vars.battery_capacity;
+        }
+        //Reached lowest voltage with little current, set to 1% charge.
+        else if(Abs_C_Rate<0.01 && lowest_cell <= sets.dischrg_voltage+0.05)vars.battery_remaining = 1;
+
+        //Get the absolute value of battery_usage and store it in absolute_battery_usage.
+        vars.absolute_battery_usage = absFloat(vars.battery_usage);
+        //Calculate the max capacity of the battery once the battery has been fully charged and fully discharged.
+        if(CONDbits.got_open_voltage && first_cal == 3){
+            //Don't let battery_remaining go below 0% or above 100%;
+            //This should never happen in normal conditions. This is just a catch.
+            if(vars.battery_remaining < 0) vars.battery_remaining = 0;
+            else if(vars.battery_remaining > vars.battery_capacity) vars.battery_remaining = vars.battery_capacity;
+        }
+        //**************************************************
+        //Calculate battery %
+        if(vars.battery_capacity == 0)vars.battery_capacity=0.0001;  //Prevent divide by zero. Make it a safe value.
+        dsky.chrg_percent = ((vars.battery_remaining / vars.battery_capacity) * 100);
+        /****************************************/
+        //Calculate number of charge cycles the battery is going through
+        if(dsky.battery_crnt_average>0.015 && CONDbits.charger_detected){
+            vars.chargeCycleLevel+=dsky.battery_crnt_average/3600;
+            if(vars.chargeCycleLevel>=vars.battery_capacity){
+                vars.chargeCycleLevel = 0;
+                if(vars.TotalChargeCycles<65535)vars.TotalChargeCycles++;
+                //And decrease battery capacity after every full charge cycle.
+                float capDec = sets.cycles_to_80 * 5;
+                if(capDec==0)capDec=1;
+                vars.battery_capacity *= 1-(1/capDec);
             }
         }
     }
-    Ballance_LEDS = bal_L;
     //Check for receive buffer overflow.
     if(U1STAbits.OERR){
         fault_log(0x2D, 0x00);
@@ -174,67 +241,6 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
     if(Run_Level < Cal_Mode){
         shutdown_timer = 1;     //Acts like a resettable fuse.
         STINGbits.fault_shutdown = no;
-    }
-    //Get highest cell
-    float highest_cell = 100;
-    //Do not run ballance resistor on the lowest cell.
-    for(int i=0;i<sets.Cell_Count;i++){
-        if(Cell_Voltage_Average[i]<highest_cell){
-            highest_cell = Cell_Voltage_Average[i];
-        }
-    }
-    //Measure battery capacity from less than 25% charge to 100% charge based on open circuit voltage.
-    float Pk_Diff = absFloat((sets.battery_rated_voltage*4)-dsky.pack_vltg_average);
-    float Abs_C_Rate = absFloat(dsky.battery_crnt_average)/(sets.chrg_C_rating*sets.amp_hour_rating);
-    float Temp_Diff = absFloat(dsky.battery_temp - 25);     //Battery temperature must be between 15C and 35C
-    //Check if below 25% to initiate evaluation sequence.
-    if(power_session != EmptyStart && CONDbits.charger_detected && dsky.chrg_percent < 25 && Temp_Diff < 10){
-        power_session = EmptyStart;
-        vars.battery_usage = 0;
-        ch_eval_start_percent = dsky.chrg_percent;
-    }
-    //Check if at full charge to complete evaluation sequence.
-    else if(power_session == EmptyStart && STINGbits.Pack_Is_Ballanced && Pk_Diff < 0.05 && Abs_C_Rate<0.01 && Temp_Diff < 10){
-        power_session = FullStart;
-        float percent_diff = 100/(100-ch_eval_start_percent);
-        float calculated_capacity = vars.battery_usage*percent_diff;
-        if(calculated_capacity<vars.battery_capacity)vars.battery_capacity=calculated_capacity; //Capacity can only go down.
-    }
-    //Check if cells are balanced enough for evaluation.
-    if(Pk_Diff < 0.05 && Abs_C_Rate<0.01 && Temp_Diff < 10){
-        if((highest_cell-lowest_cell)<0.05)STINGbits.Pack_Is_Ballanced=1;
-        else if((highest_cell-lowest_cell)>0.1){
-            STINGbits.Pack_Is_Ballanced=0;
-            power_session = FullStart;
-        }
-        vars.battery_remaining = vars.battery_capacity;
-    }
-    
-    //Get the absolute value of battery_usage and store it in absolute_battery_usage.
-    vars.absolute_battery_usage = absFloat(vars.battery_usage);
-    //Calculate the max capacity of the battery once the battery has been fully charged and fully discharged.
-    if(CONDbits.got_open_voltage && first_cal == 3){
-        //Don't let battery_remaining go below 0% or above 100%;
-        //This should never happen in normal conditions. This is just a catch.
-        if(vars.battery_remaining < 0) vars.battery_remaining = 0;
-        else if(vars.battery_remaining > vars.battery_capacity) vars.battery_remaining = vars.battery_capacity;
-    }
-    //**************************************************
-    //Calculate battery %
-    if(vars.battery_capacity == 0)vars.battery_capacity=0.0001;  //Prevent divide by zero. Make it a safe value.
-    dsky.chrg_percent = ((vars.battery_remaining / vars.battery_capacity) * 100);
-    /****************************************/
-    //Calculate number of charge cycles the battery is going through
-    if(dsky.battery_crnt_average>0.015 && CONDbits.charger_detected){
-        vars.chargeCycleLevel+=dsky.battery_crnt_average/3600;
-        if(vars.chargeCycleLevel>=vars.battery_capacity){
-            vars.chargeCycleLevel = 0;
-            if(vars.TotalChargeCycles<65535)vars.TotalChargeCycles++;
-            //And decrease battery capacity after every full charge cycle.
-            float capDec = sets.cycles_to_80 * 5;
-            if(capDec==0)capDec=1;
-            vars.battery_capacity *= 1-(1/capDec);
-        }
     }
     /* End the IRQ. */
 }
@@ -317,7 +323,8 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
             for(int i=0;i<Max_Cell_Count;i++){
                 temp_Cell_Voltage_Average[i] += dsky.Cell_Voltage[i];
             }
-            CavgCurnt_temp += dsky.Cin_current;
+            ch_vltg_avg_temp += dsky.Cin_voltage;
+            ch_crnt_avg_temp += dsky.Cin_current;
             bt_crnt_avg_temp += dsky.battery_current;
             bt_vltg_avg_temp += dsky.pack_voltage;
             avg_cnt++;
@@ -327,8 +334,10 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
                 temp_Cell_Voltage_Average[i] /= 8;
                 Cell_Voltage_Average[i] = temp_Cell_Voltage_Average[i];
             }
-            CavgCurnt_temp /= 8;
-            CavgCurnt = CavgCurnt_temp;
+            ch_vltg_avg_temp /= 8;
+            ch_crnt_avg_temp /= 8;
+            ch_vltg_avg = ch_vltg_avg_temp;
+            ch_crnt_avg = ch_crnt_avg_temp;
             bt_crnt_avg_temp /= 8;
             dsky.battery_crnt_average = bt_crnt_avg_temp;
             bt_vltg_avg_temp /= 8;
@@ -336,12 +345,15 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
             for(int i=0;i<Max_Cell_Count;i++){
                 temp_Cell_Voltage_Average[i] = 0;
             }
-            CavgCurnt_temp = 0;
+            ch_vltg_avg_temp = 0;
+            ch_crnt_avg_temp = 0;
             bt_vltg_avg_temp = 0;
             bt_crnt_avg_temp = 0;
             avg_cnt = 0;
             initial_comp();
             if(avg_rdy<2)avg_rdy++;
+            //Calculate charge input watts.
+            dsky.Cwatts = ch_vltg_avg * ch_crnt_avg;
         }
     }
     //Check for sane analog values.

@@ -27,13 +27,14 @@ SOFTWARE. */
 #include "eeprom.h"
 
 void chargeInhibit(char inhibit){
+    ch_cycle=0;
+    charge_mode = Wait;
+    CONDbits.charger_detected = no;
+    STINGbits.CH_Voltage_Present = no;
+    CH_Boost = off;           //set charge boost control off.
+    CHctrl = off;             //set charge control off.
     if(inhibit){
         CONDbits.Chrg_Inhibit = 1;
-        charge_mode > Wait;
-        CONDbits.charger_detected = no;
-        STINGbits.CH_Voltage_Present = no;
-        CH_Boost = off;           //set charge boost control off.
-        CHctrl = off;             //set charge control off.
     }
     else CONDbits.Chrg_Inhibit = 0;
 }
@@ -82,7 +83,7 @@ void chargeDetect(void){
     }
     if(charge_mode == Stop && ch_cycle > cycleLimit){
         charge_mode = CHError;
-        fault_log(0x3C, 0x00);
+        fault_log(0x3C, Ch_Err_Attrib);
     }
     else if(charge_mode == Stop){
         ch_cycle++;
@@ -109,7 +110,7 @@ void chargeDetect(void){
             fault_log(0x1C, 0x00);         // Log Partial charge was set higher than 100% event.
         }
         //If partial_charge is set to 0% then we disable and charge the battery up to full every time.
-        float packChargeVoltage = sets.battery_rated_voltage * sets.Cell_Count;
+        float packChargeVoltage = sets.cell_rated_voltage * sets.Cell_Count;
         float packDischrgVoltage = sets.dischrg_voltage * sets.Cell_Count;
         if(sets.partial_charge == 0){
             dsky.chrg_voltage = packChargeVoltage;
@@ -147,7 +148,7 @@ void chargeDetect(void){
     //Calculate PWM Boost hard limit. Helps prevent current spikes that would otherwise trip the charger into shutting down.
     float C_of_B=0;
     if(charge_mode>=USB2&&charge_mode<=USB3_Fast)C_of_B = (dsky.pack_vltg_average-Charger_Target_Voltage)/11.8;  //Get percent of charger voltage vs battery voltage.
-    else C_of_B = (dsky.pack_vltg_average-CavgVolt)/11.8;  //Get percent of charger voltage vs battery voltage.
+    else C_of_B = (dsky.pack_vltg_average-input_CavgVolt)/11.8;  //Get percent of charger voltage vs battery voltage.
     if(C_of_B<0)C_of_B=0;
     float PBoost = PWM_MaxBoost_LO+((PWM_MaxBoost_HI-PWM_MaxBoost_LO)*C_of_B);  //Convert that percent to a PWM limit withing a range.
     float MaxBoost = (PWM_Period*2)*PBoost;
@@ -158,7 +159,7 @@ void chargeDetect(void){
 //Force a full charge.
 void Full_Charge(void){
     STINGbits.p_charge = no;
-    dsky.chrg_voltage = sets.battery_rated_voltage*sets.Cell_Count;
+    dsky.chrg_voltage = sets.cell_rated_voltage*sets.Cell_Count;
     if(CONDbits.charger_detected)vars.partial_chrg_cnt = clear;
     else vars.partial_chrg_cnt = 10;
 }

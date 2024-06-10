@@ -49,8 +49,8 @@ struct Settings{
     /*****************************/
     //Battery Ratings and setpoints
     float   partial_charge;             //Percentage of voltage to charge the battery up to. Set to 0 to disable.
-    float   max_battery_voltage;        //Max battery cell voltage before shutdown and flag set.
-    float   battery_rated_voltage;      //Target max charge voltage
+    float   absolute_max_cell_voltage;  //Max battery cell voltage before shutdown and flag set.
+    float   cell_rated_voltage;         //Target max charge voltage
     float   dischrg_voltage;            //Minimum battery voltage
     float   low_voltage_shutdown;       //Battery Low Total Shutdown Voltage
     float   dischrg_C_rating;           //Discharge C rating
@@ -175,18 +175,21 @@ volatile float   resistor_divide_const = 0;              //Value for calculating
 /* General Vars */
 volatile float open_voltage_percentage[4];     //Battery Open Circuit Voltage Percentage.
 volatile float temp_Cell_Voltage_Average[4];
-volatile float Cell_Voltage_Average[4];
 volatile float Bcurrent_compensate = 0;     //Battery Current compensation.
 volatile float Ccurrent_compensate = 0;      //Charger Current compensation.
-volatile float CavgVolt = 0;     //averaged voltage from charger
-volatile float BavgVolt[4];     //averaged voltage from battery
-volatile float BavgCurnt = 0;    //averaged current input for battery
-volatile float CavgCurnt = 0;    //averaged current input from charger
-volatile float CavgCurnt_temp = 0;
-volatile float avgBTemp = 0;    //averaged battery temperature
-volatile float avgSTemp = 0;    //averaged self temperature
+volatile float input_CavgVolt = 0;                //input average voltage from charger
+volatile float input_BavgVolt[4];     //averaged voltage from battery
+volatile float input_BavgCurnt = 0;    //input average current input for battery
+volatile float input_CavgCurnt = 0;    //input average current input from charger
+volatile float input_avgBTemp = 0;    //averaged battery temperature
+volatile float input_avgSTemp = 0;    //averaged self temperature
+volatile float Cell_Voltage_Average[4];
 volatile float bt_crnt_avg_temp = 0;
 volatile float bt_vltg_avg_temp = 0;
+volatile float ch_crnt_avg_temp = 0;
+volatile float ch_vltg_avg_temp = 0;
+volatile float ch_crnt_avg = 0;
+volatile float ch_vltg_avg = 0;
 volatile float Max_Charger_Current = 0;
 volatile float Charger_Target_Voltage = 0;
 volatile float Half_ref = 0;
@@ -222,6 +225,7 @@ volatile char Run_Level = 0;
 volatile char ch_cycle = 0;
 volatile char button_timer = 0;
 volatile char Auto_Eval = 0;
+volatile char Ch_Err_Attrib = 0;
 /*****************************/
 //Control Output
 volatile unsigned int     charge_power = 0; //charge rate
@@ -248,6 +252,8 @@ typedef struct tagCONDBITS {
   unsigned IC_RW:1;
   unsigned IC_ACK:1;
   unsigned Chrg_Inhibit:1;
+  unsigned Port1_Echo:1;
+  unsigned Port2_Echo:1;
   //unsigned MemInUse:1;
 } CONDBITS;
 volatile CONDBITS CONDbits;

@@ -76,6 +76,7 @@ void port_Busy_Idle(int serial_port){
 }
 /* Do it all at once. */
 void write_check(int serial_port){
+    if(serial_port == PORT1 && U1STAbits.UTXEN == 0)return;
     port_valid_check(serial_port);
     Buffer_Index_Sanity_CHK(serial_port);
     buffer_write_Idle(serial_port);

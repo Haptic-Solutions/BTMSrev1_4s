@@ -192,7 +192,7 @@ inline void explody_preventy_check(void){
     if(C_Fault)IFS1bits.INT1IF = 1;
     //Battery over voltage check
     for(int i=0;i<sets.Cell_Count;i++){
-        if(Cell_Voltage_Average[i] > sets.max_battery_voltage){
+        if(Cell_Voltage_Average[i] > sets.absolute_max_cell_voltage){
             if(OV_Timer[i]<4)OV_Timer[i]++;
             else {
                 fault_log(0x07, i+1);    //Log a high battery voltage shutdown event.

@@ -32,20 +32,20 @@ void calcAnalog(void){
         * of converting analog inputs into voltages, currents, and temps.
         */
         //Battery current.
-        BavgCurnt /= sample_Average;      //Sample average.
-        BavgCurnt -= 32768;    //Set zero point.
-        BavgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
-        BavgCurnt *= Half_ref;      //Convert to +-1.65 'volts'. It's still a 0 - 3.3 volt signal on the analog input. The zero point is at 1.65v
-        dsky.battery_current = (BavgCurnt * 12.5) + Bcurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
-        BavgCurnt = 0;       //Clear average.
+        input_BavgCurnt /= sample_Average;      //Sample average.
+        input_BavgCurnt -= 32768;    //Set zero point.
+        input_BavgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
+        input_BavgCurnt *= Half_ref;      //Convert to +-1.65 'volts'. It's still a 0 - 3.3 volt signal on the analog input. The zero point is at 1.65v
+        dsky.battery_current = (input_BavgCurnt * 12.5) + Bcurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
+        input_BavgCurnt = 0;       //Clear average.
         
         //Charger current.
-        CavgCurnt /= sample_Average;      //Sample average.
-        CavgCurnt -= 32768;    //Set zero point.
-        CavgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
-        CavgCurnt *= Half_ref;      //Convert to +-1.65 'volts'. It's still a 0 - 3.3 volt signal on the analog input. The zero point is at 1.65v
-        dsky.Cin_current = (CavgCurnt * 12.5) + Ccurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
-        CavgCurnt = 0;       //Clear average.
+        input_CavgCurnt /= sample_Average;      //Sample average.
+        input_CavgCurnt -= 32768;    //Set zero point.
+        input_CavgCurnt /= 32768;    //Convert to signed fractional. -1 to 1
+        input_CavgCurnt *= Half_ref;      //Convert to +-1.65 'volts'. It's still a 0 - 3.3 volt signal on the analog input. The zero point is at 1.65v
+        dsky.Cin_current = (input_CavgCurnt * 12.5) + Ccurrent_compensate; //Offset for ACS711ELCTR-25AB-T Current Sensor.
+        input_CavgCurnt = 0;       //Clear average.
 
         //Battery voltage.
         //avgVolt /= 8;      //Sample average.
@@ -55,10 +55,10 @@ void calcAnalog(void){
         //Do it all at once to save time.
         float S_V[Max_Cell_Count];
         for(int i=0;i<Max_Cell_Count;i++){
-            BavgVolt[i] /= analog_const;
-            if(CONDbits.V_Cal) S_V[i] = BavgVolt[i] / resistor_divide_const;
-            else S_V[i] = (BavgVolt[i] / resistor_divide_const) + sets.S_vlt_adjst[i];    //Use resistor divider values to covert to actual voltage.
-            BavgVolt[i] = 0;       //Clear average.
+            input_BavgVolt[i] /= analog_const;
+            if(CONDbits.V_Cal) S_V[i] = input_BavgVolt[i] / resistor_divide_const;
+            else S_V[i] = (input_BavgVolt[i] / resistor_divide_const) + sets.S_vlt_adjst[i];    //Use resistor divider values to covert to actual voltage.
+            input_BavgVolt[i] = 0;       //Clear average.
         }
         
         if(CONDbits.V_Cal){
@@ -81,20 +81,20 @@ void calcAnalog(void){
         
         
         //Charger Voltage
-        CavgVolt /= analog_const;
-        if(CONDbits.V_Cal)dsky.Cin_voltage = CavgVolt / resistor_divide_const;    //Use resistor divider values to covert to actual voltage.
-        else dsky.Cin_voltage = (CavgVolt / resistor_divide_const) + sets.Ch_vlt_adjst;
-        CavgVolt = 0;       //Clear average.
+        input_CavgVolt /= analog_const;
+        if(CONDbits.V_Cal)dsky.Cin_voltage = input_CavgVolt / resistor_divide_const;    //Use resistor divider values to covert to actual voltage.
+        else dsky.Cin_voltage = (input_CavgVolt / resistor_divide_const) + sets.Ch_vlt_adjst;
+        input_CavgVolt = 0;       //Clear average.
 
         //Battery temperature.
         //avgBTemp /= x;      //Sample average.
         //avgBTemp /= 65535;  //Convert to unsigned fractional
         //avgBTemp *= 3.3;      //Converted to 0 - 5V voltage.
         //Do it all at once to save time.
-        avgBTemp /= analog_const;
-        avgBTemp -= 0.48;   //Offset for LM62 temp sensor.
-        dsky.battery_temp = avgBTemp / 0.0156;    //Convert to Degrees C
-        avgBTemp = 0;       //Clear average.
+        input_avgBTemp /= analog_const;
+        input_avgBTemp -= 0.48;   //Offset for LM62 temp sensor.
+        dsky.battery_temp = input_avgBTemp / 0.0156;    //Convert to Degrees C
+        input_avgBTemp = 0;       //Clear average.
 
 
         //Snowman's temperature.
@@ -102,10 +102,10 @@ void calcAnalog(void){
         //avgSTemp /= 65535;  //Convert to unsigned fractional
         //avgSTemp *= 3.3;      //Converted to 0 - 5V voltage.
         //Do it all at once to save time.
-        avgSTemp /= analog_const;
-        avgSTemp -= 0.48;   //Offset for LM62 temp sensor.
-        dsky.my_temp = avgSTemp / 0.0156;    //Convert to Degrees C
-        avgSTemp = 0;       //Clear average.
+        input_avgSTemp /= analog_const;
+        input_avgSTemp -= 0.48;   //Offset for LM62 temp sensor.
+        dsky.my_temp = input_avgSTemp / 0.0156;    //Convert to Degrees C
+        input_avgSTemp = 0;       //Clear average.
         STINGbits.adc_valid_data = 1;
 }
 
@@ -223,7 +223,7 @@ float Vcurve_calc(float V_level){
 }
 void get_volt_percent(void){
     dsky.open_voltage = dsky.pack_vltg_average;
-    float VoltsFromDead = sets.battery_rated_voltage - sets.dischrg_voltage;
+    float VoltsFromDead = sets.cell_rated_voltage - sets.dischrg_voltage;
     if(VoltsFromDead==0)VoltsFromDead=0.00001;    //Prevent divide by zero.
     for(int i=0;i<sets.Cell_Count;i++){
         float V_level = Cell_Voltage_Average[i] - sets.dischrg_voltage;
@@ -255,7 +255,7 @@ void initial_comp(void){
     //do the current cal.
     if(curnt_cal_stage == 2 && avg_rdy > 0){
         Bcurrent_compensate = (dsky.battery_crnt_average * -1)-0.015;   //Account for circuit draw when on.
-        Ccurrent_compensate = CavgCurnt * -1;
+        Ccurrent_compensate = ch_crnt_avg * -1;
         curnt_cal_stage = 3;        //Current Cal Complete
         //Do a heater cal after we have done current cal unless it is disabled.
         if(vars.heat_cal_stage != disabled) vars.heat_cal_stage = initialize;

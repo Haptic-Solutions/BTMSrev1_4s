@@ -39,8 +39,8 @@ void default_sets(void){
     /*****************************/
     //Battery Ratings and setpoints
     sets.partial_charge = 0.90;            //Percentage of voltage to charge the battery up to. Set to 0 to disable.
-    sets.max_battery_voltage = 4.28;      //Max battery voltage before lockout.
-    sets.battery_rated_voltage = 4.2;     //Target max charge voltage
+    sets.absolute_max_cell_voltage = 4.28;      //Max battery voltage before lockout.
+    sets.cell_rated_voltage = 4.2;     //Target max charge voltage
     sets.dischrg_voltage = 3.5;         //Minimum battery voltage
     sets.low_voltage_shutdown = 2.4;    //Battery Low lockout voltage
     sets.dischrg_C_rating = 2;           //Discharge C rating
@@ -118,7 +118,8 @@ void configure_IO(void){
     dsky.pack_voltage = 0;        //Battery voltage
     for(int i=0;i<sets.Cell_Count;i++)open_voltage_percentage[i] = 0;     //Battery Voltage Percentage.
     dsky.battery_current = 0;        //Battery charge/discharge current
-
+    CONDbits.Port1_Echo=yes;
+    CONDbits.Port2_Echo=yes;
     /**************************/
     /* Osc Config*/
     OSCCONbits.NOSC = 1;

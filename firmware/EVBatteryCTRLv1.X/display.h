@@ -97,7 +97,7 @@ const unsigned int setsArray[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
                           //0  1  2  3  4  5  6  7  8     9     10    11  12 13 14 15 16 17   18 19 20    21  22  23  24  25 26  27  28  29  30 31  32  33  34 35 36 37 
 const float setsLimits[] = {0, 0, 0, 0, 0, 0, 0, 1, 4.28, 4.25, -2.2, -2, 0, 0, 0, 0, 9, 9.5, 0, 4, 9999, -5, -5, 60, 50, 0, -0, -5, 70, 60, 0, 80, 90, 10, 0, 0, 0, 0};
 
-const char Var_Prcnt[] = "Battery %";                   //00
+const char Var_Prcnt[] = "Battery % ";                  //00
 const char Var_PkVLT[] = "Pack Voltage";                //01
 const char Var_PkTrgtVLT[] = "Pack Target Voltage";     //02
 const char Var_PkWatts[] = "Peak Watts";                //03
