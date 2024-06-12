@@ -34,7 +34,7 @@ Command:
  '*' =U= Print firmware version
  'a' =U= Abort automatic battery evaluation
  'A' =U= Start automatic battery evaluation
- 'i' ==U Print system telemetry: USAGE: 'i nn q' presence of 'q' in this command prints only the numerical value of selected variable. Omitting all command arguments lists ALL info
+ 'i' =U= Print system telemetry: USAGE: 'i nn q' presence of 'q' in this command prints only the numerical value of selected variable. Omitting all command arguments lists ALL info
  'e' =U= Print system settings: USAGE: 'e nn q' presence of 'q' in this command prints only the numerical value of selected variable. Omitting all command arguments lists ALL info
  'E' =UL= Edit system settings: USAGE: 'E nn xx.xx q' presence of 'q' in this command prints only the numerical value of selected variable. Omitting all command arguments lists ALL info
  '+' =U= Echo ON
