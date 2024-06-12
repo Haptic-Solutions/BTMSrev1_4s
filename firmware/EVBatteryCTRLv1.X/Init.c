@@ -215,17 +215,16 @@ void configure_IO(void){
 
 /*****************************/
 /* Configure Timer 3 */
-/*For speed calculation. */
+/* idk, blink some lights or smth */
 /*****************************/
-/* For exactly 1 second timing operations. */
-//    PR3 = 0xE0EA;   //57,578
-//    PR3 = 0x7271;     //29,297
-//    TMR3 = 0x0000;
-//    T3CON = 0x0000;
-//    T3CONbits.TCKPS = 3;        //1:256 prescale
+/* For 1/16 second timing operations. */
+    PR3 = 0x383A;     //14398
+    TMR3 = 0x0000;
+    T3CON = 0x0000;
+    T3CONbits.TCKPS = 2;        //1:256 prescale
 
 /*****************************/
-/* Configure Timer 4 */
+/* Configure Timer 4 */dataIRQs.c:170:13: error: 'IFS1BITS' has no member named 'T3IF'
 /* Non-Critical 1S Timing. */
 /*****************************/
 /* For low priority 1 second timing operations. */
@@ -260,14 +259,14 @@ void configure_IO(void){
     IPC0bits.INT0IP = 6;    //Over voltage IRQ.
     IPC4bits.INT1IP = 6;    //Over current IRQ.
     IPC1bits.T2IP = 6;      //0.125 second IRQ for some math timing, Greater priority.
-    IPC3bits.MI2CIP = 5;    //I2C Master IRQ
+    IPC3bits.MI2CIP = 5;    //I2C Master IRQ has to stay lower priority than T2IRQ but higher than heartbeat
     IPC0bits.T1IP = 4;      //Heartbeat IRQ, eh, not terribly important.
     IPC3bits.SI2CIP = 4;    //I2C Slave IRQ
+    IPC1bits.T3IP = 4;      //Blink some lights
     IPC2bits.U1TXIP = 3;    //TX 1 IRQ, Text can wait
     IPC6bits.U2TXIP = 3;    //TX 2 IRQ, Text can wait
     IPC2bits.U1RXIP = 2;    //RX 1 IRQ, Text can wait
     IPC6bits.U2RXIP = 2;    //RX 2 IRQ, Text can wait
-    //IPC1bits.T3IP = 2;      //Timer 3 IRQ for wheel rotate timeout. Not critical.
     IPC5bits.T5IP = 2;      //0.125 Sec Non-critical. Used for HUD.
     IPC5bits.T4IP = 1;      //1 Sec Checksum timer IRQ and power off timer.
     IPC5bits.INT2IP = 1;    //Not used.
@@ -316,7 +315,7 @@ void Init(void){
     IEC1bits.INT1IE = 1;    //Current sense fault IRQ
     IEC1bits.INT2IE = 0;  //Disable irq for INT2, not used.
     IEC0bits.T2IE = 1;	// Enable interrupts for timer 2
-    //IEC0bits.T3IE = 1;	// Enable interrupts for timer 3
+    IEC0bits.T3IE = 1;	// Enable interrupts for timer 3
     IEC1bits.T4IE = 1;	// Enable interrupts for timer 4
     IEC1bits.T5IE = 1;	// Enable interrupts for timer 5
     IEC0bits.ADIE = 1;  // Enable ADC IRQs.
@@ -330,7 +329,7 @@ void Init(void){
     PTCONbits.PTEN = 1;     // Enable PWM
     T2CONbits.TON = 1;      // Start Timer 2
     T1CONbits.TON = 1;      // Start Timer 1
-    //T3CONbits.TON = 1;      // Start Timer 3
+    T3CONbits.TON = 1;      // Start Timer 3
     T4CONbits.TON = 1;      // Start Timer 4
     T5CONbits.TON = 1;      // Start Timer 5
     USB_Power_Present_Check(); //Enable or Disable PORT1 depending if there is voltage present to FTDI chip.

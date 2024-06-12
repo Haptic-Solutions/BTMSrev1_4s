@@ -77,10 +77,9 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
             Auto_Eval = 0;
         }
         //Charger or power parameters don't line up for Evaluation. Aborting.
-        else if((!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN) || (dsky.Cin_voltage<C_Min_Voltage)){
-            if(!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN)fault_log(0x45, 0x01);
-            else if((dsky.Cin_voltage<C_Min_Voltage))fault_log(0x45, 0x02);
-            else fault_log(0x45, 0x03);
+        else if((!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN) || (ch_vltg_avg<C_Min_Voltage)){
+            if(!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN)fault_log(0x45, 0x01);   //Load turned on while trying to charge.
+            else if((ch_vltg_avg<C_Min_Voltage))fault_log(0x45, 0x02);                  //Charge disconnected while trying to charge.
             print_info(no, -1, PORT1);
             print_info(no, -1, PORT2);
             send_string(I_Auto, Eval_Error, PORT1);
@@ -165,12 +164,19 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
     //End IRQ
 }
 
+//lightweight 1/16th second IRQ
+//For low priority CPU intensive processes and checks, and 1/16th second non-critical timing.
+void __attribute__((interrupt, no_auto_psv)) _T3Interrupt (void){
+    IFS0bits.T3IF = clear;
+    //Blink some LEDs
+    BlinknLights++; //Count up all the time once every 1/8 second.
+    //End IRQ
+}
+
 //Another Heavy process IRQ
 //For low priority CPU intensive processes and checks, and 1/16th second non-critical timing.
 void __attribute__((interrupt, no_auto_psv)) _T5Interrupt (void){
     IFS1bits.T5IF = clear;
-    //Blink some LEDs
-    BlinknLights++; //Count up all the time once every 1/8 second.
     //Do display stuff.
     displayOut(PORT1);
     displayOut(PORT2);

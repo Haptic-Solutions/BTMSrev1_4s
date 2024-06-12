@@ -30,7 +30,6 @@ extern inline void output_PWM(void);
 
 float dischrg_current = 0;
 float chrg_current = 0;
-float percentOut = 0;
 float chrg_remaining = 0;
 int Output_Software_PWM = 0;
 int Output_PWM_Delay = 0;

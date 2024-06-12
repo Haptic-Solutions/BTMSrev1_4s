@@ -32,29 +32,33 @@ char Cell_HV_Check(){
     return 0;
 }
 
-
+#define reduceCTRLtemp 10
 //Calculates a current percentage limit based on temperature limits.
-float Temperature_I_Calc(float lowTCutout, float lowBeginReduce, float highTCutout, float highBeginReduce){
-    if(dsky.battery_temp < lowBeginReduce) percentOut = (dsky.battery_temp - lowTCutout) / (lowBeginReduce - lowTCutout);
-    else if (dsky.battery_temp > highBeginReduce) percentOut = ((highTCutout - dsky.battery_temp) / (highTCutout - highBeginReduce));
-    else return 1;
+float Temperature_I_Calc(float lowTCutout, float lowBeginReduce, float highTCutout, float highBeginReduce, float CTRLsdTemp){
+    float percentOut1 = 1;
+    float percentOut2 = 1;
+    if(dsky.battery_temp < lowBeginReduce) percentOut1 = (dsky.battery_temp - lowTCutout) / (lowBeginReduce - lowTCutout);
+    else if (dsky.battery_temp > highBeginReduce) percentOut1 = ((highTCutout - dsky.battery_temp) / (highTCutout - highBeginReduce));
+    if (dsky.my_temp > CTRLsdTemp-reduceCTRLtemp) percentOut2 = ((CTRLsdTemp - dsky.my_temp) / (CTRLsdTemp - CTRLsdTemp-reduceCTRLtemp));
+    //Use the lower value
+    if(percentOut1>percentOut2)percentOut1=percentOut2;
     //Clamp the result 0 - 1
-    if(percentOut > 1) return 1;
-    else if (percentOut < 0) return 0;
-    else return percentOut;
+    if(percentOut1 > 1) return 1;
+    else if (percentOut1 < 0) return 0;
+    else return percentOut1;
 }
 
 //Uses calculated current limit and applies it to the battery capacity, state of charge, and C ratings.
 inline void temperatureCalc(void){
     //Calculate max discharge current based off battery temp and battery remaining.
     dischrg_current = (sets.dischrg_C_rating * vars.battery_remaining)
-    * Temperature_I_Calc(sets.dischrg_min_temp, sets.dischrg_reduce_low_temp, sets.dischrg_max_temp, sets.dischrg_reduce_high_temp);
+    * Temperature_I_Calc(sets.dischrg_min_temp, sets.dischrg_reduce_low_temp, sets.dischrg_max_temp, sets.dischrg_reduce_high_temp, sets.ctrlr_shutdown_temp);
     if(dischrg_current < sets.limp_current) dischrg_current = sets.limp_current;
     //Calculate max charge current based off battery temp and battery remaining.
     chrg_remaining = (vars.battery_capacity - vars.battery_remaining);
     if(chrg_remaining < 0.2) chrg_remaining = 0.2;  //Minimum charge current is 0.2 * charge C rating.
     chrg_current = (sets.chrg_C_rating * chrg_remaining)
-    * Temperature_I_Calc(sets.chrg_min_temp, sets.chrg_reduce_low_temp, sets.chrg_max_temp, sets.chrg_reduce_high_temp);
+    * Temperature_I_Calc(sets.chrg_min_temp, sets.chrg_reduce_low_temp, sets.chrg_max_temp, sets.chrg_reduce_high_temp, sets.ctrlr_shutdown_temp);
 }
 
 inline void output_PWM(void){
