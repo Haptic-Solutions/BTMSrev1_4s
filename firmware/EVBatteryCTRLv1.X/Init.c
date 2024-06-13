@@ -224,7 +224,7 @@ void configure_IO(void){
     T3CONbits.TCKPS = 2;        //1:256 prescale
 
 /*****************************/
-/* Configure Timer 4 */dataIRQs.c:170:13: error: 'IFS1BITS' has no member named 'T3IF'
+/* Configure Timer 4 */
 /* Non-Critical 1S Timing. */
 /*****************************/
 /* For low priority 1 second timing operations. */

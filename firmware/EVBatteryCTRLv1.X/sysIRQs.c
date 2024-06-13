@@ -248,6 +248,8 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt (void){
 //Used for some critical math timing operations. Cycles through every 1/8 sec.
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void){
     IFS0bits.T2IF = 0;
+    //Evaluation timer
+    if(ch_timeout>0)ch_timeout--;
     // turn ADC on to get a sample.
     ADCON1bits.ADON = on;
     //I2C timeout counter and error logger.

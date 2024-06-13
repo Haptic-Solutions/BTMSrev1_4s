@@ -48,16 +48,17 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
             print_info(no, -1, PORT2);
             send_string(I_Auto, Eval_Discharging, PORT1);
             send_string(I_Auto, Eval_Discharging, PORT2);
-            chargeInhibit(yes);
+            chargeInhibit(yes); //disable charger
             CONDbits.Power_Out_EN = on;
         }
-        else if(dsky.chrg_percent<Eval_Start && CONDbits.Chrg_Inhibit && !CONDbits.Power_Out_EN){
+        else if(dsky.chrg_percent<Eval_Start && CONDbits.Chrg_Inhibit){
             print_info(no, -1, PORT1);
             print_info(no, -1, PORT2);
             send_string(I_Auto, Eval_Charging, PORT1);
             send_string(I_Auto, Eval_Charging, PORT2);
-            chargeInhibit(no);
+            chargeInhibit(no);  //enable charger
             CONDbits.Power_Out_EN = off;
+            ch_timeout = 64;
             Auto_Eval--;
             if(Auto_Eval==0){
                 send_string(I_Auto, Eval_Finished, PORT1);
@@ -66,7 +67,7 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
             Full_Charge();
         }
         //Load used has shutdown before auto evaluation could complete. Aborted.
-        else if((dsky.chrg_percent>25 && CONDbits.Chrg_Inhibit && !CONDbits.Power_Out_EN)){
+        else if((dsky.chrg_percent>Eval_Start && CONDbits.Chrg_Inhibit && !CONDbits.Power_Out_EN)){
             print_info(no, -1, PORT1);
             print_info(no, -1, PORT2);
             send_string(I_Auto, Eval_Error, PORT1);
@@ -77,9 +78,9 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt (void){
             Auto_Eval = 0;
         }
         //Charger or power parameters don't line up for Evaluation. Aborting.
-        else if((!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN) || (ch_vltg_avg<C_Min_Voltage)){
+        else if((!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN) || (ch_vltg_avg<C_Min_Voltage && ch_timeout == 0)){
             if(!CONDbits.Chrg_Inhibit && CONDbits.Power_Out_EN)fault_log(0x45, 0x01);   //Load turned on while trying to charge.
-            else if((ch_vltg_avg<C_Min_Voltage))fault_log(0x45, 0x02);                  //Charge disconnected while trying to charge.
+            else if((ch_vltg_avg<C_Min_Voltage))fault_log(0x45, 0x02);                  //Charger disconnected while trying to charge.
             print_info(no, -1, PORT1);
             print_info(no, -1, PORT2);
             send_string(I_Auto, Eval_Error, PORT1);
