@@ -1,7 +1,0 @@
-(fp_lib_table
-  (lib (name "digikey-footprints")(type "KiCad")(uri "C:/Users/User/KiCadLIBS/digikey-kicad-library-master/digikey-footprints.pretty")(options "")(descr ""))
-  (lib (name "trinamic-footprints")(type "KiCad")(uri "C:/Users/User/KiCadLIBS/digikey-partner-kicad-library-master/Trinamic/trinamic-footprints.pretty")(options "")(descr ""))
-  (lib (name "Sensor_Current")(type "KiCad")(uri "C:/Users/User/KiCadLIBS/Sensor_Current.pretty")(options "")(descr ""))
-  (lib (name "Housings_DIP")(type "KiCad")(uri "C:/Users/User/KiCadLIBS/Housings_DIP.pretty")(options "")(descr ""))
-  (lib (name "new")(type "KiCad")(uri "${KIPRJMOD}/new.pretty")(options "")(descr ""))
-)
