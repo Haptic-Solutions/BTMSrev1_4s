@@ -169,4 +169,5 @@
   (lib (name "BTMS-rescue")(type "Legacy")(uri "${KIPRJMOD}/BTMS-rescue.lib")(options "")(descr ""))
   (lib (name "ucc27201ddar")(type "Legacy")(uri "${KIPRJMOD}/customKICADdata/ucc27201ddar.lib")(options "")(descr ""))
   (lib (name "New_Library")(type "KiCad")(uri "${KIPRJMOD}/New_Library.kicad_sym")(options "")(descr ""))
+  (lib (name "adc")(type "KiCad")(uri "${KIPRJMOD}/adc.kicad_sym")(options "")(descr ""))
 )
