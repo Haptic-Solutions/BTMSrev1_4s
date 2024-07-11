@@ -6564,7 +6564,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 6c4125d6-b19e-4b13-9e3e-04f6660a243e)
   )
-  (text "Battery Current and Output Control" (at 146.685 220.98 0)
+  (text "Battery Current sensing and Output Control" (at 140.97 220.98 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 6e8e0830-0ca4-40e7-b752-7f5b8ad3b66e)
   )
@@ -6605,7 +6605,7 @@
     (uuid f355daf7-3fd4-4dc4-9712-3cd1e04a6640)
   )
   (text "Using digital 3.3v instead of analog for\nthis temperature sensor because it's not\nsuper ciritial how accurate it is, and this\npower line runs accross the board and could\npickup noise."
-    (at 422.91 389.255 0)
+    (at 422.91 391.16 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid fa676aa2-3483-430b-b47c-31f1dd48786f)
   )
