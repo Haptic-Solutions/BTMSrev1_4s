@@ -1,4 +1,4 @@
-20843704739260096
+20848868814008786
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -87282,6 +87282,27 @@ varistor
 0
 2
 2
+footprints
+XQFN8_SOT902-2_NXP
+
+PCA9570GMH 
+0
+8
+8
+footprints
+XQFN8_SOT902-2_NXP-L
+
+PCA9570GMH 
+0
+8
+8
+footprints
+XQFN8_SOT902-2_NXP-M
+
+PCA9570GMH 
+0
+8
+8
 inductorModel
 IND_ASPI-4030S-4R7M-T
 

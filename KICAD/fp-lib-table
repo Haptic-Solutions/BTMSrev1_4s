@@ -4,4 +4,5 @@
   (lib (name "Sensor_Current")(type "KiCad")(uri "C:/Users/User/KiCadLIBS/Sensor_Current.pretty")(options "")(descr ""))
   (lib (name "Housings_DIP")(type "KiCad")(uri "C:/Users/User/KiCadLIBS/Housings_DIP.pretty")(options "")(descr ""))
   (lib (name "new")(type "KiCad")(uri "${KIPRJMOD}/new.pretty")(options "")(descr ""))
+  (lib (name "footprints")(type "KiCad")(uri "${KIPRJMOD}/customKICADdata/KiCADv6/footprints.pretty")(options "")(descr ""))
 )
