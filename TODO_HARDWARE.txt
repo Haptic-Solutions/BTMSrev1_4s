@@ -6,12 +6,13 @@ Add: Small electrolytic decoupling capacitors to output of buck-boost converter.
 
 Upgrade: Current output rating is only 10 amps. Try to get it up to 15 amps. Not high priority.
 
-Fix: Lots of EMI coming from multiplexed LED drive circuit. <- Moved resistors as close to dsPIC as possible. Added resistor to multiplex selector.
+Fix: Lots of EMI coming from multiplexed LED drive circuit. <- Moved resistors as close to dsPIC as possible. Added resistor to multiplex selector. It's a little better. This might not be as bad as it seems.
 
-Fix: USB and AUX charge inputs will output power to one or the other. This is NOT safe for either device that may be plugged in. <- Added diode to USB input. Need better solution that doesn't waste so much energy as heat.
+Fix: USB and AUX charge inputs will output power to one or the other. This is NOT safe for either device that may be plugged in. <- New design uses a MOSFET network to switch USB input on/off. Need to test when new boards come in.
 
 Fix: Capacitive loads cause inrush current that trips the over current protection circuit. A pre-charge circuit with resistors might work with some types of loads, but probably not when loads are both resistive and capacitive. <- Changed power source of
 current sense IC's to an IO pin of the micro controller so that they can be reset when a known inrush current is about to be switched on. This did not work. Reverted back to powering current sense IC's from 3.3V analog supply.
+Added RC network to turn MOSFETS on much slower. Need to test.
 
 Fix: USB-PD chip senses wrong current with current schematic. Removed diode causing problems. Need better solution for powering PD chip from USB-C or Aux as it is also our 3.3V regulator to power the FTDI chip. Use separate regulator?
 
@@ -19,3 +20,4 @@ Fix: Sleep mode power draw still not low enough. Seems using these 40V Schottky 
 I only used these diodes because of their small size for how much current they can pass. Need to investigate further. Found that the buck-boost output diode is another source of leakage current. Removing the path from this circuit to the battery drops
 the leakage current from battery down to 0.002mA which is within error of my cheap multi-meter. A 100mAh battery would last 5.7 years at this current while in sleep mode, and a 2.6Ah pack like the one I've been using to test would last 
 ~148 years in sleep mode.
+Using newer design should improve this as the battery is completely disconnected when in deep-sleep mode.
