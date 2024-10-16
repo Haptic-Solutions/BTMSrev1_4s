@@ -4,7 +4,7 @@
 
 Add: Small electrolytic decoupling capacitors to output of buck-boost converter. Might need some on input as well. Seems to trip USB-PD charges when average current isn't anywhere near it's set limit. Done some. Need to test more.
 
-Upgrade: Current output rating is only 10 amps. Try to get it up to 15 amps. Not high priority.
+Upgrade: Current output rating is only 10 amps. Try to get it up to 15 amps. Not high priority. May not even bother with this version as it's small board size limits the current.
 
 Fix: Lots of EMI coming from multiplexed LED drive circuit. <- Moved resistors as close to dsPIC as possible. Added resistor to multiplex selector. It's a little better. This might not be as bad as it seems.
 

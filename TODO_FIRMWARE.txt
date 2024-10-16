@@ -8,7 +8,7 @@ Implement: MPPT for solar charging.
 
 Implement: I2C communication to USB3.1 PD chip. Mostly done. Bug where re-plugging in the charger does not initiate USB3 charging. Testing fix for this. Seems to work alright after changing some things. Keep an eye on this.
 
-Implement: Power button features. Done.
+Implement: Power button features. Done. Need to add a few features to this. Maybe an err ACK top bring back charge meter after a non-fatal error?
 
 Implement: Better CLI interface such as more info available at request, and easier to understand variable names. Partly Done. Need to implement HUD config system.
 
